@@ -1,0 +1,14 @@
+.DS_Store
+.m2
+target
+.idea/
+.vscode/
+*.iml
+*.class
+*.log
+hs_err_pid*
+replay_pid*
+*.dump
+*.dumpstream
+*.swp
+*.swo

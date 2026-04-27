@@ -1,0 +1,61 @@
+kind: game_state
+version: 1
+phase:
+  season: spring
+  step: move
+  year: 1901
+  due: 0
+nations:
+  england:
+    name: England
+    homes: []
+    controls: []
+    units:
+    - position: lvp_l
+      order:
+        type: move
+        status: success
+        to: edi_l
+        via_convoy: true
+    - position: nao_s
+      order:
+        type: convoy
+        status: success
+        from: lvp_l
+        to: edi_l
+    - position: nwg_s
+      order:
+        type: convoy
+        status: success
+        from: lvp_l
+        to: edi_l
+  germany:
+    name: Germany
+    homes: []
+    controls: []
+    units:
+    - position: edi_l
+      order:
+        type: move
+        status: success
+        to: lvp_l
+        via_convoy: true
+    - position: nth_s
+      order:
+        type: convoy
+        status: success
+        from: edi_l
+        to: lvp_l
+    - position: eng_s
+      order:
+        type: convoy
+        status: success
+        from: edi_l
+        to: lvp_l
+    - position: iri_s
+      order:
+        type: convoy
+        status: success
+        from: edi_l
+        to: lvp_l
+standoffs: []

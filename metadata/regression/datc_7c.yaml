@@ -1,0 +1,51 @@
+kind: game_state
+version: 1
+phase:
+  season: spring
+  step: move
+  year: 1901
+  due: 0
+nations:
+  france:
+    name: France
+    homes: []
+    controls: []
+    units:
+    - position: bre_c
+      order:
+        type: move
+        status: success
+        to: eng_s
+        via_convoy: false
+    - position: pic_l
+      order:
+        type: move
+        status: success
+        to: bel_l
+        via_convoy: false
+    - position: bur_l
+      order:
+        type: support
+        status: success
+        from: pic_l
+        to: bel_l
+    - position: mao_s
+      order:
+        type: support
+        status: success
+        from: bre_c
+        to: eng_s
+  england:
+    name: England
+    homes: []
+    controls: []
+    units:
+    - position: eng_s
+      order:
+        type: convoy
+        status: failure
+        from: pic_l
+        to: bel_l
+        comment: No army to convoy.
+      dislodged_by: bre
+standoffs: []

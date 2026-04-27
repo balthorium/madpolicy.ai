@@ -1,0 +1,43 @@
+kind: game_state
+version: 1
+phase:
+  season: spring
+  step: move
+  year: 1901
+  due: 0
+nations:
+  england:
+    name: England
+    homes: []
+    controls: []
+    units:
+    - position: lon_l
+      order:
+        type: hold
+        status: failure
+      dislodged_by: eng
+    - position: wal_l
+      order:
+        type: move
+        status: failure
+        to: lon_l
+        via_convoy: false
+        comment: Overwhelmed.
+  france:
+    name: France
+    homes: []
+    controls: []
+    units:
+    - position: eng_s
+      order:
+        type: move
+        status: success
+        to: lon_c
+        via_convoy: false
+    - position: nth_s
+      order:
+        type: support
+        status: success
+        from: eng_s
+        to: lon_c
+standoffs: []

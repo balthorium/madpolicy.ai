@@ -1,0 +1,28 @@
+kind: game_state
+version: 1
+phase:
+  season: spring
+  step: retreat
+  year: 1901
+  due: 0
+nations:
+  italy:
+    name: Italy
+    homes: []
+    controls: []
+    units:
+    - position: vie_l
+      order:
+        type: retreat
+        status: failure
+        to: tyr_l
+        comment: Two or more units retreating to same province.
+      dislodged_by: tri
+    - position: boh_l
+      order:
+        type: retreat
+        status: failure
+        to: tyr_l
+        comment: Two or more units retreating to same province.
+      dislodged_by: sil
+standoffs: []

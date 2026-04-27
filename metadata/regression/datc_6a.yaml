@@ -1,0 +1,42 @@
+kind: game_state
+version: 1
+phase:
+  season: spring
+  step: move
+  year: 1901
+  due: 0
+nations:
+  turkey:
+    name: Turkey
+    homes: []
+    controls: []
+    units:
+    - position: gre_l
+      order:
+        type: move
+        status: failure
+        to: sev_l
+        via_convoy: true
+        comment: Illegal or useless order.
+    - position: aeg_s
+      order:
+        type: convoy
+        status: failure
+        from: gre_l
+        to: sev_l
+        comment: Illegal or useless order.
+    - position: con_c
+      order:
+        type: convoy
+        status: failure
+        from: gre_l
+        to: sev_l
+        comment: Illegal or useless order.
+    - position: bla_s
+      order:
+        type: convoy
+        status: failure
+        from: gre_l
+        to: sev_l
+        comment: Illegal or useless order.
+standoffs: []

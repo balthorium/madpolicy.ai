@@ -1,0 +1,38 @@
+kind: game_state
+version: 1
+phase:
+  season: spring
+  step: move
+  year: 1901
+  due: 0
+nations:
+  austria:
+    name: Austria
+    homes: []
+    controls: []
+    units:
+    - position: ser_l
+      order:
+        type: move
+        status: success
+        to: bud_l
+        via_convoy: false
+    - position: vie_l
+      order:
+        type: move
+        status: failure
+        to: bud_l
+        via_convoy: false
+        comment: Overwhelmed.
+  russia:
+    name: Russia
+    homes: []
+    controls: []
+    units:
+    - position: gal_l
+      order:
+        type: support
+        status: success
+        from: ser_l
+        to: bud_l
+standoffs: []

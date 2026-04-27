@@ -1,0 +1,55 @@
+kind: game_state
+version: 1
+phase:
+  season: spring
+  step: move
+  year: 1901
+  due: 0
+nations:
+  austria:
+    name: Austria
+    homes: []
+    controls: []
+    units:
+    - position: ser_l
+      order:
+        type: hold
+        status: success
+  russia:
+    name: Russia
+    homes: []
+    controls: []
+    units:
+    - position: rum_l
+      order:
+        type: move
+        status: failure
+        to: ser_l
+        via_convoy: false
+        comment: Standoff.
+    - position: bud_l
+      order:
+        type: support
+        status: success
+        from: rum_l
+        to: ser_l
+  turkey:
+    name: Turkey
+    homes: []
+    controls: []
+    units:
+    - position: bul_l
+      order:
+        type: move
+        status: failure
+        to: ser_l
+        via_convoy: false
+        comment: Standoff.
+    - position: gre_l
+      order:
+        type: support
+        status: success
+        from: bul_l
+        to: ser_l
+standoffs:
+- ser

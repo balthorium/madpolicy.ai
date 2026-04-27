@@ -1,0 +1,43 @@
+kind: game_state
+version: 1
+phase:
+  season: spring
+  step: move
+  year: 1901
+  due: 0
+nations:
+  turkey:
+    name: Turkey
+    homes: []
+    controls: []
+    units:
+    - position: ank_c
+      order:
+        type: move
+        status: failure
+        to: con_c
+        via_convoy: false
+        comment: Standoff.
+    - position: con_l
+      order:
+        type: move
+        status: failure
+        to: smy_l
+        via_convoy: false
+        comment: Standoff.
+    - position: smy_l
+      order:
+        type: move
+        status: failure
+        to: ank_l
+        via_convoy: false
+        comment: Standoff.
+    - position: bul_l
+      order:
+        type: move
+        status: failure
+        to: con_l
+        via_convoy: false
+        comment: Standoff.
+standoffs:
+- con

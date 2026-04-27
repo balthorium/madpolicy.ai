@@ -1,0 +1,32 @@
+kind: game_state
+version: 1
+phase:
+  season: spring
+  step: retreat
+  year: 1901
+  due: 0
+nations:
+  england:
+    name: England
+    homes: []
+    controls: []
+    units:
+    - position: kie_l
+      order:
+        type: retreat
+        status: failure
+        to: ber_l
+        comment: Illegal or useless order.
+      dislodged_by: ber
+  germany:
+    name: Germany
+    homes: []
+    controls: []
+    units:
+    - position: pru_l
+      order:
+        type: retreat
+        status: success
+        to: ber_l
+      dislodged_by: war
+standoffs: []

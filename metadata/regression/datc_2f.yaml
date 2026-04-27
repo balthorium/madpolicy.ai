@@ -1,0 +1,55 @@
+kind: game_state
+version: 1
+phase:
+  season: spring
+  step: move
+  year: 1901
+  due: 0
+nations:
+  england:
+    name: England
+    homes: []
+    controls: []
+    units:
+    - position: nao_s
+      order:
+        type: move
+        status: success
+        to: mao_s
+        via_convoy: false
+    - position: iri_s
+      order:
+        type: support
+        status: success
+        from: nao_s
+        to: mao_s
+  france:
+    name: France
+    homes: []
+    controls: []
+    units:
+    - position: spa_nc
+      order:
+        type: support
+        status: failure
+        from: mao_s
+        to: mao_s
+        comment: Support cut.
+    - position: mao_s
+      order:
+        type: hold
+        status: failure
+      dislodged_by: nao
+  italy:
+    name: Italy
+    homes: []
+    controls: []
+    units:
+    - position: lyo_s
+      order:
+        type: move
+        status: failure
+        to: spa_sc
+        via_convoy: false
+        comment: Standoff.
+standoffs: []

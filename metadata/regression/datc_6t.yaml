@@ -1,0 +1,84 @@
+kind: game_state
+version: 1
+phase:
+  season: spring
+  step: move
+  year: 1901
+  due: 0
+nations:
+  england:
+    name: England
+    homes: []
+    controls: []
+    units:
+    - position: edi_c
+      order:
+        type: move
+        status: success
+        to: nth_s
+        via_convoy: false
+    - position: lon_c
+      order:
+        type: support
+        status: success
+        from: edi_c
+        to: nth_s
+    - position: iri_s
+      order:
+        type: move
+        status: failure
+        to: eng_s
+        via_convoy: false
+        comment: Standoff.
+    - position: mao_s
+      order:
+        type: support
+        status: success
+        from: iri_s
+        to: eng_s
+  france:
+    name: France
+    homes: []
+    controls: []
+    units:
+    - position: bre_l
+      order:
+        type: move
+        status: failure
+        to: lon_l
+        via_convoy: true
+        comment: Convoy failed.
+    - position: eng_s
+      order:
+        type: convoy
+        status: failure
+        from: bre_l
+        to: lon_l
+        comment: Convoy failed due to paradox (Szykman Rule).
+    - position: bel_c
+      order:
+        type: support
+        status: success
+        from: eng_s
+        to: eng_s
+  russia:
+    name: Russia
+    homes: []
+    controls: []
+    units:
+    - position: nwy_l
+      order:
+        type: move
+        status: failure
+        to: bel_l
+        via_convoy: true
+        comment: Convoy failed.
+    - position: nth_s
+      order:
+        type: convoy
+        status: failure
+        from: nwy_l
+        to: bel_l
+        comment: Convoy failed due to paradox (Szykman Rule).
+      dislodged_by: edi
+standoffs: []

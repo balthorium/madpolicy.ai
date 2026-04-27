@@ -1,0 +1,48 @@
+kind: game_state
+version: 1
+phase:
+  season: spring
+  step: move
+  year: 1901
+  due: 0
+nations:
+  france:
+    name: France
+    homes: []
+    controls: []
+    units:
+    - position: bur_l
+      order:
+        type: hold
+        status: success
+  germany:
+    name: Germany
+    homes: []
+    controls: []
+    units:
+    - position: mun_l
+      order:
+        type: move
+        status: failure
+        to: bur_l
+        via_convoy: false
+        comment: Standoff.
+    - position: kie_l
+      order:
+        type: support
+        status: success
+        from: boh_l
+        to: mun_l
+  austria:
+    name: Austria
+    homes: []
+    controls: []
+    units:
+    - position: boh_l
+      order:
+        type: move
+        status: failure
+        to: mun_l
+        via_convoy: false
+        comment: Standoff.
+standoffs: []

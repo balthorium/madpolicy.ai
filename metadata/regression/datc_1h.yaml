@@ -1,0 +1,39 @@
+kind: game_state
+version: 1
+phase:
+  season: spring
+  step: move
+  year: 1901
+  due: 0
+nations:
+  italy:
+    name: Italy
+    homes: []
+    controls: []
+    units:
+    - position: ven_l
+      order:
+        type: move
+        status: success
+        to: tri_l
+        via_convoy: false
+    - position: tyr_l
+      order:
+        type: support
+        status: success
+        from: ven_l
+        to: tri_l
+  austria:
+    name: Austria
+    homes: []
+    controls: []
+    units:
+    - position: tri_c
+      order:
+        type: support
+        status: failure
+        from: tri_c
+        to: tri_c
+        comment: Illegal or useless order.
+      dislodged_by: ven
+standoffs: []

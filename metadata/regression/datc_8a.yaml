@@ -1,0 +1,65 @@
+kind: game_state
+version: 1
+phase:
+  season: spring
+  step: retreat
+  year: 1901
+  due: 0
+nations:
+  austria:
+    name: Austria
+    homes: []
+    controls: []
+    units:
+    - position: tri_c
+      order:
+        type: retreat
+        status: failure
+        to: alb_c
+        comment: Two or more units retreating to same province.
+      dislodged_by: tyr
+    - position: ser_l
+      order:
+        type: support
+        status: failure
+        from: tri_c
+        to: alb_c
+        comment: Illegal or useless order.
+    - position: bud_l
+      order:
+        type: hold
+        status: success
+    - position: bul_l
+      order:
+        type: move
+        status: failure
+        to: smy_l
+        via_convoy: false
+        comment: Illegal or useless order.
+    - position: aeg_s
+      order:
+        type: convoy
+        status: failure
+        from: bul_l
+        to: smy_l
+        comment: Illegal or useless order.
+  turkey:
+    name: Turkey
+    homes: []
+    controls: []
+    units:
+    - position: gre_c
+      order:
+        type: retreat
+        status: failure
+        to: alb_c
+        comment: Two or more units retreating to same province.
+      dislodged_by: ion
+    - position: rum_l
+      order:
+        type: retreat
+        status: failure
+        to: bud_l
+        comment: Illegal or useless order.
+      dislodged_by: sev
+standoffs: []

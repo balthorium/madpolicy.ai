@@ -1,0 +1,61 @@
+kind: game_state
+version: 1
+phase:
+  season: spring
+  step: move
+  year: 1901
+  due: 0
+nations:
+  england:
+    name: England
+    homes: []
+    controls: []
+    units:
+    - position: hel_s
+      order:
+        type: move
+        status: success
+        to: kie_c
+        via_convoy: false
+    - position: den_c
+      order:
+        type: support
+        status: success
+        from: hel_s
+        to: kie_c
+  germany:
+    name: Germany
+    homes: []
+    controls: []
+    units:
+    - position: ber_l
+      order:
+        type: move
+        status: success
+        to: pru_l
+        via_convoy: false
+    - position: kie_c
+      order:
+        type: hold
+        status: failure
+      dislodged_by: hel
+    - position: sil_l
+      order:
+        type: support
+        status: success
+        from: ber_l
+        to: pru_l
+  russia:
+    name: Russia
+    homes: []
+    controls: []
+    units:
+    - position: pru_l
+      order:
+        type: move
+        status: failure
+        to: ber_l
+        via_convoy: false
+        comment: Overwhelmed.
+      dislodged_by: ber
+standoffs: []

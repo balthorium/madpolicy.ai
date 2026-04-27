@@ -1,0 +1,42 @@
+kind: game_state
+version: 1
+phase:
+  season: spring
+  step: move
+  year: 1901
+  due: 0
+nations:
+  england:
+    name: England
+    homes: []
+    controls: []
+    units:
+    - position: den_l
+      order:
+        type: move
+        status: failure
+        to: kie_l
+        via_convoy: false
+        comment: Standoff.
+    - position: bal_s
+      order:
+        type: support
+        status: success
+        from: den_l
+        to: kie_l
+  germany:
+    name: Germany
+    homes: []
+    controls: []
+    units:
+    - position: kie_l
+      order:
+        type: hold
+        status: success
+    - position: hel_s
+      order:
+        type: support
+        status: success
+        from: kie_l
+        to: kie_l
+standoffs: []

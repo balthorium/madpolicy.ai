@@ -1,0 +1,37 @@
+kind: game_state
+version: 1
+phase:
+  season: spring
+  step: move
+  year: 1901
+  due: 0
+nations:
+  france:
+    name: France
+    homes: []
+    controls: []
+    units:
+    - position: mar_c
+      order:
+        type: move
+        status: failure
+        to: lyo_s
+        via_convoy: false
+        comment: Standoff.
+    - position: spa_nc
+      order:
+        type: support
+        status: failure
+        from: mar_c
+        to: lyo_s
+        comment: Illegal or useless order.
+  italy:
+    name: Italy
+    homes: []
+    controls: []
+    units:
+    - position: lyo_s
+      order:
+        type: hold
+        status: success
+standoffs: []

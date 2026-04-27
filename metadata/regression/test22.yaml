@@ -1,0 +1,140 @@
+kind: game_state
+version: 1
+phase:
+  season: spring
+  step: move
+  year: 1901
+  due: 0
+nations:
+  france:
+    name: France
+    homes: []
+    controls: []
+    units:
+    - position: syr_l
+      order:
+        type: move
+        status: success
+        to: stp_l
+        via_convoy: true
+    - position: bla_s
+      order:
+        type: convoy
+        status: failure
+        from: syr_l
+        to: stp_l
+        comment: Illegal or useless order.
+    - position: aeg_s
+      order:
+        type: convoy
+        status: success
+        from: syr_l
+        to: stp_l
+    - position: eas_s
+      order:
+        type: convoy
+        status: success
+        from: syr_l
+        to: stp_l
+    - position: ion_s
+      order:
+        type: convoy
+        status: success
+        from: syr_l
+        to: stp_l
+    - position: adr_s
+      order:
+        type: convoy
+        status: failure
+        from: syr_l
+        to: stp_l
+        comment: Illegal or useless order.
+    - position: tys_s
+      order:
+        type: convoy
+        status: success
+        from: syr_l
+        to: stp_l
+    - position: wes_s
+      order:
+        type: convoy
+        status: success
+        from: syr_l
+        to: stp_l
+    - position: lyo_s
+      order:
+        type: convoy
+        status: success
+        from: syr_l
+        to: stp_l
+    - position: mao_s
+      order:
+        type: convoy
+        status: success
+        from: syr_l
+        to: stp_l
+    - position: nao_s
+      order:
+        type: convoy
+        status: success
+        from: syr_l
+        to: stp_l
+    - position: iri_s
+      order:
+        type: convoy
+        status: success
+        from: syr_l
+        to: stp_l
+    - position: eng_s
+      order:
+        type: convoy
+        status: success
+        from: syr_l
+        to: stp_l
+    - position: nth_s
+      order:
+        type: convoy
+        status: success
+        from: syr_l
+        to: stp_l
+    - position: nwg_s
+      order:
+        type: convoy
+        status: success
+        from: syr_l
+        to: stp_l
+    - position: hel_s
+      order:
+        type: convoy
+        status: failure
+        from: syr_l
+        to: stp_l
+        comment: Illegal or useless order.
+    - position: ska_s
+      order:
+        type: convoy
+        status: failure
+        from: syr_l
+        to: stp_l
+        comment: Illegal or useless order.
+    - position: bal_s
+      order:
+        type: convoy
+        status: failure
+        from: syr_l
+        to: stp_l
+        comment: Illegal or useless order.
+    - position: bot_s
+      order:
+        type: convoy
+        status: failure
+        from: syr_l
+        to: stp_l
+        comment: Illegal or useless order.
+    - position: bar_s
+      order:
+        type: convoy
+        status: success
+        from: syr_l
+        to: stp_l
+standoffs: []

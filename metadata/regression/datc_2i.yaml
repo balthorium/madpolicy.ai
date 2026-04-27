@@ -1,0 +1,44 @@
+kind: game_state
+version: 1
+phase:
+  season: spring
+  step: move
+  year: 1901
+  due: 0
+nations:
+  france:
+    name: France
+    homes: []
+    controls: []
+    units:
+    - position: mao_s
+      order:
+        type: move
+        status: failure
+        to: spa_sc
+        via_convoy: false
+        comment: Overwhelmed.
+    - position: por_c
+      order:
+        type: support
+        status: success
+        from: mao_s
+        to: spa_nc
+  italy:
+    name: Italy
+    homes: []
+    controls: []
+    units:
+    - position: lyo_s
+      order:
+        type: support
+        status: success
+        from: wes_s
+        to: spa_sc
+    - position: wes_s
+      order:
+        type: move
+        status: success
+        to: spa_sc
+        via_convoy: false
+standoffs: []

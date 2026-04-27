@@ -1,0 +1,76 @@
+kind: game_state
+version: 1
+phase:
+  season: spring
+  step: move
+  year: 1901
+  due: 0
+nations:
+  russia:
+    name: Russia
+    homes: []
+    controls: []
+    units:
+    - position: edi_l
+      order:
+        type: support
+        status: success
+        from: nwy_l
+        to: cly_l
+    - position: nwg_s
+      order:
+        type: convoy
+        status: success
+        from: nwy_l
+        to: cly_l
+    - position: nwy_l
+      order:
+        type: move
+        status: success
+        to: cly_l
+        via_convoy: true
+  france:
+    name: France
+    homes: []
+    controls: []
+    units:
+    - position: iri_s
+      order:
+        type: support
+        status: success
+        from: mao_s
+        to: nao_s
+    - position: mao_s
+      order:
+        type: move
+        status: success
+        to: nao_s
+        via_convoy: false
+  england:
+    name: England
+    homes: []
+    controls: []
+    units:
+    - position: lvp_l
+      order:
+        type: move
+        status: failure
+        to: cly_l
+        via_convoy: true
+        comment: Convoy failed.
+    - position: nao_s
+      order:
+        type: convoy
+        status: failure
+        from: lvp_l
+        to: cly_l
+      dislodged_by: mao
+    - position: cly_c
+      order:
+        type: support
+        status: failure
+        from: nao_s
+        to: nao_s
+        comment: Support cut.
+      dislodged_by: nwy
+standoffs: []

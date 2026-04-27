@@ -1,0 +1,42 @@
+kind: game_state
+version: 1
+phase:
+  season: spring
+  step: move
+  year: 1901
+  due: 0
+nations:
+  england:
+    name: England
+    homes: []
+    controls: []
+    units:
+    - position: lon_c
+      order:
+        type: move
+        status: failure
+        to: yor_c
+        via_convoy: false
+        comment: Standoff.
+    - position: yor_l
+      order:
+        type: move
+        status: failure
+        to: yor_l
+        via_convoy: true
+        comment: Illegal or useless order.
+    - position: nth_s
+      order:
+        type: convoy
+        status: failure
+        from: yor_l
+        to: yor_l
+        comment: Illegal or useless order.
+    - position: lvp_l
+      order:
+        type: support
+        status: failure
+        from: yor_l
+        to: yor_l
+        comment: Supported unit did not make corresponding order.
+standoffs: []

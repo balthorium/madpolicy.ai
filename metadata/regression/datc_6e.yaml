@@ -1,0 +1,76 @@
+kind: game_state
+version: 1
+phase:
+  season: spring
+  step: move
+  year: 1901
+  due: 0
+nations:
+  england:
+    name: England
+    homes: []
+    controls: []
+    units:
+    - position: lon_l
+      order:
+        type: move
+        status: failure
+        to: hol_l
+        via_convoy: true
+        comment: Convoy failed.
+    - position: nth_s
+      order:
+        type: convoy
+        status: failure
+        from: lon_l
+        to: hol_l
+      dislodged_by: ska
+  germany:
+    name: Germany
+    homes: []
+    controls: []
+    units:
+    - position: hol_l
+      order:
+        type: support
+        status: success
+        from: bel_l
+        to: bel_l
+    - position: bel_l
+      order:
+        type: support
+        status: failure
+        from: hol_l
+        to: hol_l
+        comment: Support cut.
+    - position: hel_s
+      order:
+        type: support
+        status: success
+        from: ska_s
+        to: nth_s
+    - position: ska_s
+      order:
+        type: move
+        status: success
+        to: nth_s
+        via_convoy: false
+  france:
+    name: France
+    homes: []
+    controls: []
+    units:
+    - position: pic_l
+      order:
+        type: move
+        status: failure
+        to: bel_l
+        via_convoy: false
+        comment: Standoff.
+    - position: bur_l
+      order:
+        type: support
+        status: success
+        from: pic_l
+        to: bel_l
+standoffs: []

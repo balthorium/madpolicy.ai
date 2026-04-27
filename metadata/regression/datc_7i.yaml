@@ -1,0 +1,53 @@
+kind: game_state
+version: 1
+phase:
+  season: spring
+  step: move
+  year: 1901
+  due: 0
+nations:
+  england:
+    name: England
+    homes: []
+    controls: []
+    units:
+    - position: nwy_c
+      order:
+        type: support
+        status: failure
+        from: nth_s
+        to: ska_s
+        comment: Support cut.
+      dislodged_by: swe
+    - position: nth_s
+      order:
+        type: move
+        status: failure
+        to: ska_s
+        via_convoy: false
+        comment: Standoff.
+  russia:
+    name: Russia
+    homes: []
+    controls: []
+    units:
+    - position: swe_l
+      order:
+        type: move
+        status: success
+        to: nwy_l
+        via_convoy: false
+    - position: ska_s
+      order:
+        type: convoy
+        status: failure
+        from: swe_l
+        to: nwy_l
+        comment: No army to convoy.
+    - position: bar_s
+      order:
+        type: support
+        status: success
+        from: swe_l
+        to: nwy_l
+standoffs: []

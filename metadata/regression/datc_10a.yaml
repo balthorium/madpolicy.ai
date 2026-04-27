@@ -1,0 +1,38 @@
+kind: game_state
+version: 1
+phase:
+  season: fall
+  step: adjustment
+  year: 1901
+  due: 0
+nations:
+  france:
+    name: France
+    homes:
+    - bre
+    - par
+    - mar
+    controls:
+    - bre
+    - par
+    - mar
+    units:
+    - position: lyo_s
+      order:
+        type: disband
+        status: success
+    - position: pic_l
+      order:
+        type: disband
+        status: failure
+        comment: Too many disband orders.
+    - position: par_l
+      order:
+        type: disband
+        status: failure
+        comment: Too many disband orders.
+    - position: bur_l
+      order:
+        type: hold
+        status: success
+standoffs: []

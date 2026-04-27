@@ -1,0 +1,33 @@
+kind: game_state
+version: 1
+phase:
+  season: fall
+  step: adjustment
+  year: 1901
+  due: 0
+nations:
+  germany:
+    name: Germany
+    homes:
+    - ber
+    - kie
+    - mun
+    controls:
+    - vie
+    - kie
+    - mun
+    units:
+    - position: vie_l
+      order:
+        type: hold
+        status: success
+    - position: ber_l
+      order:
+        type: build
+        status: failure
+        comment: Illegal or useless order.
+    - position: kie_c
+      order:
+        type: hold
+        status: success
+standoffs: []

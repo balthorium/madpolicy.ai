@@ -1,0 +1,40 @@
+kind: game_state
+version: 1
+phase:
+  season: spring
+  step: retreat
+  year: 1901
+  due: 0
+nations:
+  england:
+    name: England
+    homes: []
+    controls: []
+    units:
+    - position: nwy_c
+      order:
+        type: retreat
+        status: failure
+        to: nth_s
+        comment: Two or more units retreating to same province.
+      dislodged_by: fin
+  russia:
+    name: Russia
+    homes: []
+    controls: []
+    units:
+    - position: edi_c
+      order:
+        type: retreat
+        status: failure
+        to: nth_s
+        comment: Two or more units retreating to same province.
+      dislodged_by: lvp
+    - position: hol_c
+      order:
+        type: retreat
+        status: failure
+        to: nth_s
+        comment: Two or more units retreating to same province.
+      dislodged_by: ruh
+standoffs: []

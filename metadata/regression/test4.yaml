@@ -1,0 +1,32 @@
+kind: game_state
+version: 1
+phase:
+  season: spring
+  step: move
+  year: 1901
+  due: 0
+nations:
+  england:
+    name: England
+    homes: []
+    controls: []
+    units:
+    - position: lon_l
+      order:
+        type: move
+        status: success
+        to: wal_l
+        via_convoy: false
+    - position: wal_l
+      order:
+        type: move
+        status: success
+        to: yor_l
+        via_convoy: false
+    - position: yor_l
+      order:
+        type: move
+        status: success
+        to: lon_l
+        via_convoy: false
+standoffs: []

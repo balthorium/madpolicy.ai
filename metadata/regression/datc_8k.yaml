@@ -1,0 +1,54 @@
+kind: game_state
+version: 1
+phase:
+  season: spring
+  step: move
+  year: 1901
+  due: 0
+nations:
+  france:
+    name: France
+    homes: []
+    controls: []
+    units:
+    - position: gas_l
+      order:
+        type: move
+        status: success
+        to: mar_l
+        via_convoy: true
+    - position: bur_l
+      order:
+        type: support
+        status: success
+        from: gas_l
+        to: mar_l
+    - position: mao_s
+      order:
+        type: convoy
+        status: success
+        from: gas_l
+        to: mar_l
+    - position: wes_s
+      order:
+        type: convoy
+        status: success
+        from: gas_l
+        to: mar_l
+    - position: lyo_s
+      order:
+        type: convoy
+        status: success
+        from: gas_l
+        to: mar_l
+  italy:
+    name: Italy
+    homes: []
+    controls: []
+    units:
+    - position: mar_l
+      order:
+        type: hold
+        status: failure
+      dislodged_by: gas
+standoffs: []

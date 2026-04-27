@@ -1,0 +1,1013 @@
+kind: board
+version: 1
+provinces:
+  nao:
+    name: North Atlantic Ocean
+    positions:
+    - id: nao_s
+      type: sea
+  nwg:
+    name: Norwegian Sea
+    positions:
+    - id: nwg_s
+      type: sea
+  nth:
+    name: North Sea
+    positions:
+    - id: nth_s
+      type: sea
+  iri:
+    name: Irish Sea
+    positions:
+    - id: iri_s
+      type: sea
+  mao:
+    name: Mid-Atlantic Ocean
+    positions:
+    - id: mao_s
+      type: sea
+  eng:
+    name: English Channel
+    positions:
+    - id: eng_s
+      type: sea
+  lvp:
+    name: Liverpool
+    positions:
+    - id: lvp_c
+      type: coast
+    - id: lvp_l
+      type: land
+    supply_center: true
+  wal:
+    name: Wales
+    positions:
+    - id: wal_c
+      type: coast
+    - id: wal_l
+      type: land
+  lon:
+    name: London
+    positions:
+    - id: lon_c
+      type: coast
+    - id: lon_l
+      type: land
+    supply_center: true
+  yor:
+    name: York
+    positions:
+    - id: yor_c
+      type: coast
+    - id: yor_l
+      type: land
+  edi:
+    name: Edinburgh
+    positions:
+    - id: edi_c
+      type: coast
+    - id: edi_l
+      type: land
+    supply_center: true
+  cly:
+    name: Clyde
+    positions:
+    - id: cly_c
+      type: coast
+    - id: cly_l
+      type: land
+  bre:
+    name: Brest
+    positions:
+    - id: bre_c
+      type: coast
+    - id: bre_l
+      type: land
+    supply_center: true
+  gas:
+    name: Gascony
+    positions:
+    - id: gas_c
+      type: coast
+    - id: gas_l
+      type: land
+  spa:
+    name: Spain
+    positions:
+    - id: spa_nc
+      type: coast
+      coast: north
+    - id: spa_sc
+      type: coast
+      coast: south
+    - id: spa_l
+      type: land
+    supply_center: true
+  por:
+    name: Portugal
+    positions:
+    - id: por_c
+      type: coast
+    - id: por_l
+      type: land
+    supply_center: true
+  wes:
+    name: Western Mediterranean Sea
+    positions:
+    - id: wes_s
+      type: sea
+  naf:
+    name: North Africa
+    positions:
+    - id: naf_c
+      type: coast
+    - id: naf_l
+      type: land
+  lyo:
+    name: Gulf of Lyon
+    positions:
+    - id: lyo_s
+      type: sea
+  mar:
+    name: Marseilles
+    positions:
+    - id: mar_c
+      type: coast
+    - id: mar_l
+      type: land
+    supply_center: true
+  bur:
+    name: Burgundy
+    positions:
+    - id: bur_l
+      type: land
+  par:
+    name: Paris
+    positions:
+    - id: par_l
+      type: land
+    supply_center: true
+  pic:
+    name: Picardy
+    positions:
+    - id: pic_c
+      type: coast
+    - id: pic_l
+      type: land
+  bel:
+    name: Belgium
+    positions:
+    - id: bel_c
+      type: coast
+    - id: bel_l
+      type: land
+    supply_center: true
+  hol:
+    name: Holland
+    positions:
+    - id: hol_c
+      type: coast
+    - id: hol_l
+      type: land
+    supply_center: true
+  ruh:
+    name: Ruhr
+    positions:
+    - id: ruh_l
+      type: land
+  kie:
+    name: Kiel
+    positions:
+    - id: kie_c
+      type: coast
+    - id: kie_l
+      type: land
+    supply_center: true
+  mun:
+    name: Munich
+    positions:
+    - id: mun_l
+      type: land
+    supply_center: true
+  pie:
+    name: Piedmont
+    positions:
+    - id: pie_c
+      type: coast
+    - id: pie_l
+      type: land
+  hel:
+    name: Helgoland Bight
+    positions:
+    - id: hel_s
+      type: sea
+  den:
+    name: Denmark
+    positions:
+    - id: den_c
+      type: coast
+    - id: den_l
+      type: land
+    supply_center: true
+  ska:
+    name: Skagerrak
+    positions:
+    - id: ska_s
+      type: sea
+  nwy:
+    name: Norway
+    positions:
+    - id: nwy_c
+      type: coast
+    - id: nwy_l
+      type: land
+    supply_center: true
+  swe:
+    name: Sweden
+    positions:
+    - id: swe_c
+      type: coast
+    - id: swe_l
+      type: land
+    supply_center: true
+  ber:
+    name: Berlin
+    positions:
+    - id: ber_c
+      type: coast
+    - id: ber_l
+      type: land
+    supply_center: true
+  sil:
+    name: Silesia
+    positions:
+    - id: sil_l
+      type: land
+  pru:
+    name: Prussia
+    positions:
+    - id: pru_c
+      type: coast
+    - id: pru_l
+      type: land
+  boh:
+    name: Bohemia
+    positions:
+    - id: boh_l
+      type: land
+  tyr:
+    name: Tyrolia
+    positions:
+    - id: tyr_l
+      type: land
+  ven:
+    name: Venice
+    positions:
+    - id: ven_c
+      type: coast
+    - id: ven_l
+      type: land
+    supply_center: true
+  tus:
+    name: Tuscany
+    positions:
+    - id: tus_c
+      type: coast
+    - id: tus_l
+      type: land
+  rom:
+    name: Rome
+    positions:
+    - id: rom_c
+      type: coast
+    - id: rom_l
+      type: land
+    supply_center: true
+  nap:
+    name: Naples
+    positions:
+    - id: nap_c
+      type: coast
+    - id: nap_l
+      type: land
+    supply_center: true
+  apu:
+    name: Apulia
+    positions:
+    - id: apu_c
+      type: coast
+    - id: apu_l
+      type: land
+  adr:
+    name: Adriatic Sea
+    positions:
+    - id: adr_s
+      type: sea
+  tri:
+    name: Trieste
+    positions:
+    - id: tri_c
+      type: coast
+    - id: tri_l
+      type: land
+    supply_center: true
+  vie:
+    name: Vienna
+    positions:
+    - id: vie_l
+      type: land
+    supply_center: true
+  bud:
+    name: Budapest
+    positions:
+    - id: bud_l
+      type: land
+    supply_center: true
+  gal:
+    name: Galicia
+    positions:
+    - id: gal_l
+      type: land
+  war:
+    name: Warsaw
+    positions:
+    - id: war_l
+      type: land
+    supply_center: true
+  lvn:
+    name: Livonia
+    positions:
+    - id: lvn_c
+      type: coast
+    - id: lvn_l
+      type: land
+  bal:
+    name: Baltic Sea
+    positions:
+    - id: bal_s
+      type: sea
+  bot:
+    name: Gulf of Bothnia
+    positions:
+    - id: bot_s
+      type: sea
+  fin:
+    name: Finland
+    positions:
+    - id: fin_c
+      type: coast
+    - id: fin_l
+      type: land
+  bar:
+    name: Barents Sea
+    positions:
+    - id: bar_s
+      type: sea
+  stp:
+    name: St. Petersburg
+    positions:
+    - id: stp_nc
+      type: coast
+      coast: north
+    - id: stp_sc
+      type: coast
+      coast: south
+    - id: stp_l
+      type: land
+    supply_center: true
+  mos:
+    name: Moscow
+    positions:
+    - id: mos_l
+      type: land
+    supply_center: true
+  ukr:
+    name: Ukraina
+    positions:
+    - id: ukr_l
+      type: land
+  sev:
+    name: Sevastopol
+    positions:
+    - id: sev_c
+      type: coast
+    - id: sev_l
+      type: land
+    supply_center: true
+  bla:
+    name: Black Sea
+    positions:
+    - id: bla_s
+      type: sea
+  rum:
+    name: Rumania
+    positions:
+    - id: rum_c
+      type: coast
+    - id: rum_l
+      type: land
+    supply_center: true
+  bul:
+    name: Bulgaria
+    positions:
+    - id: bul_ec
+      type: coast
+      coast: east
+    - id: bul_sc
+      type: coast
+      coast: south
+    - id: bul_l
+      type: land
+    supply_center: true
+  ser:
+    name: Serbia
+    positions:
+    - id: ser_l
+      type: land
+    supply_center: true
+  alb:
+    name: Albania
+    positions:
+    - id: alb_c
+      type: coast
+    - id: alb_l
+      type: land
+  gre:
+    name: Greece
+    positions:
+    - id: gre_c
+      type: coast
+    - id: gre_l
+      type: land
+    supply_center: true
+  con:
+    name: Constantinpole
+    positions:
+    - id: con_c
+      type: coast
+    - id: con_l
+      type: land
+    supply_center: true
+  ank:
+    name: Ankara
+    positions:
+    - id: ank_c
+      type: coast
+    - id: ank_l
+      type: land
+    supply_center: true
+  arm:
+    name: Armenia
+    positions:
+    - id: arm_c
+      type: coast
+    - id: arm_l
+      type: land
+  syr:
+    name: Syria
+    positions:
+    - id: syr_c
+      type: coast
+    - id: syr_l
+      type: land
+  smy:
+    name: Smyrna
+    positions:
+    - id: smy_c
+      type: coast
+    - id: smy_l
+      type: land
+    supply_center: true
+  eas:
+    name: Eastern Mediterranean Sea
+    positions:
+    - id: eas_s
+      type: sea
+  aeg:
+    name: Aegean Sea
+    positions:
+    - id: aeg_s
+      type: sea
+  ion:
+    name: Ionian Sea
+    positions:
+    - id: ion_s
+      type: sea
+  tys:
+    name: Tyrrhenian Sea
+    positions:
+    - id: tys_s
+      type: sea
+  tun:
+    name: Tunis
+    positions:
+    - id: tun_c
+      type: coast
+    - id: tun_l
+      type: land
+    supply_center: true
+adjacency:
+- - nao_s
+  - mao_s
+- - nao_s
+  - iri_s
+- - nao_s
+  - lvp_c
+- - nao_s
+  - cly_c
+- - nao_s
+  - nwg_s
+- - nwg_s
+  - cly_c
+- - nwg_s
+  - edi_c
+- - nwg_s
+  - nth_s
+- - nwg_s
+  - nwy_c
+- - nwg_s
+  - bar_s
+- - nth_s
+  - edi_c
+- - nth_s
+  - yor_c
+- - nth_s
+  - lon_c
+- - nth_s
+  - eng_s
+- - nth_s
+  - bel_c
+- - nth_s
+  - hol_c
+- - nth_s
+  - hel_s
+- - nth_s
+  - den_c
+- - nth_s
+  - ska_s
+- - nth_s
+  - nwy_c
+- - iri_s
+  - mao_s
+- - iri_s
+  - eng_s
+- - iri_s
+  - wal_c
+- - iri_s
+  - lvp_c
+- - mao_s
+  - naf_c
+- - mao_s
+  - spa_nc
+- - mao_s
+  - spa_sc
+- - mao_s
+  - por_c
+- - mao_s
+  - gas_c
+- - mao_s
+  - bre_c
+- - mao_s
+  - eng_s
+- - eng_s
+  - bre_c
+- - eng_s
+  - pic_c
+- - eng_s
+  - bel_c
+- - eng_s
+  - lon_c
+- - eng_s
+  - wal_c
+- - lvp_c
+  - wal_c
+- - lvp_l
+  - wal_l
+- - lvp_l
+  - yor_l
+- - lvp_l
+  - edi_l
+- - lvp_c
+  - cly_c
+- - lvp_l
+  - cly_l
+- - wal_c
+  - lon_c
+- - wal_l
+  - lon_l
+- - wal_l
+  - yor_l
+- - lon_c
+  - yor_c
+- - lon_l
+  - yor_l
+- - yor_c
+  - edi_c
+- - yor_l
+  - edi_l
+- - edi_c
+  - cly_c
+- - edi_l
+  - cly_l
+- - bre_c
+  - gas_c
+- - bre_l
+  - gas_l
+- - bre_l
+  - par_l
+- - bre_c
+  - pic_c
+- - bre_l
+  - pic_l
+- - gas_c
+  - spa_nc
+- - gas_l
+  - spa_l
+- - gas_l
+  - mar_l
+- - gas_l
+  - bur_l
+- - gas_l
+  - par_l
+- - spa_nc
+  - por_c
+- - spa_sc
+  - por_c
+- - spa_sc
+  - wes_s
+- - spa_sc
+  - lyo_s
+- - spa_sc
+  - mar_c
+- - spa_l
+  - mar_l
+- - wes_s
+  - naf_c
+- - wes_s
+  - tun_c
+- - wes_s
+  - tys_s
+- - wes_s
+  - mao_s
+- - wes_s
+  - lyo_s
+- - naf_c
+  - tun_c
+- - naf_l
+  - tun_l
+- - mar_c
+  - pie_c
+- - mar_l
+  - pie_l
+- - mar_l
+  - bur_l
+- - bur_l
+  - mun_l
+- - bur_l
+  - ruh_l
+- - bur_l
+  - bel_l
+- - bur_l
+  - pic_l
+- - bur_l
+  - par_l
+- - par_l
+  - pic_l
+- - pic_c
+  - bel_c
+- - pic_l
+  - bel_l
+- - bel_l
+  - ruh_l
+- - bel_c
+  - hol_c
+- - bel_l
+  - hol_l
+- - hol_l
+  - ruh_l
+- - hol_c
+  - kie_c
+- - hol_l
+  - kie_l
+- - hol_c
+  - hel_s
+- - ruh_l
+  - mun_l
+- - ruh_l
+  - kie_l
+- - kie_l
+  - mun_l
+- - kie_c
+  - ber_c
+- - kie_l
+  - ber_l
+- - kie_c
+  - bal_s
+- - kie_c
+  - den_c
+- - kie_l
+  - den_l
+- - kie_c
+  - hel_s
+- - mun_l
+  - tyr_l
+- - mun_l
+  - boh_l
+- - mun_l
+  - sil_l
+- - mun_l
+  - ber_l
+- - pie_c
+  - tus_c
+- - pie_l
+  - tus_l
+- - pie_l
+  - ven_l
+- - pie_l
+  - tyr_l
+- - hel_s
+  - den_c
+- - den_c
+  - bal_s
+- - den_c
+  - swe_c
+- - den_l
+  - swe_l
+- - den_c
+  - ska_s
+- - ska_s
+  - swe_c
+- - ska_s
+  - nwy_c
+- - nwy_c
+  - swe_c
+- - nwy_l
+  - swe_l
+- - nwy_c
+  - stp_nc
+- - nwy_l
+  - stp_l
+- - nwy_c
+  - bar_s
+- - swe_c
+  - bal_s
+- - swe_c
+  - bot_s
+- - swe_c
+  - fin_c
+- - swe_l
+  - fin_l
+- - ber_l
+  - sil_l
+- - ber_c
+  - pru_c
+- - ber_l
+  - pru_l
+- - ber_c
+  - bal_s
+- - sil_l
+  - boh_l
+- - sil_l
+  - gal_l
+- - sil_l
+  - war_l
+- - sil_l
+  - pru_l
+- - pru_l
+  - war_l
+- - pru_c
+  - lvn_c
+- - pru_l
+  - lvn_l
+- - pru_c
+  - bal_s
+- - boh_l
+  - tyr_l
+- - boh_l
+  - vie_l
+- - boh_l
+  - gal_l
+- - tyr_l
+  - ven_l
+- - tyr_l
+  - tri_l
+- - tyr_l
+  - vie_l
+- - ven_l
+  - tus_l
+- - ven_c
+  - apu_c
+- - ven_l
+  - apu_l
+- - ven_c
+  - adr_s
+- - ven_c
+  - tri_c
+- - ven_l
+  - tri_l
+- - ven_l
+  - rom_l
+- - tus_c
+  - rom_c
+- - tus_l
+  - rom_l
+- - tus_c
+  - tys_s
+- - rom_c
+  - tys_s
+- - rom_c
+  - nap_c
+- - rom_l
+  - nap_l
+- - rom_l
+  - apu_l
+- - nap_c
+  - tys_s
+- - nap_c
+  - ion_s
+- - nap_c
+  - apu_c
+- - nap_l
+  - apu_l
+- - apu_c
+  - ion_s
+- - apu_c
+  - adr_s
+- - adr_s
+  - ion_s
+- - adr_s
+  - alb_c
+- - adr_s
+  - tri_c
+- - tri_c
+  - alb_c
+- - tri_l
+  - alb_l
+- - tri_l
+  - ser_l
+- - tri_l
+  - bud_l
+- - tri_l
+  - vie_l
+- - vie_l
+  - bud_l
+- - vie_l
+  - gal_l
+- - bud_l
+  - ser_l
+- - bud_l
+  - rum_l
+- - bud_l
+  - gal_l
+- - gal_l
+  - rum_l
+- - gal_l
+  - ukr_l
+- - gal_l
+  - war_l
+- - war_l
+  - ukr_l
+- - war_l
+  - mos_l
+- - war_l
+  - lvn_l
+- - lvn_l
+  - mos_l
+- - lvn_c
+  - stp_sc
+- - lvn_l
+  - stp_l
+- - lvn_c
+  - bot_s
+- - lvn_c
+  - bal_s
+- - bal_s
+  - bot_s
+- - bot_s
+  - stp_sc
+- - bot_s
+  - fin_c
+- - fin_c
+  - stp_sc
+- - fin_l
+  - stp_l
+- - fin_l
+  - nwy_l
+- - bar_s
+  - stp_nc
+- - stp_l
+  - mos_l
+- - mos_l
+  - ukr_l
+- - mos_l
+  - sev_l
+- - ukr_l
+  - rum_l
+- - ukr_l
+  - sev_l
+- - sev_c
+  - rum_c
+- - sev_l
+  - rum_l
+- - sev_c
+  - bla_s
+- - sev_c
+  - arm_c
+- - sev_l
+  - arm_l
+- - bla_s
+  - rum_c
+- - bla_s
+  - bul_ec
+- - bla_s
+  - con_c
+- - bla_s
+  - ank_c
+- - bla_s
+  - arm_c
+- - rum_l
+  - ser_l
+- - rum_c
+  - bul_ec
+- - rum_l
+  - bul_l
+- - bul_l
+  - ser_l
+- - bul_sc
+  - gre_c
+- - bul_l
+  - gre_l
+- - bul_sc
+  - aeg_s
+- - bul_sc
+  - con_c
+- - bul_ec
+  - con_c
+- - bul_l
+  - con_l
+- - ser_l
+  - alb_l
+- - ser_l
+  - gre_l
+- - alb_c
+  - ion_s
+- - alb_c
+  - gre_c
+- - alb_l
+  - gre_l
+- - gre_c
+  - ion_s
+- - gre_c
+  - aeg_s
+- - con_c
+  - aeg_s
+- - con_c
+  - smy_c
+- - con_l
+  - smy_l
+- - con_c
+  - ank_c
+- - con_l
+  - ank_l
+- - ank_l
+  - smy_l
+- - ank_c
+  - arm_c
+- - ank_l
+  - arm_l
+- - arm_l
+  - smy_l
+- - arm_l
+  - syr_l
+- - syr_c
+  - smy_c
+- - syr_l
+  - smy_l
+- - syr_c
+  - eas_s
+- - smy_c
+  - aeg_s
+- - smy_c
+  - eas_s
+- - eas_s
+  - aeg_s
+- - eas_s
+  - ion_s
+- - aeg_s
+  - ion_s
+- - ion_s
+  - tys_s
+- - ion_s
+  - tun_c
+- - tys_s
+  - tun_c
+- - tys_s
+  - lyo_s
+- - lyo_s
+  - mar_c
+- - lyo_s
+  - pie_c
+- - lyo_s
+  - tus_c
+- - por_l
+  - spa_l

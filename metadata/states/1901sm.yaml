@@ -1,0 +1,176 @@
+kind: game_state
+version: 1
+phase:
+  season: spring
+  step: move
+  year: 1901
+  due: 0
+nations:
+  england:
+    name: England
+    homes:
+    - lon
+    - edi
+    - lvp
+    controls:
+    - lon
+    - edi
+    - lvp
+    units:
+    - position: lon_c
+      order:
+        type: hold
+        status: new
+    - position: edi_c
+      order:
+        type: hold
+        status: new
+    - position: lvp_l
+      order:
+        type: hold
+        status: new
+  germany:
+    name: Germany
+    homes:
+    - ber
+    - mun
+    - kie
+    controls:
+    - ber
+    - mun
+    - kie
+    units:
+    - position: ber_l
+      order:
+        type: hold
+        status: new
+    - position: mun_l
+      order:
+        type: hold
+        status: new
+    - position: kie_c
+      order:
+        type: hold
+        status: new
+  russia:
+    name: Russia
+    homes:
+    - mos
+    - war
+    - stp
+    - sev
+    controls:
+    - mos
+    - war
+    - stp
+    - sev
+    units:
+    - position: mos_l
+      order:
+        type: hold
+        status: new
+    - position: war_l
+      order:
+        type: hold
+        status: new
+    - position: stp_sc
+      order:
+        type: hold
+        status: new
+    - position: sev_c
+      order:
+        type: hold
+        status: new
+  turkey:
+    name: Turkey
+    homes:
+    - con
+    - smy
+    - ank
+    controls:
+    - con
+    - smy
+    - ank
+    units:
+    - position: con_l
+      order:
+        type: hold
+        status: new
+    - position: smy_l
+      order:
+        type: hold
+        status: new
+    - position: ank_c
+      order:
+        type: hold
+        status: new
+  austria:
+    name: Austria-Hungary
+    homes:
+    - vie
+    - bud
+    - tri
+    controls:
+    - vie
+    - bud
+    - tri
+    units:
+    - position: vie_l
+      order:
+        type: hold
+        status: new
+    - position: bud_l
+      order:
+        type: hold
+        status: new
+    - position: tri_c
+      order:
+        type: hold
+        status: new
+  italy:
+    name: Italy
+    homes:
+    - rom
+    - ven
+    - nap
+    controls:
+    - rom
+    - ven
+    - nap
+    units:
+    - position: rom_l
+      order:
+        type: hold
+        status: new
+    - position: ven_l
+      order:
+        type: hold
+        status: new
+    - position: nap_c
+      order:
+        type: hold
+        status: new
+  france:
+    name: France
+    homes:
+    - par
+    - mar
+    - bre
+    controls:
+    - par
+    - mar
+    - bre
+    units:
+    - position: par_l
+      order:
+        type: hold
+        status: new
+    - position: mar_l
+      order:
+        type: hold
+        status: new
+    - position: bre_c
+      order:
+        type: hold
+        status: new
+standoffs: []

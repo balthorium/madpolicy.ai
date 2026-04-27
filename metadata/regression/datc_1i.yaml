@@ -1,0 +1,21 @@
+kind: game_state
+version: 1
+phase:
+  season: spring
+  step: move
+  year: 1901
+  due: 0
+nations:
+  italy:
+    name: Italy
+    homes: []
+    controls: []
+    units:
+    - position: rom_c
+      order:
+        type: move
+        status: failure
+        to: ven_c
+        via_convoy: true
+        comment: Illegal or useless order.
+standoffs: []

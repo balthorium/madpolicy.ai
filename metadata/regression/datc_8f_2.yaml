@@ -1,0 +1,22 @@
+kind: game_state
+version: 1
+phase:
+  season: spring
+  step: retreat
+  year: 1901
+  due: 0
+nations:
+  italy:
+    name: Italy
+    homes: []
+    controls: []
+    units:
+    - position: vie_l
+      order:
+        type: retreat
+        status: failure
+        to: boh_l
+        comment: Illegal or useless order.
+      dislodged_by: tri
+standoffs:
+- boh

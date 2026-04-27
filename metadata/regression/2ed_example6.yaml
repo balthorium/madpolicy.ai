@@ -1,0 +1,57 @@
+kind: game_state
+version: 1
+phase:
+  season: spring
+  step: move
+  year: 1901
+  due: 0
+nations:
+  russia:
+    name: Russia
+    homes: []
+    controls: []
+    units:
+    - position: rum_l
+      order:
+        type: move
+        status: success
+        to: bul_l
+        via_convoy: false
+    - position: gre_l
+      order:
+        type: support
+        status: success
+        from: rum_l
+        to: bul_l
+    - position: ser_l
+      order:
+        type: support
+        status: success
+        from: rum_l
+        to: bul_l
+    - position: sev_l
+      order:
+        type: move
+        status: success
+        to: rum_l
+        via_convoy: false
+  turkey:
+    name: Turkey
+    homes: []
+    controls: []
+    units:
+    - position: bul_l
+      order:
+        type: move
+        status: failure
+        to: rum_l
+        via_convoy: false
+        comment: Overwhelmed.
+      dislodged_by: rum
+    - position: bla_s
+      order:
+        type: support
+        status: success
+        from: bul_l
+        to: rum_l
+standoffs: []

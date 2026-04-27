@@ -1,0 +1,47 @@
+kind: game_state
+version: 1
+phase:
+  season: spring
+  step: move
+  year: 1901
+  due: 0
+nations:
+  italy:
+    name: Italy
+    homes: []
+    controls: []
+    units:
+    - position: rom_l
+      order:
+        type: move
+        status: failure
+        to: apu_l
+        via_convoy: false
+        comment: Standoff.
+    - position: tys_s
+      order:
+        type: convoy
+        status: failure
+        from: apu_l
+        to: rom_l
+        comment: No army to convoy.
+  turkey:
+    name: Turkey
+    homes: []
+    controls: []
+    units:
+    - position: apu_l
+      order:
+        type: move
+        status: failure
+        to: rom_l
+        via_convoy: false
+        comment: Standoff.
+    - position: ion_s
+      order:
+        type: convoy
+        status: failure
+        from: apu_l
+        to: rom_l
+        comment: No army to convoy.
+standoffs: []

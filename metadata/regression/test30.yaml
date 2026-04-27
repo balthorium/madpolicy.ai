@@ -1,0 +1,37 @@
+kind: game_state
+version: 1
+phase:
+  season: fall
+  step: adjustment
+  year: 1901
+  due: 0
+nations:
+  germany:
+    name: Germany
+    homes:
+    - war
+    - kie
+    - mun
+    controls:
+    - war
+    - kie
+    units:
+    - position: war_l
+      order:
+        type: hold
+        status: success
+    - position: kie_l
+      order:
+        type: build
+        status: failure
+        comment: Too many build orders.
+    - position: mun_l
+      order:
+        type: hold
+        status: success
+    - position: sev_l
+      order:
+        type: hold
+        status: failure
+        comment: Civil disorder.
+standoffs: []

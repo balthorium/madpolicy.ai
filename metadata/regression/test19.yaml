@@ -1,0 +1,56 @@
+kind: game_state
+version: 1
+phase:
+  season: spring
+  step: move
+  year: 1901
+  due: 0
+nations:
+  england:
+    name: England
+    homes: []
+    controls: []
+    units:
+    - position: spa_l
+      order:
+        type: move
+        status: success
+        to: tus_l
+        via_convoy: true
+    - position: lyo_s
+      order:
+        type: convoy
+        status: failure
+        from: spa_l
+        to: tus_l
+      dislodged_by: mar
+    - position: wes_s
+      order:
+        type: convoy
+        status: success
+        from: spa_l
+        to: tus_l
+    - position: tys_s
+      order:
+        type: convoy
+        status: success
+        from: spa_l
+        to: tus_l
+  germany:
+    name: Germany
+    homes: []
+    controls: []
+    units:
+    - position: mar_c
+      order:
+        type: move
+        status: success
+        to: lyo_s
+        via_convoy: false
+    - position: pie_c
+      order:
+        type: support
+        status: success
+        from: mar_c
+        to: lyo_s
+standoffs: []

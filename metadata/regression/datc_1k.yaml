@@ -1,0 +1,34 @@
+kind: game_state
+version: 1
+phase:
+  season: spring
+  step: move
+  year: 1901
+  due: 0
+nations:
+  austria:
+    name: Austria
+    homes: []
+    controls: []
+    units:
+    - position: vie_l
+      order:
+        type: move
+        status: failure
+        to: tyr_l
+        via_convoy: false
+        comment: Standoff.
+  italy:
+    name: Italy
+    homes: []
+    controls: []
+    units:
+    - position: ven_l
+      order:
+        type: move
+        status: failure
+        to: tyr_l
+        via_convoy: false
+        comment: Standoff.
+standoffs:
+- tyr

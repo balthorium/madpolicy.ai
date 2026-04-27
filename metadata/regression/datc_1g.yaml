@@ -1,0 +1,28 @@
+kind: game_state
+version: 1
+phase:
+  season: spring
+  step: move
+  year: 1901
+  due: 0
+nations:
+  england:
+    name: England
+    homes: []
+    controls: []
+    units:
+    - position: lon_c
+      order:
+        type: move
+        status: failure
+        to: bel_c
+        via_convoy: true
+        comment: Illegal or useless order.
+    - position: nth_s
+      order:
+        type: convoy
+        status: failure
+        from: lon_l
+        to: bel_l
+        comment: No army to convoy.
+standoffs: []

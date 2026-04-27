@@ -1,0 +1,39 @@
+kind: game_state
+version: 1
+phase:
+  season: spring
+  step: move
+  year: 1901
+  due: 0
+nations:
+  germany:
+    name: Germany
+    homes: []
+    controls: []
+    units:
+    - position: pru_l
+      order:
+        type: move
+        status: success
+        to: war_l
+        via_convoy: false
+    - position: sil_l
+      order:
+        type: support
+        status: success
+        from: pru_l
+        to: war_l
+  russia:
+    name: Russia
+    homes: []
+    controls: []
+    units:
+    - position: war_l
+      order:
+        type: move
+        status: failure
+        to: sil_l
+        via_convoy: false
+        comment: Standoff.
+      dislodged_by: pru
+standoffs: []
