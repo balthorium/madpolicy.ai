@@ -58,7 +58,6 @@ public final class MoveAdjudicator {
                     validations,
                     supportEvaluations,
                     convoyEvaluations,
-                    moveSuccess,
                     previousDislodgedBy,
                     paradoxicalConvoyMoves
                 );
@@ -349,7 +348,6 @@ public final class MoveAdjudicator {
         Map<String, ValidationResult> validations,
         Map<String, SupportEvaluation> supportEvaluations,
         Map<String, ConvoyEvaluation> convoyEvaluations,
-        Map<String, Boolean> previousMoveSuccess,
         Map<String, String> previousDislodgedBy,
         Set<String> paradoxicalConvoyMoves
     ) {
@@ -735,7 +733,7 @@ public final class MoveAdjudicator {
         return switch (unit.order().kind()) {
             case HOLD -> null;
             case SUPPORT -> supportFailureComment(supportEvaluation);
-            case CONVOY -> convoyFailureComment(convoyEvaluation, dislodged.contains(unit.position()), paradoxicalConvoyOrder);
+            case CONVOY -> convoyFailureComment(convoyEvaluation, paradoxicalConvoyOrder);
             case MOVE -> moveFailureComment(unit, moveSucceeded, standoffs, dislodgedBy, successfulDestinationProvinces, defensiveBounce, convoyRouteExists);
         };
     }
@@ -779,7 +777,7 @@ public final class MoveAdjudicator {
         return FailureComment.ILLEGAL_ORDER;
     }
 
-    private FailureComment convoyFailureComment(ConvoyEvaluation evaluation, boolean dislodged, boolean paradoxicalConvoyOrder) {
+    private FailureComment convoyFailureComment(ConvoyEvaluation evaluation, boolean paradoxicalConvoyOrder) {
         if (paradoxicalConvoyOrder) {
             return FailureComment.CONVOY_FAILED_DUE_TO_PARADOX_SZYKMAN_RULE;
         }
