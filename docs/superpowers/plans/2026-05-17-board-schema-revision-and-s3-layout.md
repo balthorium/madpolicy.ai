@@ -43,9 +43,9 @@ Run the same command and expect success.
 ### Task 2: Migrate local YAML fixtures to the new schema
 
 **Files:**
-- Move: `metadata/boards/standard.yaml` -> `metadata/boards/standard/<revision>.yaml`
-- Modify: `metadata/states/*.yaml`
-- Modify: `metadata/regression/*.yaml`
+- Move: `data/boards/standard.yaml` -> `data/boards/standard/<revision>.yaml`
+- Modify: `data/states/*.yaml`
+- Modify: `src/test/resources/regression/*.yaml`
 - Test: `src/test/java/ai/madpolicy/diplomacy/model/YamlRoundTripTest.java`
 
 - [ ] **Step 1: Update board fixture structure**
@@ -84,7 +84,7 @@ Expected: failure because the catalog still resolves boards only by ID.
 
 - [ ] **Step 3: Write the minimal implementation**
 
-Resolve boards from `metadata/boards/<board>/<revision>.yaml` and validate path/content
+Resolve boards from `data/boards/<board>/<revision>.yaml` and validate path/content
 agreement for both board ID and revision.
 
 - [ ] **Step 4: Run the targeted test to verify it passes**

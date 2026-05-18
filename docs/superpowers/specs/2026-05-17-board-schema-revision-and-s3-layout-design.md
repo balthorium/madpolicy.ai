@@ -92,11 +92,11 @@ The local repo should mirror the future S3 addressing model as closely as practi
 
 Recommended layout:
 
-- `metadata/boards/<board-id>/<board-revision>.yaml`
+- `data/boards/<board-id>/<board-revision>.yaml`
 
 Example:
 
-- `metadata/boards/standard/3.yaml`
+- `data/boards/standard/3.yaml`
 
 Validation rules:
 

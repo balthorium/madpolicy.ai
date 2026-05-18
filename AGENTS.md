@@ -4,7 +4,7 @@
 This repository contains a Java 21 + Spring Boot + Maven implementation of a Diplomacy move-phase adjudication engine.
 
 The current goal is:
-- keep the move-phase adjudicator passing the move-phase regression corpus in `metadata/regression`
+- keep the move-phase adjudicator passing the move-phase regression corpus in `src/test/resources/regression`
 - produce both:
   - an `adjudicated_state`
   - a `next_state` with `phase.step: retreat`
@@ -75,7 +75,7 @@ export PATH="$JAVA_HOME/bin:$PATH"
 
 ## Regression Harness Behavior
 The regression harness:
-1. reads each move-phase fixture in `metadata/regression`
+1. reads each move-phase fixture in `src/test/resources/regression`
 2. normalizes it back to pre-adjudicated state by:
    - setting all order statuses to `new`
    - removing order comments
@@ -107,21 +107,21 @@ mvn -Dmaven.repo.local=$PWD/.m2 test -Dtest=RegressionCorpusTest
 Several regression fixtures were updated to match the agreed spec/rules. Do not blindly revert them.
 
 Notable examples include:
-- `metadata/regression/datc_6q.yaml`
-- `metadata/regression/datc_6r.yaml`
-- `metadata/regression/datc_6s.yaml`
-- `metadata/regression/datc_6t.yaml`
-- `metadata/regression/datc_1e.yaml`
-- `metadata/regression/datc_1g.yaml`
-- `metadata/regression/2ed_example2.yaml`
-- `metadata/regression/datc_2m.yaml`
-- `metadata/regression/datc_6k.yaml`
-- `metadata/regression/datc_7b.yaml`
-- `metadata/regression/datc_7d.yaml`
-- `metadata/regression/datc_7g.yaml`
-- `metadata/regression/datc_7k_alt.yaml`
-- `metadata/regression/datc_8i.yaml`
-- `metadata/regression/test1.yaml`
+- `src/test/resources/regression/datc_6q.yaml`
+- `src/test/resources/regression/datc_6r.yaml`
+- `src/test/resources/regression/datc_6s.yaml`
+- `src/test/resources/regression/datc_6t.yaml`
+- `src/test/resources/regression/datc_1e.yaml`
+- `src/test/resources/regression/datc_1g.yaml`
+- `src/test/resources/regression/2ed_example2.yaml`
+- `src/test/resources/regression/datc_2m.yaml`
+- `src/test/resources/regression/datc_6k.yaml`
+- `src/test/resources/regression/datc_7b.yaml`
+- `src/test/resources/regression/datc_7d.yaml`
+- `src/test/resources/regression/datc_7g.yaml`
+- `src/test/resources/regression/datc_7k_alt.yaml`
+- `src/test/resources/regression/datc_8i.yaml`
+- `src/test/resources/regression/test1.yaml`
 
 ## Working Notes
 - Prefer adding a focused microtest before changing adjudication logic.

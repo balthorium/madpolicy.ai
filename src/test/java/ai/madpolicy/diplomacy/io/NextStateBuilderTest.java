@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test;
 class NextStateBuilderTest {
     @Test
     void resetsOrdersAndAdvancesToRetreatStep() {
-        var expected = TestYaml.load(Path.of("metadata/regression/test6.yaml"), GameStateDocument.class);
+        var expected = TestYaml.load(Path.of("src/test/resources/regression/test6.yaml"), GameStateDocument.class);
         var input = normalize(expected);
         var adjudicator = new MoveAdjudicator(new BoardIndex(new BoardCatalog().resolve(
             input.board(),

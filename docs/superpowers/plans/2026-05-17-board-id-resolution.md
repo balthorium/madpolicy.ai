@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED: Use superpowers:subagent-driven-development (if subagents available) or superpowers:executing-plans to implement this plan. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Add explicit board IDs to board and game-state documents, and resolve boards by internal ID from `metadata/boards`.
+**Goal:** Add explicit board IDs to board and game-state documents, and resolve boards by internal ID from `data/boards`.
 
-**Architecture:** Extend the YAML-backed model with required board identity fields, add a small board catalog that scans and validates `metadata/boards`, and route both service and regression execution through that catalog. Keep adjudication logic unchanged and cover the change with focused loader/model tests plus existing regression tests.
+**Architecture:** Extend the YAML-backed model with required board identity fields, add a small board catalog that scans and validates `data/boards`, and route both service and regression execution through that catalog. Keep adjudication logic unchanged and cover the change with focused loader/model tests plus existing regression tests.
 
 **Tech Stack:** Java 21, Spring Boot, Jackson YAML, JUnit 5, Maven
 
@@ -39,8 +39,8 @@ Run the same command and expect success.
 ### Task 2: Update board and game-state fixtures to the new schema
 
 **Files:**
-- Modify: `metadata/boards/standard.yaml`
-- Modify: `metadata/regression/*.yaml`
+- Modify: `data/boards/standard.yaml`
+- Modify: `src/test/resources/regression/*.yaml`
 - Test: `src/test/java/ai/madpolicy/diplomacy/model/YamlRoundTripTest.java`
 
 - [ ] **Step 1: Update board fixtures with `id`**
@@ -58,7 +58,7 @@ Expected: success with updated fixture parsing.
 
 ## Chunk 2: Board Catalog And Resolution
 
-### Task 3: Add a board catalog that scans `metadata/boards`
+### Task 3: Add a board catalog that scans `data/boards`
 
 **Files:**
 - Create: `src/main/java/ai/madpolicy/diplomacy/app/BoardCatalog.java`
@@ -80,7 +80,7 @@ Expected: failure because the catalog does not exist yet.
 - [ ] **Step 3: Write the minimal implementation**
 
 Implement a catalog that:
-- scans `metadata/boards/*.yaml`
+- scans `data/boards/*.yaml`
 - loads each file as `BoardDocument`
 - validates filename equals `board.id`
 - validates uniqueness of `board.id`

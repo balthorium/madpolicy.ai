@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 public final class BoardCatalog {
-    private static final Path DEFAULT_BOARD_DIR = Path.of("metadata/boards");
+    private static final Path DEFAULT_BOARD_DIR = Path.of("data/boards");
 
     private final Path boardDirectory;
     private final ObjectMapper yamlMapper;

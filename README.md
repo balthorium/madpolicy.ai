@@ -9,7 +9,7 @@ This repo currently covers move-phase adjudication only. It reads a board plus m
 - an `adjudicated_state`
 - a `next_state` with `phase.step: retreat`
 
-The primary behavioral oracle is the regression corpus in `metadata/regression`.
+The primary behavioral oracle is the regression corpus in `src/test/resources/regression`.
 
 ## Requirements
 
@@ -61,9 +61,9 @@ mvn -Dmaven.repo.local=$PWD/.m2 test
   Focused adjudication and validator tests.
 - `src/test/java/ai/madpolicy/diplomacy/regression/`
   Regression harness and corpus test.
-- `metadata/boards/standard.yaml`
+- `data/boards/standard.yaml`
   Board topology.
-- `metadata/regression/`
+- `src/test/resources/regression/`
   Move-phase expected results.
 
 ## Important Rules

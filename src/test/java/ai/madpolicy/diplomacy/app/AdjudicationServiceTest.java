@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 class AdjudicationServiceTest {
     @Test
     void returnsBothArtifacts() {
-        var result = new AdjudicationService().adjudicate(Path.of("metadata/states/1901sm.yaml"));
+        var result = new AdjudicationService().adjudicate(Path.of("data/states/1901sm.yaml"));
 
         assertThat(result.adjudicatedState()).isNotNull();
         assertThat(result.nextState()).isNotNull();

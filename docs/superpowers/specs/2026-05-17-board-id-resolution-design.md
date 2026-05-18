@@ -7,7 +7,7 @@ Boards will carry a required internal `id`, and game states will carry a require
 that identifies which board the state applies to.
 
 Board lookup will be based exclusively on the internal board ID, not on a caller-supplied
-path. The engine will scan `metadata/boards/*.yaml`, parse each board, and resolve the
+path. The engine will scan `data/boards/*.yaml`, parse each board, and resolve the
 requested board from that in-memory index.
 
 ## Goals
@@ -62,7 +62,7 @@ standoffs: []
 
 ## Board Resolution
 
-Board resolution will scan `metadata/boards` for YAML files, load every board document,
+Board resolution will scan `data/boards` for YAML files, load every board document,
 and build an in-memory `id -> board` map.
 
 Resolution rules:
@@ -83,7 +83,7 @@ Target flow:
 
 1. Load the game state from the provided state path.
 2. Read `game_state.board`.
-3. Scan and index boards from `metadata/boards/*.yaml`.
+3. Scan and index boards from `data/boards/*.yaml`.
 4. Resolve the board by internal ID.
 5. Build `BoardIndex` from the resolved board.
 6. Adjudicate and build both `adjudicated_state` and `next_state`.

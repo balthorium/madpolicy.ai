@@ -8,8 +8,8 @@ import org.junit.jupiter.api.Test;
 class YamlRoundTripTest {
     @Test
     void parsesBoardAndStateFixtures() {
-        var board = TestYaml.load(Path.of("metadata/boards/standard/1.yaml"), BoardDocument.class);
-        var state = TestYaml.load(Path.of("metadata/states/1901sm.yaml"), GameStateDocument.class);
+        var board = TestYaml.load(Path.of("data/boards/standard/1.yaml"), BoardDocument.class);
+        var state = TestYaml.load(Path.of("data/states/1901sm.yaml"), GameStateDocument.class);
 
         assertThat(board.kind()).isEqualTo("board");
         assertThat(board.schema()).isEqualTo(1);
@@ -24,7 +24,7 @@ class YamlRoundTripTest {
 
     @Test
     void parsesRegressionFixturesWithDislodgedBy() {
-        var state = TestYaml.load(Path.of("metadata/regression/test6.yaml"), GameStateDocument.class);
+        var state = TestYaml.load(Path.of("src/test/resources/regression/test6.yaml"), GameStateDocument.class);
 
         assertThat(state.nations().get("england").units().getFirst().dislodgedBy()).isEqualTo("eng");
     }

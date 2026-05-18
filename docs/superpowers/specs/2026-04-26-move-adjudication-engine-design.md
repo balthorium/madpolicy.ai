@@ -32,7 +32,7 @@ This spec covers adjudication behavior only. It does not prescribe any specific 
 
 The engine accepts:
 
-- a board document in the `metadata/boards/standard.yaml` schema
+- a board document in the `data/boards/standard.yaml` schema
 - a game-state document in the existing state schema with:
   - `kind: game_state`
   - `phase.step: move`
