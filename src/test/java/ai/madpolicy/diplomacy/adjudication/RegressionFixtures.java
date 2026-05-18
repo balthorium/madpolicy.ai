@@ -33,7 +33,7 @@ final class RegressionFixtures {
                 OrderState order = unit.order();
                 units.add(new UnitState(
                     unit.position(),
-                    new OrderState(order.type(), "new", order.to(), order.from(), order.viaConvoy(), null),
+                    new OrderState(order.type(), "pending", order.to(), order.from(), order.viaConvoy(), null),
                     null
                 ));
             }

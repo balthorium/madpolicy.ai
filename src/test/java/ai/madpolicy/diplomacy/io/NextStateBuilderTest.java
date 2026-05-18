@@ -36,13 +36,13 @@ class NextStateBuilderTest {
 
         UnitState frenchMover = findUnit(nextState, "france", "lon_c").orElseThrow();
         assertThat(frenchMover.order().type()).isEqualTo("hold");
-        assertThat(frenchMover.order().status()).isEqualTo("new");
+        assertThat(frenchMover.order().status()).isEqualTo("pending");
         assertThat(frenchMover.order().comment()).isNull();
         assertThat(frenchMover.dislodgedBy()).isNull();
 
         UnitState dislodgedEnglishUnit = findUnit(nextState, "england", "lon_l").orElseThrow();
         assertThat(dislodgedEnglishUnit.order().type()).isEqualTo("hold");
-        assertThat(dislodgedEnglishUnit.order().status()).isEqualTo("new");
+        assertThat(dislodgedEnglishUnit.order().status()).isEqualTo("pending");
         assertThat(dislodgedEnglishUnit.order().to()).isNull();
         assertThat(dislodgedEnglishUnit.dislodgedBy()).isEqualTo("eng");
     }
@@ -61,7 +61,7 @@ class NextStateBuilderTest {
                 OrderState order = unit.order();
                 units.add(new UnitState(
                     unit.position(),
-                    new OrderState(order.type(), "new", order.to(), order.from(), order.viaConvoy(), null),
+                    new OrderState(order.type(), "pending", order.to(), order.from(), order.viaConvoy(), null),
                     null
                 ));
             }

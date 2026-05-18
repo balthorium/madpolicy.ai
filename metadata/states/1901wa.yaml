@@ -34,7 +34,7 @@ nations:
     - position: ber_l
       order:
         type: hold
-        status: new
+        status: pending
   russia:
     name: Russia
     homes:
@@ -49,19 +49,19 @@ nations:
     - position: mos_l
       order:
         type: hold
-        status: new
+        status: pending
     - position: war_l
       order:
         type: hold
-        status: new
+        status: pending
     - position: stp_sc
       order:
         type: hold
-        status: new
+        status: pending
     - position: sev_c
       order:
         type: hold
-        status: new
+        status: pending
   turkey:
     name: Turkey
     homes:
@@ -76,11 +76,11 @@ nations:
     - position: con_l
       order:
         type: hold
-        status: new
+        status: pending
     - position: smy_l
       order:
         type: hold
-        status: new
+        status: pending
   austria:
     name: Austria-Hungary
     homes:
@@ -95,7 +95,7 @@ nations:
     - position: vie_l
       order:
         type: hold
-        status: new
+        status: pending
   italy:
     name: Italy
     homes:
@@ -110,15 +110,15 @@ nations:
     - position: rom_l
       order:
         type: hold
-        status: new
+        status: pending
     - position: ven_l
       order:
         type: hold
-        status: new
+        status: pending
     - position: nap_c
       order:
         type: hold
-        status: new
+        status: pending
   france:
     name: France
     homes:
@@ -133,13 +133,13 @@ nations:
     - position: par_l
       order:
         type: hold
-        status: new
+        status: pending
     - position: mar_l
       order:
         type: hold
-        status: new
+        status: pending
     - position: bre_c
       order:
         type: hold
-        status: new
+        status: pending
 standoffs: []

@@ -44,9 +44,9 @@ class MoveAdjudicatorMicroTest {
                     List.of(),
                     List.of(),
                     List.of(
-                        new UnitState("par_l", new OrderState("support", "new", "bre_c", "bre_c", false, null), null),
-                        new UnitState("bre_c", new OrderState("hold", "new", null, null, false, null), null),
-                        new UnitState("gas_l", new OrderState("support", "new", "par_l", "par_l", false, null), null)
+                        new UnitState("par_l", new OrderState("support", "pending", "bre_c", "bre_c", false, null), null),
+                        new UnitState("bre_c", new OrderState("hold", "pending", null, null, false, null), null),
+                        new UnitState("gas_l", new OrderState("support", "pending", "par_l", "par_l", false, null), null)
                     )
                 ),
                 "germany",
@@ -55,7 +55,7 @@ class MoveAdjudicatorMicroTest {
                     List.of(),
                     List.of(),
                     List.of(
-                        new UnitState("bur_l", new OrderState("move", "new", "par_l", null, false, null), null)
+                        new UnitState("bur_l", new OrderState("move", "pending", "par_l", null, false, null), null)
                     )
                 )
             ),
@@ -85,9 +85,9 @@ class MoveAdjudicatorMicroTest {
                     List.of(),
                     List.of(),
                     List.of(
-                        new UnitState("bre_c", new OrderState("hold", "new", null, null, false, null), null),
-                        new UnitState("eng_s", new OrderState("convoy", "new", "bre_c", "lon_l", false, null), null),
-                        new UnitState("iri_s", new OrderState("support", "new", "eng_s", "eng_s", false, null), null)
+                        new UnitState("bre_c", new OrderState("hold", "pending", null, null, false, null), null),
+                        new UnitState("eng_s", new OrderState("convoy", "pending", "bre_c", "lon_l", false, null), null),
+                        new UnitState("iri_s", new OrderState("support", "pending", "eng_s", "eng_s", false, null), null)
                     )
                 ),
                 "germany",
@@ -96,7 +96,7 @@ class MoveAdjudicatorMicroTest {
                     List.of(),
                     List.of(),
                     List.of(
-                        new UnitState("nth_s", new OrderState("move", "new", "eng_s", null, false, null), null)
+                        new UnitState("nth_s", new OrderState("move", "pending", "eng_s", null, false, null), null)
                     )
                 )
             ),
@@ -126,9 +126,9 @@ class MoveAdjudicatorMicroTest {
                     List.of(),
                     List.of(),
                     List.of(
-                        new UnitState("bre_c", new OrderState("hold", "new", null, null, false, null), null),
-                        new UnitState("eng_s", new OrderState("convoy", "new", "bre_c", "lon_l", false, null), null),
-                        new UnitState("iri_s", new OrderState("support", "new", "eng_s", "eng_s", false, null), null)
+                        new UnitState("bre_c", new OrderState("hold", "pending", null, null, false, null), null),
+                        new UnitState("eng_s", new OrderState("convoy", "pending", "bre_c", "lon_l", false, null), null),
+                        new UnitState("iri_s", new OrderState("support", "pending", "eng_s", "eng_s", false, null), null)
                     )
                 ),
                 "germany",
@@ -137,8 +137,8 @@ class MoveAdjudicatorMicroTest {
                     List.of(),
                     List.of(),
                     List.of(
-                        new UnitState("wal_c", new OrderState("move", "new", "eng_s", null, false, null), null),
-                        new UnitState("lon_c", new OrderState("support", "new", "wal_c", "eng_s", false, null), null)
+                        new UnitState("wal_c", new OrderState("move", "pending", "eng_s", null, false, null), null),
+                        new UnitState("lon_c", new OrderState("support", "pending", "wal_c", "eng_s", false, null), null)
                     )
                 )
             ),

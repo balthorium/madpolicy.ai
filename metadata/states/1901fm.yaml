@@ -23,15 +23,15 @@ nations:
     - position: nth_s
       order:
         type: hold
-        status: new
+        status: pending
     - position: eng_s
       order:
         type: hold
-        status: new
+        status: pending
     - position: lon_l
       order:
         type: hold
-        status: new
+        status: pending
   germany:
     name: Germany
     homes:
@@ -46,15 +46,15 @@ nations:
     - position: ber_l
       order:
         type: hold
-        status: new
+        status: pending
     - position: mun_l
       order:
         type: hold
-        status: new
+        status: pending
     - position: bal_s
       order:
         type: hold
-        status: new
+        status: pending
   russia:
     name: Russia
     homes:
@@ -71,19 +71,19 @@ nations:
     - position: sev_l
       order:
         type: hold
-        status: new
+        status: pending
     - position: lvn_l
       order:
         type: hold
-        status: new
+        status: pending
     - position: bot_s
       order:
         type: hold
-        status: new
+        status: pending
     - position: bla_s
       order:
         type: hold
-        status: new
+        status: pending
   turkey:
     name: Turkey
     homes:
@@ -98,15 +98,15 @@ nations:
     - position: con_l
       order:
         type: hold
-        status: new
+        status: pending
     - position: smy_l
       order:
         type: hold
-        status: new
+        status: pending
     - position: aeg_s
       order:
         type: hold
-        status: new
+        status: pending
   austria:
     name: Austria-Hungary
     homes:
@@ -121,15 +121,15 @@ nations:
     - position: vie_l
       order:
         type: hold
-        status: new
+        status: pending
     - position: gre_l
       order:
         type: hold
-        status: new
+        status: pending
     - position: ion_s
       order:
         type: hold
-        status: new
+        status: pending
   italy:
     name: Italy
     homes:
@@ -144,15 +144,15 @@ nations:
     - position: rom_l
       order:
         type: hold
-        status: new
+        status: pending
     - position: ven_l
       order:
         type: hold
-        status: new
+        status: pending
     - position: tys_s
       order:
         type: hold
-        status: new
+        status: pending
   france:
     name: France
     homes:
@@ -167,13 +167,13 @@ nations:
     - position: bre_l
       order:
         type: hold
-        status: new
+        status: pending
     - position: mar_l
       order:
         type: hold
-        status: new
+        status: pending
     - position: mao_s
       order:
         type: hold
-        status: new
+        status: pending
 standoffs: []
