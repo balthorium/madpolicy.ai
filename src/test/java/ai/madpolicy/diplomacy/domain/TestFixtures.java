@@ -1,5 +1,6 @@
 package ai.madpolicy.diplomacy.domain;
 
+import ai.madpolicy.diplomacy.app.BoardCatalog;
 import ai.madpolicy.diplomacy.model.BoardDocument;
 import ai.madpolicy.diplomacy.model.GameStateDocument;
 import ai.madpolicy.diplomacy.model.TestYaml;
@@ -10,7 +11,7 @@ final class TestFixtures {
     }
 
     static BoardIndex boardIndex() {
-        BoardDocument board = TestYaml.load(Path.of("metadata/boards/board.yaml"), BoardDocument.class);
+        BoardDocument board = new BoardCatalog().resolve("standard");
         return new BoardIndex(board);
     }
 

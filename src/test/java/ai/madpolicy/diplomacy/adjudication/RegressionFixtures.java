@@ -1,7 +1,7 @@
 package ai.madpolicy.diplomacy.adjudication;
 
+import ai.madpolicy.diplomacy.app.BoardCatalog;
 import ai.madpolicy.diplomacy.domain.BoardIndex;
-import ai.madpolicy.diplomacy.model.BoardDocument;
 import ai.madpolicy.diplomacy.model.GameStateDocument;
 import ai.madpolicy.diplomacy.model.NationState;
 import ai.madpolicy.diplomacy.model.OrderState;
@@ -22,8 +22,7 @@ final class RegressionFixtures {
     }
 
     static MoveAdjudicator adjudicator() {
-        BoardDocument board = TestYaml.load(Path.of("metadata/boards/board.yaml"), BoardDocument.class);
-        return new MoveAdjudicator(new BoardIndex(board));
+        return new MoveAdjudicator(new BoardIndex(new BoardCatalog().resolve("standard")));
     }
 
     static GameStateDocument normalize(GameStateDocument expected) {
@@ -41,6 +40,13 @@ final class RegressionFixtures {
             NationState nation = entry.getValue();
             nations.put(entry.getKey(), new NationState(nation.name(), nation.homes(), nation.controls(), units));
         }
-        return new GameStateDocument(expected.kind(), expected.version(), expected.phase(), nations, List.of());
+        return new GameStateDocument(
+            expected.kind(),
+            expected.version(),
+            expected.board(),
+            expected.phase(),
+            nations,
+            List.of()
+        );
     }
 }

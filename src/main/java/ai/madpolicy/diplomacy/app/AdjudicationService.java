@@ -14,19 +14,21 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AdjudicationService {
+    private final BoardCatalog boardCatalog;
     private final ObjectMapper yamlMapper;
     private final AdjudicatedStateBuilder adjudicatedStateBuilder;
     private final NextStateBuilder nextStateBuilder;
 
     public AdjudicationService() {
+        this.boardCatalog = new BoardCatalog();
         this.yamlMapper = new ObjectMapper(new YAMLFactory()).findAndRegisterModules();
         this.adjudicatedStateBuilder = new AdjudicatedStateBuilder();
         this.nextStateBuilder = new NextStateBuilder();
     }
 
-    public DualStateResult adjudicate(Path boardPath, Path statePath) {
-        BoardDocument board = load(boardPath, BoardDocument.class);
+    public DualStateResult adjudicate(Path statePath) {
         GameStateDocument state = load(statePath, GameStateDocument.class);
+        BoardDocument board = boardCatalog.resolve(state.board());
         var adjudicator = new MoveAdjudicator(new BoardIndex(board));
         var adjudication = adjudicator.adjudicate(state);
         return new DualStateResult(

@@ -6,6 +6,7 @@ import java.util.Map;
 public record GameStateDocument(
     String kind,
     int version,
+    String board,
     GamePhase phase,
     Map<String, NationState> nations,
     List<String> standoffs

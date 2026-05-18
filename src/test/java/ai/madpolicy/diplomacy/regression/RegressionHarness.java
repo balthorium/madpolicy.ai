@@ -1,9 +1,9 @@
 package ai.madpolicy.diplomacy.regression;
 
 import ai.madpolicy.diplomacy.adjudication.MoveAdjudicator;
+import ai.madpolicy.diplomacy.app.BoardCatalog;
 import ai.madpolicy.diplomacy.domain.BoardIndex;
 import ai.madpolicy.diplomacy.io.AdjudicatedStateBuilder;
-import ai.madpolicy.diplomacy.model.BoardDocument;
 import ai.madpolicy.diplomacy.model.GameStateDocument;
 import ai.madpolicy.diplomacy.model.NationState;
 import ai.madpolicy.diplomacy.model.OrderState;
@@ -13,24 +13,20 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Stream;
 
 public final class RegressionHarness {
     private static final Path REGRESSION_DIR = Path.of("metadata/regression");
-    private static final Path BOARD_PATH = Path.of("metadata/boards/board.yaml");
 
     private RegressionHarness() {
     }
 
     public static RegressionSummary runAll() {
-        BoardDocument board = TestYaml.load(BOARD_PATH, BoardDocument.class);
-        MoveAdjudicator adjudicator = new MoveAdjudicator(new BoardIndex(board));
+        BoardCatalog boardCatalog = new BoardCatalog();
         AdjudicatedStateBuilder stateBuilder = new AdjudicatedStateBuilder();
 
         List<FailureDetail> failedCases = new ArrayList<>();
@@ -42,6 +38,9 @@ public final class RegressionHarness {
                     if (!"move".equals(expected.phase().step())) {
                         return;
                     }
+                    MoveAdjudicator adjudicator = new MoveAdjudicator(
+                        new BoardIndex(boardCatalog.resolve(expected.board()))
+                    );
                     GameStateDocument input = normalize(expected);
                     GameStateDocument actual = stateBuilder.build(input, adjudicator.adjudicate(input));
                     String mismatch = firstMismatch(expected, actual);
@@ -71,7 +70,14 @@ public final class RegressionHarness {
             NationState nation = entry.getValue();
             nations.put(entry.getKey(), new NationState(nation.name(), nation.homes(), nation.controls(), units));
         }
-        return new GameStateDocument(expected.kind(), expected.version(), expected.phase(), nations, List.of());
+        return new GameStateDocument(
+            expected.kind(),
+            expected.version(),
+            expected.board(),
+            expected.phase(),
+            nations,
+            List.of()
+        );
     }
 
     static String firstMismatch(GameStateDocument expected, GameStateDocument actual) {

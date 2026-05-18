@@ -3,8 +3,8 @@ package ai.madpolicy.diplomacy.io;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import ai.madpolicy.diplomacy.adjudication.MoveAdjudicator;
+import ai.madpolicy.diplomacy.app.BoardCatalog;
 import ai.madpolicy.diplomacy.domain.BoardIndex;
-import ai.madpolicy.diplomacy.model.BoardDocument;
 import ai.madpolicy.diplomacy.model.GameStateDocument;
 import ai.madpolicy.diplomacy.model.NationState;
 import ai.madpolicy.diplomacy.model.OrderState;
@@ -23,8 +23,7 @@ class NextStateBuilderTest {
     void resetsOrdersAndAdvancesToRetreatStep() {
         var expected = TestYaml.load(Path.of("metadata/regression/test6.yaml"), GameStateDocument.class);
         var input = normalize(expected);
-        BoardDocument board = TestYaml.load(Path.of("metadata/boards/board.yaml"), BoardDocument.class);
-        var adjudicator = new MoveAdjudicator(new BoardIndex(board));
+        var adjudicator = new MoveAdjudicator(new BoardIndex(new BoardCatalog().resolve(input.board())));
         var adjudicated = adjudicator.adjudicate(input);
 
         GameStateDocument nextState = new NextStateBuilder().build(input, adjudicated);
@@ -66,6 +65,13 @@ class NextStateBuilderTest {
             NationState nation = entry.getValue();
             nations.put(entry.getKey(), new NationState(nation.name(), nation.homes(), nation.controls(), units));
         }
-        return new GameStateDocument(expected.kind(), expected.version(), expected.phase(), nations, List.of());
+        return new GameStateDocument(
+            expected.kind(),
+            expected.version(),
+            expected.board(),
+            expected.phase(),
+            nations,
+            List.of()
+        );
     }
 }

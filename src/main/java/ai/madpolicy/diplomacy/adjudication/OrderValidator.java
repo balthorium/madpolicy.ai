@@ -2,7 +2,6 @@ package ai.madpolicy.diplomacy.adjudication;
 
 import ai.madpolicy.diplomacy.domain.BoardIndex;
 import ai.madpolicy.diplomacy.domain.NormalizedUnit;
-import ai.madpolicy.diplomacy.domain.OrderKind;
 
 public final class OrderValidator {
     private final BoardIndex board;

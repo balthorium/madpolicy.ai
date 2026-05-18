@@ -3,7 +3,6 @@ package ai.madpolicy.diplomacy.domain;
 import ai.madpolicy.diplomacy.model.BoardDocument;
 import ai.madpolicy.diplomacy.model.BoardPosition;
 import ai.madpolicy.diplomacy.model.BoardProvince;
-import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;

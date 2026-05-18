@@ -61,7 +61,7 @@ mvn -Dmaven.repo.local=$PWD/.m2 test
   Focused adjudication and validator tests.
 - `src/test/java/ai/madpolicy/diplomacy/regression/`
   Regression harness and corpus test.
-- `metadata/boards/board.yaml`
+- `metadata/boards/standard.yaml`
   Board topology.
 - `metadata/regression/`
   Move-phase expected results.

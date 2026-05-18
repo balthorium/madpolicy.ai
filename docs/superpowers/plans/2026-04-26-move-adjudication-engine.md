@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED: Use superpowers:subagent-driven-development (if subagents available) or superpowers:executing-plans to implement this plan. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Build a Spring Boot-based Java move-phase adjudication engine that reads `metadata/boards/board.yaml` and a move-phase game-state YAML, produces an `adjudicated_state` matching the regression corpus, and produces a `next_state` for the retreat phase.
+**Goal:** Build a Spring Boot-based Java move-phase adjudication engine that reads `metadata/boards/standard.yaml` and a move-phase game-state YAML, produces an `adjudicated_state` matching the regression corpus, and produces a `next_state` for the retreat phase.
 
 **Architecture:** Use a small Spring Boot application as the composition root, but keep adjudication logic in plain domain services with no framework coupling. Represent board/state YAML with Jackson-backed immutable DTOs, normalize and validate move orders into a domain model, adjudicate using deterministic pure services, and serialize both `adjudicated_state` and `next_state` back to YAML. Use the regression corpus as the primary acceptance suite.
 
@@ -139,7 +139,7 @@ import org.junit.jupiter.api.Test;
 class YamlRoundTripTest {
     @Test
     void parsesBoardAndStateFixtures() {
-        var board = TestYaml.load(Path.of("metadata/boards/board.yaml"), BoardDocument.class);
+        var board = TestYaml.load(Path.of("metadata/boards/standard.yaml"), BoardDocument.class);
         var state = TestYaml.load(Path.of("metadata/states/1901sm.yaml"), GameStateDocument.class);
 
         assertThat(board.kind()).isEqualTo("board");
@@ -484,7 +484,7 @@ class AdjudicationServiceTest {
     @Test
     void returnsBothArtifacts() {
         var result = TestFixtures.service().adjudicate(
-            Path.of("metadata/boards/board.yaml"),
+            Path.of("metadata/boards/standard.yaml"),
             Path.of("metadata/states/1901sm.yaml")
         );
 
