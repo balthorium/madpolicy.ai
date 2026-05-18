@@ -9,7 +9,7 @@ class YamlRoundTripTest {
     @Test
     void parsesBoardAndStateFixtures() {
         var board = TestYaml.load(Path.of("data/boards/standard/1.yaml"), BoardDocument.class);
-        var state = TestYaml.load(Path.of("data/states/1901sm.yaml"), GameStateDocument.class);
+        var state = TestYaml.load(Path.of("data/games/646EBC81-1090-4681-93E1-5688A6D49DF0/1901_spring_move.yaml"), GameStateDocument.class);
 
         assertThat(board.kind()).isEqualTo("board");
         assertThat(board.schema()).isEqualTo(1);

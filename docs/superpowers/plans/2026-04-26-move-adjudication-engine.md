@@ -140,7 +140,7 @@ class YamlRoundTripTest {
     @Test
     void parsesBoardAndStateFixtures() {
         var board = TestYaml.load(Path.of("data/boards/standard.yaml"), BoardDocument.class);
-        var state = TestYaml.load(Path.of("data/states/1901sm.yaml"), GameStateDocument.class);
+        var state = TestYaml.load(Path.of("data/games/646EBC81-1090-4681-93E1-5688A6D49DF0/1901_spring_move.yaml"), GameStateDocument.class);
 
         assertThat(board.kind()).isEqualTo("board");
         assertThat(state.phase().step()).isEqualTo("move");
@@ -259,7 +259,7 @@ import org.junit.jupiter.api.Test;
 class GameStateIndexTest {
     @Test
     void indexesUnitsByPositionAndNation() {
-        GameStateIndex state = TestFixtures.stateIndex("data/states/1901sm.yaml");
+        GameStateIndex state = TestFixtures.stateIndex("data/games/646EBC81-1090-4681-93E1-5688A6D49DF0/1901_spring_move.yaml");
 
         assertThat(state.unitAt("lon_c")).isPresent();
         assertThat(state.unitAt("lon_c").orElseThrow().order().kind()).isEqualTo(OrderKind.HOLD);
@@ -485,7 +485,7 @@ class AdjudicationServiceTest {
     void returnsBothArtifacts() {
         var result = TestFixtures.service().adjudicate(
             Path.of("data/boards/standard.yaml"),
-            Path.of("data/states/1901sm.yaml")
+            Path.of("data/games/646EBC81-1090-4681-93E1-5688A6D49DF0/1901_spring_move.yaml")
         );
 
         assertThat(result.adjudicatedState()).isNotNull();
