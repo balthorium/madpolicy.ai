@@ -13,42 +13,56 @@ class BoardCatalogTest {
     Path tempDir;
 
     @Test
-    void resolvesBoardByInternalId() {
-        writeBoard("standard.yaml", "standard");
+    void resolvesBoardByInternalIdAndRevision() {
+        writeBoard("standard", 3, "standard", 3);
 
-        BoardDocument board = new BoardCatalog(tempDir).resolve("standard");
+        BoardDocument board = new BoardCatalog(tempDir).resolve("standard", 3);
 
         assertThat(board.id()).isEqualTo("standard");
+        assertThat(board.revision()).isEqualTo(3);
     }
 
     @Test
-    void failsWhenBoardIdIsMissing() {
-        writeBoard("standard.yaml", "standard");
+    void failsWhenBoardRevisionIsMissing() {
+        writeBoard("standard", 3, "standard", 3);
 
-        assertThatThrownBy(() -> new BoardCatalog(tempDir).resolve("missing"))
+        assertThatThrownBy(() -> new BoardCatalog(tempDir).resolve("standard", 4))
             .isInstanceOf(IllegalStateException.class)
-            .hasMessageContaining("missing");
+            .hasMessageContaining("standard")
+            .hasMessageContaining("4");
     }
 
     @Test
-    void failsWhenFilenameDoesNotMatchBoardId() {
-        writeBoard("wrong-name.yaml", "standard");
+    void failsWhenDirectoryDoesNotMatchBoardId() {
+        writeBoard("wrong-name", 3, "standard", 3);
 
-        assertThatThrownBy(() -> new BoardCatalog(tempDir).resolve("standard"))
+        assertThatThrownBy(() -> new BoardCatalog(tempDir).resolve("wrong-name", 3))
             .isInstanceOf(IllegalStateException.class)
             .hasMessageContaining("does not match board id");
     }
 
-    private void writeBoard(String fileName, String boardId) {
+    @Test
+    void failsWhenFilenameDoesNotMatchBoardRevision() {
+        writeBoard("standard", 7, "standard", 3);
+
+        assertThatThrownBy(() -> new BoardCatalog(tempDir).resolve("standard", 7))
+            .isInstanceOf(IllegalStateException.class)
+            .hasMessageContaining("does not match board revision");
+    }
+
+    private void writeBoard(String directoryName, int fileRevision, String boardId, int boardRevision) {
+        Path boardDir = tempDir.resolve(directoryName);
         String yaml = """
             kind: board
-            version: 1
+            schema: 1
             id: %s
+            revision: %s
             provinces: {}
             adjacency: []
-            """.formatted(boardId);
+            """.formatted(boardId, boardRevision);
         try {
-            java.nio.file.Files.writeString(tempDir.resolve(fileName), yaml);
+            java.nio.file.Files.createDirectories(boardDir);
+            java.nio.file.Files.writeString(boardDir.resolve(fileRevision + ".yaml"), yaml);
         } catch (java.io.IOException e) {
             throw new IllegalStateException(e);
         }

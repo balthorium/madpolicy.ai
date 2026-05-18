@@ -36,8 +36,10 @@ public final class AdjudicatedStateBuilder {
 
         return new GameStateDocument(
             original.kind(),
-            original.version(),
+            original.schema(),
+            original.revision(),
             original.board(),
+            original.boardRevision(),
             original.phase(),
             nations,
             adjudication.standoffs().stream().sorted().toList()

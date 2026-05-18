@@ -12,9 +12,15 @@ class AdjudicationServiceTest {
 
         assertThat(result.adjudicatedState()).isNotNull();
         assertThat(result.nextState()).isNotNull();
+        assertThat(result.adjudicatedState().schema()).isEqualTo(1);
+        assertThat(result.adjudicatedState().revision()).isEqualTo(1);
         assertThat(result.adjudicatedState().phase().step()).isEqualTo("move");
-        assertThat(result.nextState().phase().step()).isEqualTo("retreat");
         assertThat(result.adjudicatedState().board()).isEqualTo("standard");
+        assertThat(result.adjudicatedState().boardRevision()).isEqualTo(1);
+        assertThat(result.nextState().schema()).isEqualTo(1);
+        assertThat(result.nextState().revision()).isEqualTo(1);
+        assertThat(result.nextState().phase().step()).isEqualTo("retreat");
         assertThat(result.nextState().board()).isEqualTo("standard");
+        assertThat(result.nextState().boardRevision()).isEqualTo(1);
     }
 }

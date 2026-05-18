@@ -1,6 +1,7 @@
 kind: board
-version: 1
+schema: 1
 id: standard
+revision: 1
 provinces:
   nao:
     name: North Atlantic Ocean

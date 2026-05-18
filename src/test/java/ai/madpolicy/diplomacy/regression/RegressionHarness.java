@@ -39,7 +39,7 @@ public final class RegressionHarness {
                         return;
                     }
                     MoveAdjudicator adjudicator = new MoveAdjudicator(
-                        new BoardIndex(boardCatalog.resolve(expected.board()))
+                        new BoardIndex(boardCatalog.resolve(expected.board(), expected.boardRevision()))
                     );
                     GameStateDocument input = normalize(expected);
                     GameStateDocument actual = stateBuilder.build(input, adjudicator.adjudicate(input));
@@ -72,8 +72,10 @@ public final class RegressionHarness {
         }
         return new GameStateDocument(
             expected.kind(),
-            expected.version(),
+            expected.schema(),
+            expected.revision(),
             expected.board(),
+            expected.boardRevision(),
             expected.phase(),
             nations,
             List.of()
@@ -84,8 +86,17 @@ public final class RegressionHarness {
         if (!Objects.equals(expected.kind(), actual.kind())) {
             return "kind";
         }
-        if (expected.version() != actual.version()) {
-            return "version";
+        if (expected.schema() != actual.schema()) {
+            return "schema";
+        }
+        if (expected.revision() != actual.revision()) {
+            return "revision";
+        }
+        if (!Objects.equals(expected.board(), actual.board())) {
+            return "board";
+        }
+        if (expected.boardRevision() != actual.boardRevision()) {
+            return "board_revision";
         }
         if (!Objects.equals(expected.phase(), actual.phase())) {
             return "phase";

@@ -11,7 +11,7 @@ final class TestFixtures {
     }
 
     static BoardIndex boardIndex() {
-        BoardDocument board = new BoardCatalog().resolve("standard");
+        BoardDocument board = new BoardCatalog().resolve("standard", 1);
         return new BoardIndex(board);
     }
 

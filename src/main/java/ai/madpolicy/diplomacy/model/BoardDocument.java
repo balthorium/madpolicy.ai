@@ -5,8 +5,9 @@ import java.util.Map;
 
 public record BoardDocument(
     String kind,
-    int version,
+    int schema,
     String id,
+    int revision,
     Map<String, BoardProvince> provinces,
     List<List<String>> adjacency
 ) {}

@@ -28,7 +28,7 @@ public class AdjudicationService {
 
     public DualStateResult adjudicate(Path statePath) {
         GameStateDocument state = load(statePath, GameStateDocument.class);
-        BoardDocument board = boardCatalog.resolve(state.board());
+        BoardDocument board = boardCatalog.resolve(state.board(), state.boardRevision());
         var adjudicator = new MoveAdjudicator(new BoardIndex(board));
         var adjudication = adjudicator.adjudicate(state);
         return new DualStateResult(

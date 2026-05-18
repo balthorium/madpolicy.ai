@@ -51,8 +51,10 @@ public final class NextStateBuilder {
 
         return new GameStateDocument(
             original.kind(),
-            original.version(),
+            original.schema(),
+            original.revision(),
             original.board(),
+            original.boardRevision(),
             retreatPhase,
             nations,
             adjudication.standoffs().stream().sorted().toList()

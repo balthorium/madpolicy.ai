@@ -4,11 +4,7 @@ import ai.madpolicy.diplomacy.model.BoardDocument;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.stream.Stream;
 
 public final class BoardCatalog {
     private static final Path DEFAULT_BOARD_DIR = Path.of("metadata/boards");
@@ -25,37 +21,22 @@ public final class BoardCatalog {
         this.yamlMapper = new ObjectMapper(new YAMLFactory()).findAndRegisterModules();
     }
 
-    public BoardDocument resolve(String boardId) {
-        Map<String, BoardDocument> boards = loadBoards();
-        BoardDocument board = boards.get(boardId);
-        if (board == null) {
-            throw new IllegalStateException("No board found for board id: " + boardId);
+    public BoardDocument resolve(String boardId, int boardRevision) {
+        Path boardPath = boardDirectory.resolve(boardId).resolve(boardRevision + ".yaml");
+        BoardDocument board = load(boardPath);
+        String directoryName = boardPath.getParent().getFileName().toString();
+        if (!directoryName.equals(board.id())) {
+            throw new IllegalStateException(
+                "Board directory '" + directoryName + "' does not match board id '" + board.id() + "'"
+            );
+        }
+        String fileStem = stripYamlExtension(boardPath.getFileName().toString());
+        if (!fileStem.equals(Integer.toString(board.revision()))) {
+            throw new IllegalStateException(
+                "Board filename '" + fileStem + "' does not match board revision '" + board.revision() + "'"
+            );
         }
         return board;
-    }
-
-    private Map<String, BoardDocument> loadBoards() {
-        Map<String, BoardDocument> boards = new LinkedHashMap<>();
-        try (Stream<Path> paths = Files.list(boardDirectory)) {
-            paths.filter(path -> path.getFileName().toString().endsWith(".yaml"))
-                .sorted()
-                .forEach(path -> {
-                    BoardDocument board = load(path);
-                    BoardDocument previous = boards.putIfAbsent(board.id(), board);
-                    if (previous != null) {
-                        throw new IllegalStateException("Duplicate board id: " + board.id());
-                    }
-                    String fileStem = stripYamlExtension(path.getFileName().toString());
-                    if (!fileStem.equals(board.id())) {
-                        throw new IllegalStateException(
-                            "Board filename '" + fileStem + "' does not match board id '" + board.id() + "'"
-                        );
-                    }
-                });
-        } catch (IOException e) {
-            throw new IllegalStateException("Failed to read boards from " + boardDirectory, e);
-        }
-        return boards;
     }
 
     private BoardDocument load(Path path) {

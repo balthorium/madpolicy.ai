@@ -22,7 +22,7 @@ final class RegressionFixtures {
     }
 
     static MoveAdjudicator adjudicator() {
-        return new MoveAdjudicator(new BoardIndex(new BoardCatalog().resolve("standard")));
+        return new MoveAdjudicator(new BoardIndex(new BoardCatalog().resolve("standard", 1)));
     }
 
     static GameStateDocument normalize(GameStateDocument expected) {
@@ -42,8 +42,10 @@ final class RegressionFixtures {
         }
         return new GameStateDocument(
             expected.kind(),
-            expected.version(),
+            expected.schema(),
+            expected.revision(),
             expected.board(),
+            expected.boardRevision(),
             expected.phase(),
             nations,
             List.of()

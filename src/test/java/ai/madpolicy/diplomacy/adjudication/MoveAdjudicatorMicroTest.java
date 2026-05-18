@@ -33,7 +33,9 @@ class MoveAdjudicatorMicroTest {
         GameStateDocument state = new GameStateDocument(
             "game_state",
             1,
+            1,
             "standard",
+            1,
             new GamePhase("spring", "move", 1901, 0),
             Map.of(
                 "france",
@@ -72,7 +74,9 @@ class MoveAdjudicatorMicroTest {
         GameStateDocument state = new GameStateDocument(
             "game_state",
             1,
+            1,
             "standard",
+            1,
             new GamePhase("spring", "move", 1901, 0),
             Map.of(
                 "france",
@@ -111,7 +115,9 @@ class MoveAdjudicatorMicroTest {
         GameStateDocument state = new GameStateDocument(
             "game_state",
             1,
+            1,
             "standard",
+            1,
             new GamePhase("spring", "move", 1901, 0),
             Map.of(
                 "france",

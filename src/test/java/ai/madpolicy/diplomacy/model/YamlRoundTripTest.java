@@ -8,12 +8,17 @@ import org.junit.jupiter.api.Test;
 class YamlRoundTripTest {
     @Test
     void parsesBoardAndStateFixtures() {
-        var board = TestYaml.load(Path.of("metadata/boards/standard.yaml"), BoardDocument.class);
+        var board = TestYaml.load(Path.of("metadata/boards/standard/1.yaml"), BoardDocument.class);
         var state = TestYaml.load(Path.of("metadata/states/1901sm.yaml"), GameStateDocument.class);
 
         assertThat(board.kind()).isEqualTo("board");
+        assertThat(board.schema()).isEqualTo(1);
         assertThat(board.id()).isEqualTo("standard");
+        assertThat(board.revision()).isEqualTo(1);
+        assertThat(state.schema()).isEqualTo(1);
+        assertThat(state.revision()).isEqualTo(1);
         assertThat(state.board()).isEqualTo("standard");
+        assertThat(state.boardRevision()).isEqualTo(1);
         assertThat(state.phase().step()).isEqualTo("move");
     }
 

@@ -8,6 +8,6 @@ final class TestFixtures {
     }
 
     static OrderValidator validator() {
-        return new OrderValidator(new BoardIndex(new BoardCatalog().resolve("standard")));
+        return new OrderValidator(new BoardIndex(new BoardCatalog().resolve("standard", 1)));
     }
 }

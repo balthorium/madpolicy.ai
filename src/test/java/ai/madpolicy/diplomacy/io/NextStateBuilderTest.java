@@ -23,7 +23,10 @@ class NextStateBuilderTest {
     void resetsOrdersAndAdvancesToRetreatStep() {
         var expected = TestYaml.load(Path.of("metadata/regression/test6.yaml"), GameStateDocument.class);
         var input = normalize(expected);
-        var adjudicator = new MoveAdjudicator(new BoardIndex(new BoardCatalog().resolve(input.board())));
+        var adjudicator = new MoveAdjudicator(new BoardIndex(new BoardCatalog().resolve(
+            input.board(),
+            input.boardRevision()
+        )));
         var adjudicated = adjudicator.adjudicate(input);
 
         GameStateDocument nextState = new NextStateBuilder().build(input, adjudicated);
@@ -67,8 +70,10 @@ class NextStateBuilderTest {
         }
         return new GameStateDocument(
             expected.kind(),
-            expected.version(),
+            expected.schema(),
+            expected.revision(),
             expected.board(),
+            expected.boardRevision(),
             expected.phase(),
             nations,
             List.of()
