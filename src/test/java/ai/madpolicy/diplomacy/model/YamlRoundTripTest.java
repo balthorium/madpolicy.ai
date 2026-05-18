@@ -15,7 +15,11 @@ class YamlRoundTripTest {
         assertThat(board.schema()).isEqualTo(1);
         assertThat(board.id()).isEqualTo("standard");
         assertThat(board.revision()).isEqualTo(1);
-        assertThat(board.provinces().get("lon").home()).isEqualTo("england");
+        assertThat(board.provinces().get("lon").isSupplyCenter()).isTrue();
+        assertThat(board.provinces().get("lon").homeNation()).isEqualTo("england");
+        assertThat(board.provinces().get("bel").isSupplyCenter()).isTrue();
+        assertThat(board.provinces().get("bel").supplyCenter()).isEqualTo("neutral");
+        assertThat(board.provinces().get("bel").homeNation()).isNull();
         assertThat(state.schema()).isEqualTo(1);
         assertThat(state.revision()).isEqualTo(1);
         assertThat(state.board()).isEqualTo("standard");

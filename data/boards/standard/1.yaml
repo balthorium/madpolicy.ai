@@ -40,8 +40,7 @@ provinces:
       type: coast
     - id: lvp_l
       type: land
-    supply_center: true
-    home: england
+    supply_center: england
   wal:
     name: Wales
     positions:
@@ -56,8 +55,7 @@ provinces:
       type: coast
     - id: lon_l
       type: land
-    supply_center: true
-    home: england
+    supply_center: england
   yor:
     name: York
     positions:
@@ -72,8 +70,7 @@ provinces:
       type: coast
     - id: edi_l
       type: land
-    supply_center: true
-    home: england
+    supply_center: england
   cly:
     name: Clyde
     positions:
@@ -88,8 +85,7 @@ provinces:
       type: coast
     - id: bre_l
       type: land
-    supply_center: true
-    home: france
+    supply_center: france
   gas:
     name: Gascony
     positions:
@@ -108,7 +104,7 @@ provinces:
       coast: south
     - id: spa_l
       type: land
-    supply_center: true
+    supply_center: neutral
   por:
     name: Portugal
     positions:
@@ -116,7 +112,7 @@ provinces:
       type: coast
     - id: por_l
       type: land
-    supply_center: true
+    supply_center: neutral
   wes:
     name: Western Mediterranean Sea
     positions:
@@ -141,8 +137,7 @@ provinces:
       type: coast
     - id: mar_l
       type: land
-    supply_center: true
-    home: france
+    supply_center: france
   bur:
     name: Burgundy
     positions:
@@ -153,8 +148,7 @@ provinces:
     positions:
     - id: par_l
       type: land
-    supply_center: true
-    home: france
+    supply_center: france
   pic:
     name: Picardy
     positions:
@@ -169,7 +163,7 @@ provinces:
       type: coast
     - id: bel_l
       type: land
-    supply_center: true
+    supply_center: neutral
   hol:
     name: Holland
     positions:
@@ -177,7 +171,7 @@ provinces:
       type: coast
     - id: hol_l
       type: land
-    supply_center: true
+    supply_center: neutral
   ruh:
     name: Ruhr
     positions:
@@ -190,15 +184,13 @@ provinces:
       type: coast
     - id: kie_l
       type: land
-    supply_center: true
-    home: germany
+    supply_center: germany
   mun:
     name: Munich
     positions:
     - id: mun_l
       type: land
-    supply_center: true
-    home: germany
+    supply_center: germany
   pie:
     name: Piedmont
     positions:
@@ -218,7 +210,7 @@ provinces:
       type: coast
     - id: den_l
       type: land
-    supply_center: true
+    supply_center: neutral
   ska:
     name: Skagerrak
     positions:
@@ -231,7 +223,7 @@ provinces:
       type: coast
     - id: nwy_l
       type: land
-    supply_center: true
+    supply_center: neutral
   swe:
     name: Sweden
     positions:
@@ -239,7 +231,7 @@ provinces:
       type: coast
     - id: swe_l
       type: land
-    supply_center: true
+    supply_center: neutral
   ber:
     name: Berlin
     positions:
@@ -247,8 +239,7 @@ provinces:
       type: coast
     - id: ber_l
       type: land
-    supply_center: true
-    home: germany
+    supply_center: germany
   sil:
     name: Silesia
     positions:
@@ -278,8 +269,7 @@ provinces:
       type: coast
     - id: ven_l
       type: land
-    supply_center: true
-    home: italy
+    supply_center: italy
   tus:
     name: Tuscany
     positions:
@@ -294,8 +284,7 @@ provinces:
       type: coast
     - id: rom_l
       type: land
-    supply_center: true
-    home: italy
+    supply_center: italy
   nap:
     name: Naples
     positions:
@@ -303,8 +292,7 @@ provinces:
       type: coast
     - id: nap_l
       type: land
-    supply_center: true
-    home: italy
+    supply_center: italy
   apu:
     name: Apulia
     positions:
@@ -324,22 +312,19 @@ provinces:
       type: coast
     - id: tri_l
       type: land
-    supply_center: true
-    home: austria
+    supply_center: austria
   vie:
     name: Vienna
     positions:
     - id: vie_l
       type: land
-    supply_center: true
-    home: austria
+    supply_center: austria
   bud:
     name: Budapest
     positions:
     - id: bud_l
       type: land
-    supply_center: true
-    home: austria
+    supply_center: austria
   gal:
     name: Galicia
     positions:
@@ -350,8 +335,7 @@ provinces:
     positions:
     - id: war_l
       type: land
-    supply_center: true
-    home: russia
+    supply_center: russia
   lvn:
     name: Livonia
     positions:
@@ -392,15 +376,13 @@ provinces:
       coast: south
     - id: stp_l
       type: land
-    supply_center: true
-    home: russia
+    supply_center: russia
   mos:
     name: Moscow
     positions:
     - id: mos_l
       type: land
-    supply_center: true
-    home: russia
+    supply_center: russia
   ukr:
     name: Ukraina
     positions:
@@ -413,8 +395,7 @@ provinces:
       type: coast
     - id: sev_l
       type: land
-    supply_center: true
-    home: russia
+    supply_center: russia
   bla:
     name: Black Sea
     positions:
@@ -427,7 +408,7 @@ provinces:
       type: coast
     - id: rum_l
       type: land
-    supply_center: true
+    supply_center: neutral
   bul:
     name: Bulgaria
     positions:
@@ -439,13 +420,13 @@ provinces:
       coast: south
     - id: bul_l
       type: land
-    supply_center: true
+    supply_center: neutral
   ser:
     name: Serbia
     positions:
     - id: ser_l
       type: land
-    supply_center: true
+    supply_center: neutral
   alb:
     name: Albania
     positions:
@@ -460,7 +441,7 @@ provinces:
       type: coast
     - id: gre_l
       type: land
-    supply_center: true
+    supply_center: neutral
   con:
     name: Constantinpole
     positions:
@@ -468,8 +449,7 @@ provinces:
       type: coast
     - id: con_l
       type: land
-    supply_center: true
-    home: turkey
+    supply_center: turkey
   ank:
     name: Ankara
     positions:
@@ -477,8 +457,7 @@ provinces:
       type: coast
     - id: ank_l
       type: land
-    supply_center: true
-    home: turkey
+    supply_center: turkey
   arm:
     name: Armenia
     positions:
@@ -500,8 +479,7 @@ provinces:
       type: coast
     - id: smy_l
       type: land
-    supply_center: true
-    home: turkey
+    supply_center: turkey
   eas:
     name: Eastern Mediterranean Sea
     positions:
@@ -529,7 +507,7 @@ provinces:
       type: coast
     - id: tun_l
       type: land
-    supply_center: true
+    supply_center: neutral
 adjacency:
 - - nao_s
   - mao_s

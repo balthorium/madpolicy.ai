@@ -93,10 +93,10 @@ public final class BoardIndex {
 
     public boolean isHomeSupplyCenterForNation(String provinceId, String nationId) {
         BoardProvince province = provinces.get(provinceId);
-        if (province == null || !Boolean.TRUE.equals(province.supplyCenter())) {
+        if (province == null || !province.isSupplyCenter()) {
             return false;
         }
-        return nationId.equals(province.home());
+        return nationId.equals(province.homeNation());
     }
 
     public boolean hasPossibleConvoyRoute(String fromPositionId, String toPositionId) {
