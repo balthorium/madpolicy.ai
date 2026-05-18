@@ -11,7 +11,6 @@ phase:
 nations:
   england:
     name: England
-    homes: []
     controls: []
     units:
     - position: edi_l
@@ -23,7 +22,6 @@ nations:
         comment: Standoff.
   germany:
     name: Germany
-    homes: []
     controls: []
     units:
     - position: yor_l

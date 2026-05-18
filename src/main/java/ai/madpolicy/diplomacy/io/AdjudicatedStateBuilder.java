@@ -28,7 +28,6 @@ public final class AdjudicatedStateBuilder {
             NationState nation = entry.getValue();
             nations.put(entry.getKey(), new NationState(
                 nation.name(),
-                nation.homes(),
                 nation.controls(),
                 adjudicatedUnits
             ));

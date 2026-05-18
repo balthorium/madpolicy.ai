@@ -11,10 +11,6 @@ phase:
 nations:
   england:
     name: England
-    homes:
-    - lon
-    - edi
-    - lvp
     controls:
     - lon
     - edi
@@ -34,10 +30,6 @@ nations:
         status: pending
   germany:
     name: Germany
-    homes:
-    - ber
-    - mun
-    - kie
     controls:
     - ber
     - mun
@@ -57,11 +49,6 @@ nations:
         status: pending
   russia:
     name: Russia
-    homes:
-    - mos
-    - war
-    - stp
-    - sev
     controls:
     - mos
     - war
@@ -86,10 +73,6 @@ nations:
         status: pending
   turkey:
     name: Turkey
-    homes:
-    - con
-    - smy
-    - ank
     controls:
     - con
     - smy
@@ -109,10 +92,6 @@ nations:
         status: pending
   austria:
     name: Austria-Hungary
-    homes:
-    - vie
-    - bud
-    - tri
     controls:
     - vie
     - bud
@@ -132,10 +111,6 @@ nations:
         status: pending
   italy:
     name: Italy
-    homes:
-    - rom
-    - ven
-    - nap
     controls:
     - rom
     - ven
@@ -155,10 +130,6 @@ nations:
         status: pending
   france:
     name: France
-    homes:
-    - par
-    - mar
-    - bre
     controls:
     - par
     - mar

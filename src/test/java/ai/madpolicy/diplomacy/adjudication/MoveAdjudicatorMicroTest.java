@@ -42,7 +42,6 @@ class MoveAdjudicatorMicroTest {
                 new NationState(
                     "France",
                     List.of(),
-                    List.of(),
                     List.of(
                         new UnitState("par_l", new OrderState("support", "pending", "bre_c", "bre_c", false, null), null),
                         new UnitState("bre_c", new OrderState("hold", "pending", null, null, false, null), null),
@@ -52,7 +51,6 @@ class MoveAdjudicatorMicroTest {
                 "germany",
                 new NationState(
                     "Germany",
-                    List.of(),
                     List.of(),
                     List.of(
                         new UnitState("bur_l", new OrderState("move", "pending", "par_l", null, false, null), null)
@@ -83,7 +81,6 @@ class MoveAdjudicatorMicroTest {
                 new NationState(
                     "France",
                     List.of(),
-                    List.of(),
                     List.of(
                         new UnitState("bre_c", new OrderState("hold", "pending", null, null, false, null), null),
                         new UnitState("eng_s", new OrderState("convoy", "pending", "bre_c", "lon_l", false, null), null),
@@ -93,7 +90,6 @@ class MoveAdjudicatorMicroTest {
                 "germany",
                 new NationState(
                     "Germany",
-                    List.of(),
                     List.of(),
                     List.of(
                         new UnitState("nth_s", new OrderState("move", "pending", "eng_s", null, false, null), null)
@@ -124,7 +120,6 @@ class MoveAdjudicatorMicroTest {
                 new NationState(
                     "France",
                     List.of(),
-                    List.of(),
                     List.of(
                         new UnitState("bre_c", new OrderState("hold", "pending", null, null, false, null), null),
                         new UnitState("eng_s", new OrderState("convoy", "pending", "bre_c", "lon_l", false, null), null),
@@ -134,7 +129,6 @@ class MoveAdjudicatorMicroTest {
                 "germany",
                 new NationState(
                     "Germany",
-                    List.of(),
                     List.of(),
                     List.of(
                         new UnitState("wal_c", new OrderState("move", "pending", "eng_s", null, false, null), null),

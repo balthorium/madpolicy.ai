@@ -11,7 +11,6 @@ phase:
 nations:
   germany:
     name: Germany
-    homes: []
     controls: []
     units:
     - position: pru_l
@@ -30,7 +29,6 @@ nations:
         comment: Support cut.
   russia:
     name: Russia
-    homes: []
     controls: []
     units:
     - position: war_l

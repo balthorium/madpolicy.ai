@@ -11,7 +11,6 @@ phase:
 nations:
   england:
     name: England
-    homes: []
     controls: []
     units:
     - position: lon_l
@@ -26,7 +25,6 @@ nations:
         to: lon_l
   france:
     name: France
-    homes: []
     controls: []
     units:
     - position: eng_s

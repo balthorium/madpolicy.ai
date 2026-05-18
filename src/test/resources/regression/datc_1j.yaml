@@ -11,7 +11,6 @@ phase:
 nations:
   austria:
     name: Austria
-    homes: []
     controls: []
     units:
     - position: ven_l
@@ -20,7 +19,6 @@ nations:
         status: success
   italy:
     name: Italy
-    homes: []
     controls: []
     units:
     - position: rom_c

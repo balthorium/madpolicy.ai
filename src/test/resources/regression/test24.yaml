@@ -11,7 +11,6 @@ phase:
 nations:
   france:
     name: France
-    homes: []
     controls: []
     units:
     - position: tun_l
@@ -30,7 +29,6 @@ nations:
       dislodged_by: rom
   italy:
     name: Italy
-    homes: []
     controls: []
     units:
     - position: nap_c

@@ -15,11 +15,13 @@ class YamlRoundTripTest {
         assertThat(board.schema()).isEqualTo(1);
         assertThat(board.id()).isEqualTo("standard");
         assertThat(board.revision()).isEqualTo(1);
+        assertThat(board.provinces().get("lon").home()).isEqualTo("england");
         assertThat(state.schema()).isEqualTo(1);
         assertThat(state.revision()).isEqualTo(1);
         assertThat(state.board()).isEqualTo("standard");
         assertThat(state.boardRevision()).isEqualTo(1);
         assertThat(state.phase().step()).isEqualTo("move");
+        assertThat(state.nations().get("england").controls()).containsExactly("lon", "edi", "lvp");
     }
 
     @Test

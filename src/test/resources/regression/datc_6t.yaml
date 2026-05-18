@@ -11,7 +11,6 @@ phase:
 nations:
   england:
     name: England
-    homes: []
     controls: []
     units:
     - position: edi_c
@@ -41,7 +40,6 @@ nations:
         to: eng_s
   france:
     name: France
-    homes: []
     controls: []
     units:
     - position: bre_l
@@ -66,7 +64,6 @@ nations:
         to: eng_s
   russia:
     name: Russia
-    homes: []
     controls: []
     units:
     - position: nwy_l

@@ -11,10 +11,6 @@ phase:
 nations:
   germany:
     name: Germany
-    homes:
-    - war
-    - kie
-    - mun
     controls:
     - kie
     - mun

@@ -38,7 +38,7 @@ final class RegressionFixtures {
                 ));
             }
             NationState nation = entry.getValue();
-            nations.put(entry.getKey(), new NationState(nation.name(), nation.homes(), nation.controls(), units));
+            nations.put(entry.getKey(), new NationState(nation.name(), nation.controls(), units));
         }
         return new GameStateDocument(
             expected.kind(),

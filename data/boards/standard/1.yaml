@@ -41,6 +41,7 @@ provinces:
     - id: lvp_l
       type: land
     supply_center: true
+    home: england
   wal:
     name: Wales
     positions:
@@ -56,6 +57,7 @@ provinces:
     - id: lon_l
       type: land
     supply_center: true
+    home: england
   yor:
     name: York
     positions:
@@ -71,6 +73,7 @@ provinces:
     - id: edi_l
       type: land
     supply_center: true
+    home: england
   cly:
     name: Clyde
     positions:
@@ -86,6 +89,7 @@ provinces:
     - id: bre_l
       type: land
     supply_center: true
+    home: france
   gas:
     name: Gascony
     positions:
@@ -138,6 +142,7 @@ provinces:
     - id: mar_l
       type: land
     supply_center: true
+    home: france
   bur:
     name: Burgundy
     positions:
@@ -149,6 +154,7 @@ provinces:
     - id: par_l
       type: land
     supply_center: true
+    home: france
   pic:
     name: Picardy
     positions:
@@ -185,12 +191,14 @@ provinces:
     - id: kie_l
       type: land
     supply_center: true
+    home: germany
   mun:
     name: Munich
     positions:
     - id: mun_l
       type: land
     supply_center: true
+    home: germany
   pie:
     name: Piedmont
     positions:
@@ -240,6 +248,7 @@ provinces:
     - id: ber_l
       type: land
     supply_center: true
+    home: germany
   sil:
     name: Silesia
     positions:
@@ -270,6 +279,7 @@ provinces:
     - id: ven_l
       type: land
     supply_center: true
+    home: italy
   tus:
     name: Tuscany
     positions:
@@ -285,6 +295,7 @@ provinces:
     - id: rom_l
       type: land
     supply_center: true
+    home: italy
   nap:
     name: Naples
     positions:
@@ -293,6 +304,7 @@ provinces:
     - id: nap_l
       type: land
     supply_center: true
+    home: italy
   apu:
     name: Apulia
     positions:
@@ -313,18 +325,21 @@ provinces:
     - id: tri_l
       type: land
     supply_center: true
+    home: austria
   vie:
     name: Vienna
     positions:
     - id: vie_l
       type: land
     supply_center: true
+    home: austria
   bud:
     name: Budapest
     positions:
     - id: bud_l
       type: land
     supply_center: true
+    home: austria
   gal:
     name: Galicia
     positions:
@@ -336,6 +351,7 @@ provinces:
     - id: war_l
       type: land
     supply_center: true
+    home: russia
   lvn:
     name: Livonia
     positions:
@@ -377,12 +393,14 @@ provinces:
     - id: stp_l
       type: land
     supply_center: true
+    home: russia
   mos:
     name: Moscow
     positions:
     - id: mos_l
       type: land
     supply_center: true
+    home: russia
   ukr:
     name: Ukraina
     positions:
@@ -396,6 +414,7 @@ provinces:
     - id: sev_l
       type: land
     supply_center: true
+    home: russia
   bla:
     name: Black Sea
     positions:
@@ -450,6 +469,7 @@ provinces:
     - id: con_l
       type: land
     supply_center: true
+    home: turkey
   ank:
     name: Ankara
     positions:
@@ -458,6 +478,7 @@ provinces:
     - id: ank_l
       type: land
     supply_center: true
+    home: turkey
   arm:
     name: Armenia
     positions:
@@ -480,6 +501,7 @@ provinces:
     - id: smy_l
       type: land
     supply_center: true
+    home: turkey
   eas:
     name: Eastern Mediterranean Sea
     positions:

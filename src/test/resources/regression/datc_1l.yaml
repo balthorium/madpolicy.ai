@@ -11,7 +11,6 @@ phase:
 nations:
   austria:
     name: Austria
-    homes: []
     controls: []
     units:
     - position: vie_l
@@ -23,7 +22,6 @@ nations:
         comment: Standoff.
   italy:
     name: Italy
-    homes: []
     controls: []
     units:
     - position: ven_l
@@ -35,7 +33,6 @@ nations:
         comment: Standoff.
   germany:
     name: Germany
-    homes: []
     controls: []
     units:
     - position: mun_l

@@ -11,10 +11,6 @@ phase:
 nations:
   germany:
     name: Germany
-    homes:
-    - ber
-    - kie
-    - mun
     controls:
     - vie
     - kie

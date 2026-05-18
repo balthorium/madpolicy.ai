@@ -11,7 +11,6 @@ phase:
 nations:
   england:
     name: England
-    homes: []
     controls: []
     units:
     - position: lon_c
@@ -28,7 +27,6 @@ nations:
         via_convoy: false
   france:
     name: France
-    homes: []
     controls: []
     units:
     - position: bre_l
@@ -48,7 +46,6 @@ nations:
       dislodged_by: pic
   germany:
     name: Germany
-    homes: []
     controls: []
     units:
     - position: bel_c
@@ -65,7 +62,6 @@ nations:
         via_convoy: false
   russia:
     name: Russia
-    homes: []
     controls: []
     units:
     - position: nwy_l

@@ -11,10 +11,6 @@ phase:
 nations:
   france:
     name: France
-    homes:
-    - bre
-    - par
-    - mar
     controls:
     - bre
     - par

@@ -11,7 +11,6 @@ phase:
 nations:
   france:
     name: France
-    homes: []
     controls: []
     units:
     - position: mar_c
@@ -30,7 +29,6 @@ nations:
         comment: Illegal or useless order.
   italy:
     name: Italy
-    homes: []
     controls: []
     units:
     - position: lyo_s

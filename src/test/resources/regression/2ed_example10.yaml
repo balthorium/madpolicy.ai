@@ -11,7 +11,6 @@ phase:
 nations:
   germany:
     name: Germany
-    homes: []
     controls: []
     units:
     - position: ber_l
@@ -28,7 +27,6 @@ nations:
       dislodged_by: boh
   russia:
     name: Russia
-    homes: []
     controls: []
     units:
     - position: pru_l

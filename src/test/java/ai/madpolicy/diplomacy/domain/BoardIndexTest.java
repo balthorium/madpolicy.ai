@@ -12,5 +12,7 @@ class BoardIndexTest {
         assertThat(board.provinceIdForPosition("tri_c")).isEqualTo("tri");
         assertThat(board.areAdjacent("tri_c", "adr_s")).isTrue();
         assertThat(board.provinceHasCoast("vie")).isFalse();
+        assertThat(board.isHomeSupplyCenterForNation("tri", "austria")).isTrue();
+        assertThat(board.isHomeSupplyCenterForNation("bel", "austria")).isFalse();
     }
 }

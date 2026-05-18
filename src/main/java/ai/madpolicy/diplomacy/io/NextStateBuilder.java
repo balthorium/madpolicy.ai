@@ -21,7 +21,6 @@ public final class NextStateBuilder {
             NationState nation = entry.getValue();
             nations.put(entry.getKey(), new NationState(
                 nation.name(),
-                nation.homes(),
                 nation.controls(),
                 nextUnits
             ));

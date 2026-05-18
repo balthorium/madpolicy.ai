@@ -11,7 +11,6 @@ phase:
 nations:
   england:
     name: England
-    homes: []
     controls: []
     units:
     - position: nwy_l
@@ -34,7 +33,6 @@ nations:
         to: swe_l
   germany:
     name: Germany
-    homes: []
     controls: []
     units:
     - position: ska_s
@@ -46,7 +44,6 @@ nations:
         comment: No army to convoy.
   russia:
     name: Russia
-    homes: []
     controls: []
     units:
     - position: swe_l
@@ -65,7 +62,6 @@ nations:
         to: nwy_l
   france:
     name: France
-    homes: []
     controls: []
     units:
     - position: nwg_s

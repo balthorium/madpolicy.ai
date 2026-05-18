@@ -11,7 +11,6 @@ phase:
 nations:
   england:
     name: England
-    homes: []
     controls: []
     units:
     - position: spa_l
@@ -41,7 +40,6 @@ nations:
         to: nap_l
   germany:
     name: Germany
-    homes: []
     controls: []
     units:
     - position: tun_c

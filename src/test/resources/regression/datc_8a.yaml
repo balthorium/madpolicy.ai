@@ -11,7 +11,6 @@ phase:
 nations:
   austria:
     name: Austria
-    homes: []
     controls: []
     units:
     - position: tri_c
@@ -48,7 +47,6 @@ nations:
         comment: Illegal or useless order.
   turkey:
     name: Turkey
-    homes: []
     controls: []
     units:
     - position: gre_c

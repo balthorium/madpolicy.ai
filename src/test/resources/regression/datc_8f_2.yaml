@@ -11,7 +11,6 @@ phase:
 nations:
   italy:
     name: Italy
-    homes: []
     controls: []
     units:
     - position: vie_l

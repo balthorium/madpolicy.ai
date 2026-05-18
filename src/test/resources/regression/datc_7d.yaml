@@ -11,7 +11,6 @@ phase:
 nations:
   italy:
     name: Italy
-    homes: []
     controls: []
     units:
     - position: rom_l
@@ -30,7 +29,6 @@ nations:
         comment: No army to convoy.
   turkey:
     name: Turkey
-    homes: []
     controls: []
     units:
     - position: apu_l

@@ -11,11 +11,6 @@ phase:
 nations:
   russia:
     name: Russia
-    homes:
-    - stp
-    - mos
-    - war
-    - sev
     controls:
     - war
     units:

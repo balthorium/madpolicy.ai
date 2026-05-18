@@ -11,7 +11,6 @@ phase:
 nations:
   england:
     name: England
-    homes: []
     controls: []
     units:
     - position: lon_l
@@ -35,7 +34,6 @@ nations:
       dislodged_by: mao
   france:
     name: France
-    homes: []
     controls: []
     units:
     - position: bre_c

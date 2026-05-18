@@ -68,7 +68,7 @@ public final class RegressionHarness {
                 ));
             }
             NationState nation = entry.getValue();
-            nations.put(entry.getKey(), new NationState(nation.name(), nation.homes(), nation.controls(), units));
+            nations.put(entry.getKey(), new NationState(nation.name(), nation.controls(), units));
         }
         return new GameStateDocument(
             expected.kind(),
@@ -112,9 +112,6 @@ public final class RegressionHarness {
             NationState actualNation = actual.nations().get(nationId);
             if (!Objects.equals(expectedNation.name(), actualNation.name())) {
                 return nationId + ".name";
-            }
-            if (!Objects.equals(expectedNation.homes(), actualNation.homes())) {
-                return nationId + ".homes";
             }
             if (!Objects.equals(expectedNation.controls(), actualNation.controls())) {
                 return nationId + ".controls";

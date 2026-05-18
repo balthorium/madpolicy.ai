@@ -91,6 +91,14 @@ public final class BoardIndex {
         return false;
     }
 
+    public boolean isHomeSupplyCenterForNation(String provinceId, String nationId) {
+        BoardProvince province = provinces.get(provinceId);
+        if (province == null || !Boolean.TRUE.equals(province.supplyCenter())) {
+            return false;
+        }
+        return nationId.equals(province.home());
+    }
+
     public boolean hasPossibleConvoyRoute(String fromPositionId, String toPositionId) {
         return convoyFleetCanParticipate(null, fromPositionId, toPositionId);
     }
