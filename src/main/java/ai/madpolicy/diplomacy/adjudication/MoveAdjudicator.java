@@ -34,12 +34,12 @@ public final class MoveAdjudicator {
         }
 
         Map<String, String> dislodgedBy = new HashMap<>();
-        Map<String, SupportEvaluation> supportEvaluations = Map.of();
-        Map<String, ConvoyEvaluation> convoyEvaluations = Map.of();
+        Map<String, SupportEvaluation> supportEvaluations = null;
+        Map<String, ConvoyEvaluation> convoyEvaluations = null;
         ResolutionSnapshot finalSnapshot = null;
         Set<String> paradoxicalConvoyMoves = Set.of();
 
-        for (int restart = 0; restart < 3; restart++) {
+        while (true) {
             Set<String> dislodged = new HashSet<>();
             Map<String, Boolean> moveSuccess = new HashMap<>();
             Set<String> standoffs = new HashSet<>();
@@ -49,7 +49,7 @@ public final class MoveAdjudicator {
             List<ResolutionSnapshot> history = new ArrayList<>();
             boolean restarted = false;
 
-            for (int i = 0; i < 20; i++) {
+            while (true) {
                 supportEvaluations = evaluateSupports(state, validations, dislodged, previousConvoyRouteExists);
                 convoyEvaluations = evaluateConvoys(state, validations, dislodged);
 
