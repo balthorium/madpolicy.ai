@@ -3,7 +3,6 @@ package ai.madpolicy.diplomacy.app;
 import ai.madpolicy.diplomacy.adjudication.MoveAdjudicator;
 import ai.madpolicy.diplomacy.domain.BoardIndex;
 import ai.madpolicy.diplomacy.io.AdjudicatedStateBuilder;
-import ai.madpolicy.diplomacy.io.NextStateBuilder;
 import ai.madpolicy.diplomacy.model.BoardDocument;
 import ai.madpolicy.diplomacy.model.GameStateDocument;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,24 +16,23 @@ public class AdjudicationService {
     private final BoardCatalog boardCatalog;
     private final ObjectMapper yamlMapper;
     private final AdjudicatedStateBuilder adjudicatedStateBuilder;
-    private final NextStateBuilder nextStateBuilder;
 
     public AdjudicationService() {
         this.boardCatalog = new BoardCatalog();
         this.yamlMapper = new ObjectMapper(new YAMLFactory()).findAndRegisterModules();
         this.adjudicatedStateBuilder = new AdjudicatedStateBuilder();
-        this.nextStateBuilder = new NextStateBuilder();
     }
 
-    public DualStateResult adjudicate(Path statePath) {
+    public GameStateDocument adjudicate(Path statePath) {
         GameStateDocument state = load(statePath, GameStateDocument.class);
+        return adjudicate(state);
+    }
+
+    public GameStateDocument adjudicate(GameStateDocument state) {
         BoardDocument board = boardCatalog.resolve(state.board(), state.boardRevision());
         var adjudicator = new MoveAdjudicator(new BoardIndex(board));
         var adjudication = adjudicator.adjudicate(state);
-        return new DualStateResult(
-            adjudicatedStateBuilder.build(state, adjudication),
-            nextStateBuilder.build(state, adjudication)
-        );
+        return adjudicatedStateBuilder.build(state, adjudication);
     }
 
     private <T> T load(Path path, Class<T> type) {

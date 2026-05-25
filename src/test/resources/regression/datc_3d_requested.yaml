@@ -1,0 +1,58 @@
+kind: game_state
+schema: 1
+revision: 1
+board: standard
+board_revision: 1
+phase:
+  season: spring
+  step: move
+  year: 1901
+  due: 0
+nations:
+  austria:
+    name: Austria
+    controls: []
+    units:
+    - position: tri_l
+      order:
+        type: move
+        to: ser_l
+        via_convoy: false
+    - position: ser_l
+      order:
+        type: move
+        to: bul_l
+        via_convoy: false
+  turkey:
+    name: Turkey
+    controls: []
+    units:
+    - position: bul_l
+      order:
+        type: move
+        to: tri_l
+        via_convoy: true
+    - position: aeg_s
+      order:
+        type: convoy
+        from: bul_l
+        to: tri_l
+    - position: ion_s
+      order:
+        type: convoy
+        from: bul_l
+        to: tri_l
+    - position: adr_s
+      order:
+        type: convoy
+        from: bul_l
+        to: tri_l
+  italy:
+    name: Italy
+    controls: []
+    units:
+    - position: nap_c
+      order:
+        type: move
+        to: ion_s
+        via_convoy: false

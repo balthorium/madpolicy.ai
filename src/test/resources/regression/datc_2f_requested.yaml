@@ -1,0 +1,46 @@
+kind: game_state
+schema: 1
+revision: 1
+board: standard
+board_revision: 1
+phase:
+  season: spring
+  step: move
+  year: 1901
+  due: 0
+nations:
+  england:
+    name: England
+    controls: []
+    units:
+    - position: nao_s
+      order:
+        type: move
+        to: mao_s
+        via_convoy: false
+    - position: iri_s
+      order:
+        type: support
+        from: nao_s
+        to: mao_s
+  france:
+    name: France
+    controls: []
+    units:
+    - position: spa_nc
+      order:
+        type: support
+        from: mao_s
+        to: mao_s
+    - position: mao_s
+      order:
+        type: hold
+  italy:
+    name: Italy
+    controls: []
+    units:
+    - position: lyo_s
+      order:
+        type: move
+        to: spa_sc
+        via_convoy: false

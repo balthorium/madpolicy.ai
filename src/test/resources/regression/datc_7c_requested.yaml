@@ -1,0 +1,44 @@
+kind: game_state
+schema: 1
+revision: 1
+board: standard
+board_revision: 1
+phase:
+  season: spring
+  step: move
+  year: 1901
+  due: 0
+nations:
+  france:
+    name: France
+    controls: []
+    units:
+    - position: bre_c
+      order:
+        type: move
+        to: eng_s
+        via_convoy: false
+    - position: pic_l
+      order:
+        type: move
+        to: bel_l
+        via_convoy: false
+    - position: bur_l
+      order:
+        type: support
+        from: pic_l
+        to: bel_l
+    - position: mao_s
+      order:
+        type: support
+        from: bre_c
+        to: eng_s
+  england:
+    name: England
+    controls: []
+    units:
+    - position: eng_s
+      order:
+        type: convoy
+        from: pic_l
+        to: bel_l

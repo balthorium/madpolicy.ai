@@ -1,0 +1,49 @@
+kind: game_state
+schema: 1
+revision: 1
+board: standard
+board_revision: 1
+phase:
+  season: spring
+  step: retreat
+  year: 1901
+  due: 0
+nations:
+  austria:
+    name: Austria
+    controls: []
+    units:
+    - position: tri_c
+      order:
+        type: retreat
+        to: alb_c
+    - position: ser_l
+      order:
+        type: support
+        from: tri_c
+        to: alb_c
+    - position: bud_l
+      order:
+        type: hold
+    - position: bul_l
+      order:
+        type: move
+        to: smy_l
+        via_convoy: false
+    - position: aeg_s
+      order:
+        type: convoy
+        from: bul_l
+        to: smy_l
+  turkey:
+    name: Turkey
+    controls: []
+    units:
+    - position: gre_c
+      order:
+        type: retreat
+        to: alb_c
+    - position: rum_l
+      order:
+        type: retreat
+        to: bud_l

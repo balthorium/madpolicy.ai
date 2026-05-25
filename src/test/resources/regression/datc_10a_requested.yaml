@@ -1,0 +1,30 @@
+kind: game_state
+schema: 1
+revision: 1
+board: standard
+board_revision: 1
+phase:
+  season: fall
+  step: adjustment
+  year: 1901
+  due: 0
+nations:
+  france:
+    name: France
+    controls:
+    - bre
+    - par
+    - mar
+    units:
+    - position: lyo_s
+      order:
+        type: disband
+    - position: pic_l
+      order:
+        type: disband
+    - position: par_l
+      order:
+        type: disband
+    - position: bur_l
+      order:
+        type: hold

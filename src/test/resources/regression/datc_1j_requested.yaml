@@ -1,0 +1,32 @@
+kind: game_state
+schema: 1
+revision: 1
+board: standard
+board_revision: 1
+phase:
+  season: spring
+  step: move
+  year: 1901
+  due: 0
+nations:
+  austria:
+    name: Austria
+    controls: []
+    units:
+    - position: ven_l
+      order:
+        type: hold
+  italy:
+    name: Italy
+    controls: []
+    units:
+    - position: rom_c
+      order:
+        type: support
+        from: apu_l
+        to: ven_l
+    - position: apu_l
+      order:
+        type: move
+        to: ven_l
+        via_convoy: false

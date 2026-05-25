@@ -1,0 +1,56 @@
+kind: game_state
+schema: 1
+revision: 1
+board: standard
+board_revision: 1
+phase:
+  season: spring
+  step: move
+  year: 1901
+  due: 0
+nations:
+  england:
+    name: England
+    controls: []
+    units:
+    - position: edi_c
+      order:
+        type: move
+        to: nth_s
+        via_convoy: false
+    - position: yor_c
+      order:
+        type: support
+        from: edi_c
+        to: nth_s
+  germany:
+    name: Germany
+    controls: []
+    units:
+    - position: nth_s
+      order:
+        type: hold
+    - position: nwg_s
+      order:
+        type: support
+        from: nth_s
+        to: nth_s
+  france:
+    name: France
+    controls: []
+    units:
+    - position: nwy_c
+      order:
+        type: move
+        to: nth_s
+        via_convoy: false
+    - position: ska_s
+      order:
+        type: support
+        from: nwy_c
+        to: nth_s
+    - position: den_c
+      order:
+        type: support
+        from: nwy_c
+        to: nth_s

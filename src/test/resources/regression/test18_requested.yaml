@@ -1,0 +1,54 @@
+kind: game_state
+schema: 1
+revision: 1
+board: standard
+board_revision: 1
+phase:
+  season: spring
+  step: move
+  year: 1901
+  due: 0
+nations:
+  france:
+    name: France
+    controls: []
+    units:
+    - position: spa_l
+      order:
+        type: move
+        to: tus_l
+        via_convoy: true
+    - position: lyo_s
+      order:
+        type: convoy
+        from: spa_l
+        to: tus_l
+    - position: wes_s
+      order:
+        type: convoy
+        from: spa_l
+        to: tus_l
+    - position: tys_s
+      order:
+        type: convoy
+        from: spa_l
+        to: tus_l
+    - position: rom_c
+      order:
+        type: support
+        from: spa_l
+        to: tus_l
+  italy:
+    name: Italy
+    controls: []
+    units:
+    - position: pie_c
+      order:
+        type: move
+        to: lyo_s
+        via_convoy: false
+    - position: tus_c
+      order:
+        type: support
+        from: pie_c
+        to: lyo_s

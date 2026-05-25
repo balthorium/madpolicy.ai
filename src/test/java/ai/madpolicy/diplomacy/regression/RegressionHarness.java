@@ -1,14 +1,11 @@
 package ai.madpolicy.diplomacy.regression;
 
-import ai.madpolicy.diplomacy.adjudication.MoveAdjudicator;
-import ai.madpolicy.diplomacy.app.BoardCatalog;
-import ai.madpolicy.diplomacy.domain.BoardIndex;
-import ai.madpolicy.diplomacy.io.AdjudicatedStateBuilder;
 import ai.madpolicy.diplomacy.model.GameStateDocument;
 import ai.madpolicy.diplomacy.model.NationState;
 import ai.madpolicy.diplomacy.model.OrderState;
 import ai.madpolicy.diplomacy.model.TestYaml;
 import ai.madpolicy.diplomacy.model.UnitState;
+import ai.madpolicy.diplomacy.web.YamlAdjudicationHttpClient;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,26 +23,22 @@ public final class RegressionHarness {
     }
 
     public static RegressionSummary runAll() {
-        BoardCatalog boardCatalog = new BoardCatalog();
-        AdjudicatedStateBuilder stateBuilder = new AdjudicatedStateBuilder();
-
         List<FailureDetail> failedCases = new ArrayList<>();
+        YamlAdjudicationHttpClient client = new YamlAdjudicationHttpClient();
         try (Stream<Path> paths = Files.list(REGRESSION_DIR)) {
-            paths.filter(path -> path.getFileName().toString().endsWith(".yaml"))
+            paths.filter(path -> path.getFileName().toString().endsWith("_expected.yaml"))
                 .sorted()
-                .forEach(path -> {
-                    GameStateDocument expected = TestYaml.load(path, GameStateDocument.class);
+                .forEach(expectedPath -> {
+                    GameStateDocument expected = TestYaml.load(expectedPath, GameStateDocument.class);
                     if (!"move".equals(expected.phase().step())) {
                         return;
                     }
-                    MoveAdjudicator adjudicator = new MoveAdjudicator(
-                        new BoardIndex(boardCatalog.resolve(expected.board(), expected.boardRevision()))
-                    );
-                    GameStateDocument input = normalize(expected);
-                    GameStateDocument actual = stateBuilder.build(input, adjudicator.adjudicate(input));
+                    Path requestedPath = requestedPathFor(expectedPath);
+                    GameStateDocument input = TestYaml.load(requestedPath, GameStateDocument.class);
+                    GameStateDocument actual = client.adjudicate(input);
                     String mismatch = firstMismatch(expected, actual);
                     if (mismatch != null) {
-                        failedCases.add(new FailureDetail(path.getFileName().toString(), mismatch));
+                        failedCases.add(new FailureDetail(expectedPath.getFileName().toString(), mismatch));
                     }
                 });
         } catch (IOException e) {
@@ -55,31 +48,13 @@ public final class RegressionHarness {
         return new RegressionSummary(failedCases);
     }
 
-    static GameStateDocument normalize(GameStateDocument expected) {
-        Map<String, NationState> nations = new LinkedHashMap<>();
-        for (Map.Entry<String, NationState> entry : expected.nations().entrySet()) {
-            List<UnitState> units = new ArrayList<>();
-            for (UnitState unit : entry.getValue().units()) {
-                OrderState order = unit.order();
-                units.add(new UnitState(
-                    unit.position(),
-                    new OrderState(order.type(), "pending", order.to(), order.from(), order.viaConvoy(), null),
-                    null
-                ));
-            }
-            NationState nation = entry.getValue();
-            nations.put(entry.getKey(), new NationState(nation.name(), nation.controls(), units));
+    private static Path requestedPathFor(Path expectedPath) {
+        String fileName = expectedPath.getFileName().toString();
+        if (!fileName.endsWith("_expected.yaml")) {
+            throw new IllegalArgumentException("Expected regression fixture name to end with _expected.yaml: " + fileName);
         }
-        return new GameStateDocument(
-            expected.kind(),
-            expected.schema(),
-            expected.revision(),
-            expected.board(),
-            expected.boardRevision(),
-            expected.phase(),
-            nations,
-            List.of()
-        );
+        String requestedFileName = fileName.replace("_expected.yaml", "_requested.yaml");
+        return expectedPath.resolveSibling(requestedFileName);
     }
 
     static String firstMismatch(GameStateDocument expected, GameStateDocument actual) {

@@ -49,6 +49,28 @@ Run the full test suite:
 mvn -Dmaven.repo.local=$PWD/.m2 test
 ```
 
+Start the service locally for manual testing:
+
+```bash
+mvn -Dmaven.repo.local=$PWD/.m2 spring-boot:run
+```
+
+Then call the YAML adjudication endpoint:
+
+```bash
+curl -H 'Content-Type: application/yaml' \
+     -H 'Accept: application/yaml' \
+     --data-binary @src/test/resources/regression/test1_requested.yaml \
+     http://localhost:8080/adjudicate \
+     -o /tmp/test1_actual.yaml
+```
+
+Compare the response to the expected fixture with `dyff`:
+
+```bash
+dyff between /tmp/test1_actual.yaml src/test/resources/regression/test1_expected.yaml
+```
+
 ## Project Layout
 
 - `src/main/java/ai/madpolicy/diplomacy/adjudication/`

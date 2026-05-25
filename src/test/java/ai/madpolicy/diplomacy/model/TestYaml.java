@@ -19,4 +19,20 @@ public final class TestYaml {
             throw new IllegalStateException("Failed to parse YAML: " + path, e);
         }
     }
+
+    public static <T> T load(String content, Class<T> type) {
+        try {
+            return YAML.readValue(content, type);
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to parse YAML content", e);
+        }
+    }
+
+    public static String write(Object value) {
+        try {
+            return YAML.writeValueAsString(value);
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to write YAML content", e);
+        }
+    }
 }

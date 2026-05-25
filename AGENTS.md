@@ -24,6 +24,15 @@ export JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home
 export PATH="$JAVA_HOME/bin:$PATH"
 ```
 
+Before exporting `JAVA_HOME` or modifying `PATH`, first check the live shell:
+
+```bash
+which java
+java -version
+```
+
+If `java` already resolves to Java 21, do not override `JAVA_HOME` or prepend a new Java path. Only apply the exports above when the current shell is not already using Java 21.
+
 ## Key Docs
 - Spec:
   - `docs/superpowers/specs/2026-04-26-move-adjudication-engine-design.md`

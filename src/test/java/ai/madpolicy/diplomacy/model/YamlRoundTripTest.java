@@ -30,8 +30,35 @@ class YamlRoundTripTest {
 
     @Test
     void parsesRegressionFixturesWithDislodgedBy() {
-        var state = TestYaml.load(Path.of("src/test/resources/regression/test6.yaml"), GameStateDocument.class);
+        var state = TestYaml.load(Path.of("src/test/resources/regression/test6_expected.yaml"), GameStateDocument.class);
 
         assertThat(state.nations().get("england").units().getFirst().dislodgedBy()).isEqualTo("eng");
+    }
+
+    @Test
+    void defaultsMissingOrderStatusToPending() {
+        var state = TestYaml.load("""
+            kind: game_state
+            schema: 1
+            revision: 1
+            board: standard
+            board_revision: 1
+            phase:
+              season: spring
+              step: move
+              year: 1901
+              due: 0
+            nations:
+              england:
+                name: England
+                controls: []
+                units:
+                - position: lon_l
+                  order:
+                    type: hold
+            standoffs: []
+            """, GameStateDocument.class);
+
+        assertThat(state.nations().get("england").units().getFirst().order().status()).isEqualTo("pending");
     }
 }

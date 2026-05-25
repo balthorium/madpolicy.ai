@@ -1,0 +1,39 @@
+kind: game_state
+schema: 1
+revision: 1
+board: standard
+board_revision: 1
+phase:
+  season: spring
+  step: move
+  year: 1901
+  due: 0
+nations:
+  france:
+    name: France
+    controls: []
+    units:
+    - position: mao_s
+      order:
+        type: move
+        to: spa_sc
+        via_convoy: false
+    - position: por_c
+      order:
+        type: support
+        from: mao_s
+        to: spa_nc
+  italy:
+    name: Italy
+    controls: []
+    units:
+    - position: lyo_s
+      order:
+        type: support
+        from: wes_s
+        to: spa_sc
+    - position: wes_s
+      order:
+        type: move
+        to: spa_sc
+        via_convoy: false

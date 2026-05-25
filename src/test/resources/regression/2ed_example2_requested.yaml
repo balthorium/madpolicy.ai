@@ -1,0 +1,41 @@
+kind: game_state
+schema: 1
+revision: 1
+board: standard
+board_revision: 1
+phase:
+  season: spring
+  step: move
+  year: 1901
+  due: 0
+nations:
+  france:
+    name: France
+    controls: []
+    units:
+    - position: bur_l
+      order:
+        type: hold
+  germany:
+    name: Germany
+    controls: []
+    units:
+    - position: mun_l
+      order:
+        type: move
+        to: bur_l
+        via_convoy: false
+    - position: kie_l
+      order:
+        type: support
+        from: boh_l
+        to: mun_l
+  austria:
+    name: Austria
+    controls: []
+    units:
+    - position: boh_l
+      order:
+        type: move
+        to: mun_l
+        via_convoy: false

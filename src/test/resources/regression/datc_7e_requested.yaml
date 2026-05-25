@@ -1,0 +1,58 @@
+kind: game_state
+schema: 1
+revision: 1
+board: standard
+board_revision: 1
+phase:
+  season: spring
+  step: move
+  year: 1901
+  due: 0
+nations:
+  england:
+    name: England
+    controls: []
+    units:
+    - position: lvp_l
+      order:
+        type: move
+        to: edi_l
+        via_convoy: true
+    - position: eng_s
+      order:
+        type: convoy
+        from: lvp_l
+        to: edi_l
+  germany:
+    name: Germany
+    controls: []
+    units:
+    - position: edi_l
+      order:
+        type: move
+        to: lvp_l
+        via_convoy: false
+  france:
+    name: France
+    controls: []
+    units:
+    - position: iri_s
+      order:
+        type: hold
+    - position: nth_s
+      order:
+        type: hold
+  russia:
+    name: Russia
+    controls: []
+    units:
+    - position: nwg_s
+      order:
+        type: convoy
+        from: lvp_l
+        to: edi_l
+    - position: nao_s
+      order:
+        type: convoy
+        from: lvp_l
+        to: edi_l

@@ -1,0 +1,25 @@
+kind: game_state
+schema: 1
+revision: 1
+board: standard
+board_revision: 1
+phase:
+  season: spring
+  step: move
+  year: 1901
+  due: 0
+nations:
+  turkey:
+    name: Turkey
+    controls: []
+    units:
+    - position: bul_sc
+      order:
+        type: move
+        to: con_c
+        via_convoy: false
+    - position: con_c
+      order:
+        type: move
+        to: bul_ec
+        via_convoy: false

@@ -9,4 +9,10 @@ public record OrderState(
     String from,
     @JsonProperty("via_convoy") Boolean viaConvoy,
     String comment
-) {}
+) {
+    public OrderState {
+        if (status == null) {
+            status = "pending";
+        }
+    }
+}

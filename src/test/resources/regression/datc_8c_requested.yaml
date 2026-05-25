@@ -1,0 +1,24 @@
+kind: game_state
+schema: 1
+revision: 1
+board: standard
+board_revision: 1
+phase:
+  season: spring
+  step: retreat
+  year: 1901
+  due: 0
+nations:
+  england:
+    name: England
+    controls: []
+    units:
+    - position: hol_l
+      order:
+        type: retreat
+        to: yor_l
+    - position: nth_s
+      order:
+        type: convoy
+        from: hol_l
+        to: yor_l

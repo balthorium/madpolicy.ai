@@ -1,0 +1,32 @@
+kind: game_state
+schema: 1
+revision: 1
+board: standard
+board_revision: 1
+phase:
+  season: spring
+  step: retreat
+  year: 1901
+  due: 0
+nations:
+  england:
+    name: England
+    controls: []
+    units:
+    - position: nwy_c
+      order:
+        type: retreat
+        to: nth_s
+  russia:
+    name: Russia
+    controls: []
+    units:
+    - position: edi_c
+      order:
+        type: retreat
+        to: nth_s
+    - position: hol_c
+      order:
+        type: support
+        from: edi_c
+        to: nth_s

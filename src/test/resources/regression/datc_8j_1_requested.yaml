@@ -1,0 +1,49 @@
+kind: game_state
+schema: 1
+revision: 1
+board: standard
+board_revision: 1
+phase:
+  season: spring
+  step: move
+  year: 1901
+  due: 0
+nations:
+  england:
+    name: England
+    controls: []
+    units:
+    - position: kie_c
+      order:
+        type: hold
+  germany:
+    name: Germany
+    controls: []
+    units:
+    - position: ber_l
+      order:
+        type: move
+        to: kie_l
+        via_convoy: false
+    - position: mun_l
+      order:
+        type: support
+        from: ber_l
+        to: kie_l
+    - position: pru_l
+      order:
+        type: hold
+  russia:
+    name: Russia
+    controls: []
+    units:
+    - position: war_l
+      order:
+        type: move
+        to: pru_l
+        via_convoy: false
+    - position: sil_l
+      order:
+        type: support
+        from: war_l
+        to: pru_l

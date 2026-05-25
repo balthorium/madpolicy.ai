@@ -1,0 +1,31 @@
+kind: game_state
+schema: 1
+revision: 1
+board: standard
+board_revision: 1
+phase:
+  season: fall
+  step: adjustment
+  year: 1901
+  due: 0
+nations:
+  germany:
+    name: Germany
+    controls:
+    - war
+    - kie
+    - mun
+    - ber
+    units:
+    - position: war_l
+      order:
+        type: hold
+    - position: kie_l
+      order:
+        type: disband
+    - position: mun_l
+      order:
+        type: hold
+    - position: sev_l
+      order:
+        type: hold
