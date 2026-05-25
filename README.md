@@ -16,7 +16,14 @@ The primary behavioral oracle is the regression corpus in `src/test/resources/re
 - Java 21
 - Maven
 
-Recommended shell setup:
+Check that your shell is already using Java 21:
+
+```bash
+which java
+java -version
+```
+
+If it is not, set Java 21 explicitly:
 
 ```bash
 export JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home
@@ -29,7 +36,21 @@ Use a workspace-local Maven repo:
 mvn -Dmaven.repo.local=$PWD/.m2 ...
 ```
 
-## Key Commands
+## Build
+
+Compile the project:
+
+```bash
+mvn -Dmaven.repo.local=$PWD/.m2 compile
+```
+
+Build the jar:
+
+```bash
+mvn -Dmaven.repo.local=$PWD/.m2 package
+```
+
+## Test
 
 Run focused adjudication tests:
 
@@ -49,13 +70,15 @@ Run the full test suite:
 mvn -Dmaven.repo.local=$PWD/.m2 test
 ```
 
+## Manual Testing
+
 Start the service locally for manual testing:
 
 ```bash
 mvn -Dmaven.repo.local=$PWD/.m2 spring-boot:run
 ```
 
-Then call the YAML adjudication endpoint:
+In another shell, call the YAML adjudication endpoint with a regression request fixture:
 
 ```bash
 curl -H 'Content-Type: application/yaml' \
@@ -70,6 +93,8 @@ Compare the response to the expected fixture with `dyff`:
 ```bash
 dyff between /tmp/test1_actual.yaml src/test/resources/regression/test1_expected.yaml
 ```
+
+If `dyff` reports no differences, the manual adjudication result matches the expected fixture semantically.
 
 ## Project Layout
 
