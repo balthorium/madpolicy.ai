@@ -18,6 +18,7 @@ public final class YamlAdjudicationHttpClient {
     private static final Object LOCK = new Object();
     private static ConfigurableApplicationContext sharedContext;
     private static URI sharedAdjudicateUri;
+    private static URI sharedOfficiateUri;
     private static boolean shutdownHookRegistered;
 
     private final HttpClient httpClient;
@@ -43,6 +44,7 @@ public final class YamlAdjudicationHttpClient {
             sharedContext = SpringApplication.run(DiplomacyApplication.class, "--server.port=0");
             int port = ((ServletWebServerApplicationContext) sharedContext).getWebServer().getPort();
             sharedAdjudicateUri = URI.create("http://127.0.0.1:" + port + "/adjudicate");
+            sharedOfficiateUri = URI.create("http://127.0.0.1:" + port + "/officiate");
             if (!shutdownHookRegistered) {
                 Runtime.getRuntime().addShutdownHook(new Thread(YamlAdjudicationHttpClient::shutdownServer));
                 shutdownHookRegistered = true;
@@ -56,6 +58,7 @@ public final class YamlAdjudicationHttpClient {
                 sharedContext.close();
                 sharedContext = null;
                 sharedAdjudicateUri = null;
+                sharedOfficiateUri = null;
             }
         }
     }
@@ -80,6 +83,45 @@ public final class YamlAdjudicationHttpClient {
         HttpResponse<String> response = adjudicateYaml(TestYaml.write(requestBody));
         if (response.statusCode() != 200) {
             throw new IllegalStateException("Adjudication endpoint returned " + response.statusCode() + ": " + response.body());
+        }
+        return TestYaml.load(response.body(), GameStateDocument.class);
+    }
+
+    public HttpResponse<String> initialStateYaml() {
+        HttpRequest request = HttpRequest.newBuilder(sharedOfficiateUri)
+            .header("Accept", "application/yaml")
+            .GET()
+            .build();
+        try {
+            return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException e) {
+            throw new UncheckedIOException("Failed to call officiate endpoint", e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Interrupted while calling officiate endpoint", e);
+        }
+    }
+
+    public HttpResponse<String> officiateYaml(String requestBody) {
+        HttpRequest request = HttpRequest.newBuilder(sharedOfficiateUri)
+            .header("Content-Type", "application/yaml")
+            .header("Accept", "application/yaml")
+            .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+            .build();
+        try {
+            return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException e) {
+            throw new UncheckedIOException("Failed to call officiate endpoint", e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Interrupted while calling officiate endpoint", e);
+        }
+    }
+
+    public GameStateDocument officiate(GameStateDocument requestBody) {
+        HttpResponse<String> response = officiateYaml(TestYaml.write(requestBody));
+        if (response.statusCode() != 200) {
+            throw new IllegalStateException("Officiate endpoint returned " + response.statusCode() + ": " + response.body());
         }
         return TestYaml.load(response.body(), GameStateDocument.class);
     }

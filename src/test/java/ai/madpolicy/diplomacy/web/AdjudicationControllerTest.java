@@ -3,6 +3,11 @@ package ai.madpolicy.diplomacy.web;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
+import ai.madpolicy.diplomacy.adjudication.MoveAdjudicator;
+import ai.madpolicy.diplomacy.app.BoardCatalog;
+import ai.madpolicy.diplomacy.domain.BoardIndex;
+import ai.madpolicy.diplomacy.io.AdjudicatedStateBuilder;
+import ai.madpolicy.diplomacy.io.NextStateBuilder;
 import ai.madpolicy.diplomacy.model.GameStateDocument;
 import ai.madpolicy.diplomacy.model.TestYaml;
 import java.net.http.HttpResponse;
@@ -10,6 +15,47 @@ import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 
 class AdjudicationControllerTest {
+    @Test
+    void returnsInitialGameState() throws Exception {
+        assumeTrue(YamlAdjudicationHttpClient.canBindLocalPort(), "local port binding is required for live REST tests");
+        YamlAdjudicationHttpClient client = new YamlAdjudicationHttpClient();
+        HttpResponse<String> response = client.initialStateYaml();
+
+        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.headers().firstValue("Content-Type")).hasValueSatisfying(
+            contentType -> assertThat(contentType).startsWith("application/yaml")
+        );
+
+        GameStateDocument expected = TestYaml.load(Path.of("data/seeds/standard/1.yaml"), GameStateDocument.class);
+        assertThat(TestYaml.load(response.body(), GameStateDocument.class)).isEqualTo(expected);
+    }
+
+    @Test
+    void officiatesAdjudicatedGameStateToNextState() throws Exception {
+        assumeTrue(YamlAdjudicationHttpClient.canBindLocalPort(), "local port binding is required for live REST tests");
+        GameStateDocument input = TestYaml.load(Path.of("src/test/resources/regression/test6_requested.yaml"), GameStateDocument.class);
+        var adjudicator = new MoveAdjudicator(new BoardIndex(new BoardCatalog().resolve(
+            input.board(),
+            input.boardRevision()
+        )));
+        var adjudication = adjudicator.adjudicate(input);
+        GameStateDocument adjudicated = new AdjudicatedStateBuilder().build(input, adjudication);
+        GameStateDocument expected = new NextStateBuilder().build(input, adjudication);
+        YamlAdjudicationHttpClient client = new YamlAdjudicationHttpClient();
+        HttpResponse<String> response = client.officiateYaml(TestYaml.write(adjudicated));
+
+        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.headers().firstValue("Content-Type")).hasValueSatisfying(
+            contentType -> assertThat(contentType).startsWith("application/yaml")
+        );
+        assertThat(response.body()).doesNotContain("comment: null");
+        assertThat(response.body()).doesNotContain("dislodged_by: null");
+        assertThat(response.body()).doesNotContain("from: null");
+        assertThat(response.body()).doesNotContain("to: null");
+        assertThat(response.body()).doesNotContain("via_convoy: null");
+        assertThat(TestYaml.load(response.body(), GameStateDocument.class)).isEqualTo(expected);
+    }
+
     @Test
     void adjudicatesPostedGameState() throws Exception {
         assumeTrue(YamlAdjudicationHttpClient.canBindLocalPort(), "local port binding is required for live REST tests");

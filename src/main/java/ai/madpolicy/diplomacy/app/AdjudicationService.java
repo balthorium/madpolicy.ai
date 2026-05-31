@@ -3,6 +3,7 @@ package ai.madpolicy.diplomacy.app;
 import ai.madpolicy.diplomacy.adjudication.MoveAdjudicator;
 import ai.madpolicy.diplomacy.domain.BoardIndex;
 import ai.madpolicy.diplomacy.io.AdjudicatedStateBuilder;
+import ai.madpolicy.diplomacy.io.NextStateBuilder;
 import ai.madpolicy.diplomacy.model.BoardDocument;
 import ai.madpolicy.diplomacy.model.GameStateDocument;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,19 +14,18 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AdjudicationService {
+    private static final Path INITIAL_STATE_PATH = Path.of("data/seeds/standard/1.yaml");
+
     private final BoardCatalog boardCatalog;
     private final ObjectMapper yamlMapper;
     private final AdjudicatedStateBuilder adjudicatedStateBuilder;
+    private final NextStateBuilder nextStateBuilder;
 
     public AdjudicationService() {
         this.boardCatalog = new BoardCatalog();
         this.yamlMapper = new ObjectMapper(new YAMLFactory()).findAndRegisterModules();
         this.adjudicatedStateBuilder = new AdjudicatedStateBuilder();
-    }
-
-    public GameStateDocument adjudicate(Path statePath) {
-        GameStateDocument state = load(statePath, GameStateDocument.class);
-        return adjudicate(state);
+        this.nextStateBuilder = new NextStateBuilder();
     }
 
     public GameStateDocument adjudicate(GameStateDocument state) {
@@ -33,6 +33,14 @@ public class AdjudicationService {
         var adjudicator = new MoveAdjudicator(new BoardIndex(board));
         var adjudication = adjudicator.adjudicate(state);
         return adjudicatedStateBuilder.build(state, adjudication);
+    }
+
+    public GameStateDocument initialState() {
+        return load(INITIAL_STATE_PATH, GameStateDocument.class);
+    }
+
+    public GameStateDocument officiate(GameStateDocument adjudicatedState) {
+        return nextStateBuilder.build(adjudicatedState);
     }
 
     private <T> T load(Path path, Class<T> type) {

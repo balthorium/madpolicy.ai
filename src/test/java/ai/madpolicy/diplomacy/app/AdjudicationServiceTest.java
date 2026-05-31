@@ -2,13 +2,17 @@ package ai.madpolicy.diplomacy.app;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import ai.madpolicy.diplomacy.model.GameStateDocument;
+import ai.madpolicy.diplomacy.model.TestYaml;
+import java.lang.reflect.Method;
 import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 
 class AdjudicationServiceTest {
     @Test
     void returnsAdjudicatedState() {
-        var result = new AdjudicationService().adjudicate(Path.of("data/games/646EBC81-1090-4681-93E1-5688A6D49DF0/1901_spring_move.yaml"));
+        GameStateDocument initialState = TestYaml.load(Path.of("data/seeds/standard/1.yaml"), GameStateDocument.class);
+        var result = new AdjudicationService().adjudicate(initialState);
 
         assertThat(result).isNotNull();
         assertThat(result.schema()).isEqualTo(1);
@@ -16,5 +20,17 @@ class AdjudicationServiceTest {
         assertThat(result.phase().step()).isEqualTo("move");
         assertThat(result.board()).isEqualTo("standard");
         assertThat(result.boardRevision()).isEqualTo(1);
+    }
+
+    @Test
+    void doesNotExposeFileBackedGameStateAdjudication() {
+        assertThat(AdjudicationService.class.getDeclaredMethods())
+            .noneMatch(AdjudicationServiceTest::isPathBasedAdjudicateMethod);
+    }
+
+    private static boolean isPathBasedAdjudicateMethod(Method method) {
+        return "adjudicate".equals(method.getName())
+            && method.getParameterCount() == 1
+            && Path.class.equals(method.getParameterTypes()[0]);
     }
 }

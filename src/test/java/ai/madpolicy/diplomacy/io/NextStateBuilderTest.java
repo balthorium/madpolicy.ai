@@ -20,6 +20,28 @@ import org.junit.jupiter.api.Test;
 
 class NextStateBuilderTest {
     @Test
+    void buildsNextStateFromAdjudicatedState() {
+        var adjudicated = TestYaml.load(Path.of("src/test/resources/regression/test6_expected.yaml"), GameStateDocument.class);
+
+        GameStateDocument nextState = new NextStateBuilder().build(adjudicated);
+
+        assertThat(nextState.phase().step()).isEqualTo("retreat");
+        assertThat(nextState.standoffs()).isEmpty();
+
+        UnitState frenchMover = findUnit(nextState, "france", "lon_c").orElseThrow();
+        assertThat(frenchMover.order().type()).isEqualTo("hold");
+        assertThat(frenchMover.order().status()).isEqualTo("pending");
+        assertThat(frenchMover.order().comment()).isNull();
+        assertThat(frenchMover.dislodgedBy()).isNull();
+
+        UnitState dislodgedEnglishUnit = findUnit(nextState, "england", "lon_l").orElseThrow();
+        assertThat(dislodgedEnglishUnit.order().type()).isEqualTo("hold");
+        assertThat(dislodgedEnglishUnit.order().status()).isEqualTo("pending");
+        assertThat(dislodgedEnglishUnit.order().to()).isNull();
+        assertThat(dislodgedEnglishUnit.dislodgedBy()).isEqualTo("eng");
+    }
+
+    @Test
     void resetsOrdersAndAdvancesToRetreatStep() {
         var expected = TestYaml.load(Path.of("src/test/resources/regression/test6_expected.yaml"), GameStateDocument.class);
         var input = normalize(expected);

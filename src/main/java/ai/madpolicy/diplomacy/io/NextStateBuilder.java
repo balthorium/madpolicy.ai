@@ -26,22 +26,49 @@ public final class NextStateBuilder {
             ));
         }
 
-        GamePhase retreatPhase = new GamePhase(
-            original.phase().season(),
-            "retreat",
-            original.phase().year(),
-            original.phase().due()
-        );
-
         return new GameStateDocument(
             original.kind(),
             original.schema(),
             original.revision(),
             original.board(),
             original.boardRevision(),
-            retreatPhase,
+            retreatPhase(original.phase()),
             nations,
             adjudication.standoffs().stream().sorted().toList()
+        );
+    }
+
+    public GameStateDocument build(GameStateDocument adjudicated) {
+        Map<String, NationState> nations = new LinkedHashMap<>();
+        for (Map.Entry<String, NationState> entry : adjudicated.nations().entrySet()) {
+            List<UnitState> nextUnits = getUnitStates(entry);
+
+            NationState nation = entry.getValue();
+            nations.put(entry.getKey(), new NationState(
+                nation.name(),
+                nation.controls(),
+                nextUnits
+            ));
+        }
+
+        return new GameStateDocument(
+            adjudicated.kind(),
+            adjudicated.schema(),
+            adjudicated.revision(),
+            adjudicated.board(),
+            adjudicated.boardRevision(),
+            retreatPhase(adjudicated.phase()),
+            nations,
+            adjudicated.standoffs().stream().sorted().toList()
+        );
+    }
+
+    private static GamePhase retreatPhase(GamePhase originalPhase) {
+        return new GamePhase(
+            originalPhase.season(),
+            "retreat",
+            originalPhase.year(),
+            originalPhase.due()
         );
     }
 
@@ -58,10 +85,32 @@ public final class NextStateBuilder {
             }
             nextUnits.add(new UnitState(
                 nextPosition,
-                new OrderState("hold", "pending", null, null, null, null),
+                pendingHoldOrder(),
                 result == null ? null : result.dislodgedBy()
             ));
         }
         return nextUnits;
+    }
+
+    private static List<UnitState> getUnitStates(Map.Entry<String, NationState> entry) {
+        List<UnitState> nextUnits = new ArrayList<>();
+        for (UnitState unit : entry.getValue().units()) {
+            String nextPosition = unit.position();
+            if ("success".equals(unit.order().status())
+                && "move".equals(unit.order().type())
+                && unit.order().to() != null) {
+                nextPosition = unit.order().to();
+            }
+            nextUnits.add(new UnitState(
+                nextPosition,
+                pendingHoldOrder(),
+                unit.dislodgedBy()
+            ));
+        }
+        return nextUnits;
+    }
+
+    private static OrderState pendingHoldOrder() {
+        return new OrderState("hold", "pending", null, null, null, null);
     }
 }
