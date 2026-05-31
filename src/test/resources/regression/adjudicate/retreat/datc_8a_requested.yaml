@@ -17,6 +17,7 @@ nations:
       order:
         type: retreat
         to: alb_c
+      dislodged_by: tyr
     - position: ser_l
       order:
         type: support
@@ -43,7 +44,9 @@ nations:
       order:
         type: retreat
         to: alb_c
+      dislodged_by: ion
     - position: rum_l
       order:
         type: retreat
         to: bud_l
+      dislodged_by: sev

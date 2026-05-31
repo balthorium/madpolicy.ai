@@ -17,7 +17,9 @@ nations:
       order:
         type: retreat
         to: ruh_l
+      dislodged_by: ruh
     - position: spa_l
       order:
         type: retreat
         to: spa_l
+      dislodged_by: mao

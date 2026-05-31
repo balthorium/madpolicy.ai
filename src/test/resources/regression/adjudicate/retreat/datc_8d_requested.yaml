@@ -17,6 +17,7 @@ nations:
       order:
         type: retreat
         to: bel_l
+      dislodged_by: ruh
     - position: nth_s
       order:
         type: move

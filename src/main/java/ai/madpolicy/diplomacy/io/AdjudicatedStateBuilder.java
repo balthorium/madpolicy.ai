@@ -46,6 +46,9 @@ public final class AdjudicatedStateBuilder {
     }
 
     private OrderState buildOrder(OrderState originalOrder, UnitResult result) {
+        if (originalOrder == null) {
+            return null;
+        }
         return new OrderState(
             originalOrder.type(),
             result == null ? originalOrder.status() : result.status(),

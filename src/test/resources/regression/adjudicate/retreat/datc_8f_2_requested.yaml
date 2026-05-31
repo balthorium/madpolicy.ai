@@ -17,3 +17,6 @@ nations:
       order:
         type: retreat
         to: boh_l
+      dislodged_by: tri
+standoffs:
+- boh

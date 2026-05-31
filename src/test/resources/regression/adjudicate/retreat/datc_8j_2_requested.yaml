@@ -17,6 +17,7 @@ nations:
       order:
         type: retreat
         to: ber_l
+      dislodged_by: ber
   germany:
     name: Germany
     controls: []
@@ -25,3 +26,4 @@ nations:
       order:
         type: retreat
         to: ber_l
+      dislodged_by: war

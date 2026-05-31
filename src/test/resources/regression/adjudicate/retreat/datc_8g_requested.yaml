@@ -17,7 +17,9 @@ nations:
       order:
         type: retreat
         to: tyr_l
+      dislodged_by: tri
     - position: boh_l
       order:
         type: retreat
         to: tyr_l
+      dislodged_by: sil

@@ -17,20 +17,29 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 public final class RegressionHarness {
-    private static final Path REGRESSION_DIR = Path.of("src/test/resources/regression/adjudicate/move");
+    private static final Path MOVE_REGRESSION_DIR = Path.of("src/test/resources/regression/adjudicate/move");
+    private static final Path RETREAT_REGRESSION_DIR = Path.of("src/test/resources/regression/adjudicate/retreat");
 
     private RegressionHarness() {
     }
 
     public static RegressionSummary runAll() {
+        return run(MOVE_REGRESSION_DIR, "move");
+    }
+
+    public static RegressionSummary runRetreat() {
+        return run(RETREAT_REGRESSION_DIR, "retreat");
+    }
+
+    private static RegressionSummary run(Path regressionDir, String step) {
         List<FailureDetail> failedCases = new ArrayList<>();
         YamlAdjudicationHttpClient client = new YamlAdjudicationHttpClient();
-        try (Stream<Path> paths = Files.list(REGRESSION_DIR)) {
+        try (Stream<Path> paths = Files.list(regressionDir)) {
             paths.filter(path -> path.getFileName().toString().endsWith("_expected.yaml"))
                 .sorted()
                 .forEach(expectedPath -> {
                     GameStateDocument expected = TestYaml.load(expectedPath, GameStateDocument.class);
-                    if (!"move".equals(expected.phase().step())) {
+                    if (!step.equals(expected.phase().step())) {
                         return;
                     }
                     Path requestedPath = requestedPathFor(expectedPath);
@@ -114,6 +123,11 @@ public final class RegressionHarness {
     }
 
     private static String firstOrderMismatch(String prefix, OrderState expected, OrderState actual) {
+        if (expected == null || actual == null) {
+            return Objects.equals(expected, actual)
+                ? null
+                : prefix + " expected=" + expected + " actual=" + actual;
+        }
         if (!Objects.equals(expected.type(), actual.type())) {
             return prefix + ".type expected=" + expected.type() + " actual=" + actual.type();
         }

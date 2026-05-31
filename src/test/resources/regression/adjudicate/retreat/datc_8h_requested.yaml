@@ -17,6 +17,7 @@ nations:
       order:
         type: retreat
         to: nth_s
+      dislodged_by: fin
   russia:
     name: Russia
     controls: []
@@ -25,7 +26,9 @@ nations:
       order:
         type: retreat
         to: nth_s
+      dislodged_by: lvp
     - position: hol_c
       order:
         type: retreat
         to: nth_s
+      dislodged_by: ruh
