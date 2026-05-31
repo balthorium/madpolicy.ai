@@ -75,7 +75,8 @@ For the current move-phase implementation, this means:
 
 - successful move orders relocate their units
 - dislodged units remain present with `dislodged_by`
-- all unit orders reset to pending holds
+- dislodged units receive pending `disband` orders by default, which clients may change to valid retreat orders
+- non-dislodged units do not receive player-actionable retreat orders
 - move-order fields and failure comments are removed
 - top-level standoffs come from the adjudication outcome
 - the returned phase has `step: retreat`

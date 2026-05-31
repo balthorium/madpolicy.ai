@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 class MoveAdjudicatorMicroTest {
     @Test
     void adjudicatesRepresentativeRegressionCase() {
-        var expected = RegressionFixtures.loadRegression("src/test/resources/regression/test6_expected.yaml");
+        var expected = RegressionFixtures.loadRegression("src/test/resources/regression/move/test6_expected.yaml");
         var input = RegressionFixtures.normalize(expected);
 
         var result = RegressionFixtures.adjudicator().adjudicate(input);
@@ -148,7 +148,7 @@ class MoveAdjudicatorMicroTest {
 
     @Test
     void convoyRequiresAnArmyAtFromPosition() {
-        var expected = RegressionFixtures.loadRegression("src/test/resources/regression/datc_7k_expected.yaml");
+        var expected = RegressionFixtures.loadRegression("src/test/resources/regression/move/datc_7k_expected.yaml");
         var input = RegressionFixtures.normalize(expected);
 
         var result = RegressionFixtures.adjudicator().adjudicate(input);
@@ -159,7 +159,7 @@ class MoveAdjudicatorMicroTest {
 
     @Test
     void convoyedMoveCanFailByStandoffEvenWhenRouteExists() {
-        var expected = RegressionFixtures.loadRegression("src/test/resources/regression/datc_3g_expected.yaml");
+        var expected = RegressionFixtures.loadRegression("src/test/resources/regression/move/datc_3g_expected.yaml");
         var input = RegressionFixtures.normalize(expected);
 
         var result = RegressionFixtures.adjudicator().adjudicate(input);
@@ -170,7 +170,7 @@ class MoveAdjudicatorMicroTest {
 
     @Test
     void equalDefenseAgainstNonLeavingUnitIsReportedAsStandoff() {
-        var expected = RegressionFixtures.loadRegression("src/test/resources/regression/test6_expected.yaml");
+        var expected = RegressionFixtures.loadRegression("src/test/resources/regression/move/test6_expected.yaml");
         var input = RegressionFixtures.normalize(expected);
 
         var result = RegressionFixtures.adjudicator().adjudicate(input);
@@ -180,7 +180,7 @@ class MoveAdjudicatorMicroTest {
 
     @Test
     void cutSupportDoesNotCauseFalseDislodgement() {
-        var expected = RegressionFixtures.loadRegression("src/test/resources/regression/2ed_example10_expected.yaml");
+        var expected = RegressionFixtures.loadRegression("src/test/resources/regression/move/2ed_example10_expected.yaml");
         var input = RegressionFixtures.normalize(expected);
 
         var result = RegressionFixtures.adjudicator().adjudicate(input);
@@ -191,7 +191,7 @@ class MoveAdjudicatorMicroTest {
 
     @Test
     void strongerHeadToHeadAttackSucceeds() {
-        var expected = RegressionFixtures.loadRegression("src/test/resources/regression/datc_7g_expected.yaml");
+        var expected = RegressionFixtures.loadRegression("src/test/resources/regression/move/datc_7g_expected.yaml");
         var input = RegressionFixtures.normalize(expected);
 
         var result = RegressionFixtures.adjudicator().adjudicate(input);
@@ -202,7 +202,7 @@ class MoveAdjudicatorMicroTest {
 
     @Test
     void dislodgedCounterattackDoesNotCreateFalseStandoff() {
-        var expected = RegressionFixtures.loadRegression("src/test/resources/regression/2ed_example5_expected.yaml");
+        var expected = RegressionFixtures.loadRegression("src/test/resources/regression/move/2ed_example5_expected.yaml");
         var input = RegressionFixtures.normalize(expected);
 
         var result = RegressionFixtures.adjudicator().adjudicate(input);
@@ -214,7 +214,7 @@ class MoveAdjudicatorMicroTest {
 
     @Test
     void supportToMoveMatchesDestinationProvinceNotExactPosition() {
-        var expected = RegressionFixtures.loadRegression("src/test/resources/regression/datc_2i_expected.yaml");
+        var expected = RegressionFixtures.loadRegression("src/test/resources/regression/move/datc_2i_expected.yaml");
         var input = RegressionFixtures.normalize(expected);
 
         var result = RegressionFixtures.adjudicator().adjudicate(input);
@@ -224,7 +224,7 @@ class MoveAdjudicatorMicroTest {
 
     @Test
     void supportDoesNotCountTowardSelfDislodgement() {
-        var expected = RegressionFixtures.loadRegression("src/test/resources/regression/2ed_example2_expected.yaml");
+        var expected = RegressionFixtures.loadRegression("src/test/resources/regression/move/2ed_example2_expected.yaml");
         var input = RegressionFixtures.normalize(expected);
 
         var result = RegressionFixtures.adjudicator().adjudicate(input);
@@ -235,7 +235,7 @@ class MoveAdjudicatorMicroTest {
 
     @Test
     void failedConvoyedAttackDoesNotCutSupport() {
-        var expected = RegressionFixtures.loadRegression("src/test/resources/regression/datc_6e_expected.yaml");
+        var expected = RegressionFixtures.loadRegression("src/test/resources/regression/move/datc_6e_expected.yaml");
         var input = RegressionFixtures.normalize(expected);
 
         var result = RegressionFixtures.adjudicator().adjudicate(input);
@@ -246,7 +246,7 @@ class MoveAdjudicatorMicroTest {
 
     @Test
     void convoyedAttackOnlyCutsSupportIfRouteSurvives() {
-        var expected = RegressionFixtures.loadRegression("src/test/resources/regression/datc_6l_expected.yaml");
+        var expected = RegressionFixtures.loadRegression("src/test/resources/regression/move/datc_6l_expected.yaml");
         var input = RegressionFixtures.normalize(expected);
 
         var result = RegressionFixtures.adjudicator().adjudicate(input);
@@ -257,7 +257,7 @@ class MoveAdjudicatorMicroTest {
 
     @Test
     void secondOrderParadoxKeepsNonParadoxAttackFromBreakingThrough() {
-        var expected = RegressionFixtures.loadRegression("src/test/resources/regression/datc_6t_expected.yaml");
+        var expected = RegressionFixtures.loadRegression("src/test/resources/regression/move/datc_6t_expected.yaml");
         var input = RegressionFixtures.normalize(expected);
 
         var result = RegressionFixtures.adjudicator().adjudicate(input);
@@ -269,7 +269,7 @@ class MoveAdjudicatorMicroTest {
 
     @Test
     void equalAttackAgainstUnitLaterDislodgedIsReportedAsOverwhelmed() {
-        var expected = RegressionFixtures.loadRegression("src/test/resources/regression/test10_expected.yaml");
+        var expected = RegressionFixtures.loadRegression("src/test/resources/regression/move/test10_expected.yaml");
         var input = RegressionFixtures.normalize(expected);
 
         var result = RegressionFixtures.adjudicator().adjudicate(input);
@@ -280,7 +280,7 @@ class MoveAdjudicatorMicroTest {
 
     @Test
     void convoyedAttackDoesNotCutRouteDeterminingSupportFromDestinationProvince() {
-        var expected = RegressionFixtures.loadRegression("src/test/resources/regression/test25_expected.yaml");
+        var expected = RegressionFixtures.loadRegression("src/test/resources/regression/move/test25_expected.yaml");
         var input = RegressionFixtures.normalize(expected);
 
         var result = RegressionFixtures.adjudicator().adjudicate(input);
@@ -293,7 +293,7 @@ class MoveAdjudicatorMicroTest {
 
     @Test
     void protectedSupportCanStillApplyEvenIfSupporterIsDislodgedByConvoyedAttack() {
-        var expected = RegressionFixtures.loadRegression("src/test/resources/regression/datc_6n_expected.yaml");
+        var expected = RegressionFixtures.loadRegression("src/test/resources/regression/move/datc_6n_expected.yaml");
         var input = RegressionFixtures.normalize(expected);
 
         var result = RegressionFixtures.adjudicator().adjudicate(input);
@@ -306,7 +306,7 @@ class MoveAdjudicatorMicroTest {
 
     @Test
     void dislodgedAttackerStillCreatesStandoffInDifferentProvince() {
-        var expected = RegressionFixtures.loadRegression("src/test/resources/regression/datc_7h_expected.yaml");
+        var expected = RegressionFixtures.loadRegression("src/test/resources/regression/move/datc_7h_expected.yaml");
         var input = RegressionFixtures.normalize(expected);
 
         var result = RegressionFixtures.adjudicator().adjudicate(input);

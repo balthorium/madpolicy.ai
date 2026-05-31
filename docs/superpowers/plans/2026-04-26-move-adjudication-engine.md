@@ -429,11 +429,11 @@ import org.junit.jupiter.api.Test;
 class NextStateBuilderTest {
     @Test
     void resetsOrdersAndAdvancesToRetreatStep() {
-        var nextState = TestFixtures.nextStateFromRegression("src/test/resources/regression/test6.yaml");
+        var nextState = TestFixtures.nextStateFromRegression("src/test/resources/regression/move/test6_expected.yaml");
 
         assertThat(nextState.phase().step()).isEqualTo("retreat");
-        assertThat(nextState.nations().get("england").units().getFirst().order().type()).isEqualTo("hold");
-        assertThat(nextState.nations().get("england").units().getFirst().order().status()).isEqualTo("new");
+        assertThat(nextState.nations().get("england").units().getFirst().order().type()).isEqualTo("disband");
+        assertThat(nextState.nations().get("england").units().getFirst().order().status()).isEqualTo("pending");
     }
 }
 ```

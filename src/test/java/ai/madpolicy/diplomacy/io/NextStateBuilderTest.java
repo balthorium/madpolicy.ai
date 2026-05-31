@@ -20,8 +20,8 @@ import org.junit.jupiter.api.Test;
 
 class NextStateBuilderTest {
     @Test
-    void buildsNextStateFromAdjudicatedState() {
-        var adjudicated = TestYaml.load(Path.of("src/test/resources/regression/test6_expected.yaml"), GameStateDocument.class);
+    void buildsRetreatStateFromAdjudicatedMoveState() {
+        var adjudicated = TestYaml.load(Path.of("src/test/resources/regression/move/test6_expected.yaml"), GameStateDocument.class);
 
         GameStateDocument nextState = new NextStateBuilder().build(adjudicated);
 
@@ -29,21 +29,30 @@ class NextStateBuilderTest {
         assertThat(nextState.standoffs()).isEmpty();
 
         UnitState frenchMover = findUnit(nextState, "france", "lon_c").orElseThrow();
-        assertThat(frenchMover.order().type()).isEqualTo("hold");
-        assertThat(frenchMover.order().status()).isEqualTo("pending");
-        assertThat(frenchMover.order().comment()).isNull();
+        assertThat(frenchMover.order()).isNull();
         assertThat(frenchMover.dislodgedBy()).isNull();
 
+        UnitState frenchSupporter = findUnit(nextState, "france", "nth_s").orElseThrow();
+        assertThat(frenchSupporter.order()).isNull();
+        assertThat(frenchSupporter.dislodgedBy()).isNull();
+
         UnitState dislodgedEnglishUnit = findUnit(nextState, "england", "lon_l").orElseThrow();
-        assertThat(dislodgedEnglishUnit.order().type()).isEqualTo("hold");
+        assertThat(dislodgedEnglishUnit.order().type()).isEqualTo("disband");
         assertThat(dislodgedEnglishUnit.order().status()).isEqualTo("pending");
         assertThat(dislodgedEnglishUnit.order().to()).isNull();
+        assertThat(dislodgedEnglishUnit.order().from()).isNull();
+        assertThat(dislodgedEnglishUnit.order().viaConvoy()).isNull();
+        assertThat(dislodgedEnglishUnit.order().comment()).isNull();
         assertThat(dislodgedEnglishUnit.dislodgedBy()).isEqualTo("eng");
+
+        UnitState nonDislodgedEnglishUnit = findUnit(nextState, "england", "wal_l").orElseThrow();
+        assertThat(nonDislodgedEnglishUnit.order()).isNull();
+        assertThat(nonDislodgedEnglishUnit.dislodgedBy()).isNull();
     }
 
     @Test
     void resetsOrdersAndAdvancesToRetreatStep() {
-        var expected = TestYaml.load(Path.of("src/test/resources/regression/test6_expected.yaml"), GameStateDocument.class);
+        var expected = TestYaml.load(Path.of("src/test/resources/regression/move/test6_expected.yaml"), GameStateDocument.class);
         var input = normalize(expected);
         var adjudicator = new MoveAdjudicator(new BoardIndex(new BoardCatalog().resolve(
             input.board(),
@@ -57,13 +66,11 @@ class NextStateBuilderTest {
         assertThat(nextState.standoffs()).isEmpty();
 
         UnitState frenchMover = findUnit(nextState, "france", "lon_c").orElseThrow();
-        assertThat(frenchMover.order().type()).isEqualTo("hold");
-        assertThat(frenchMover.order().status()).isEqualTo("pending");
-        assertThat(frenchMover.order().comment()).isNull();
+        assertThat(frenchMover.order()).isNull();
         assertThat(frenchMover.dislodgedBy()).isNull();
 
         UnitState dislodgedEnglishUnit = findUnit(nextState, "england", "lon_l").orElseThrow();
-        assertThat(dislodgedEnglishUnit.order().type()).isEqualTo("hold");
+        assertThat(dislodgedEnglishUnit.order().type()).isEqualTo("disband");
         assertThat(dislodgedEnglishUnit.order().status()).isEqualTo("pending");
         assertThat(dislodgedEnglishUnit.order().to()).isNull();
         assertThat(dislodgedEnglishUnit.dislodgedBy()).isEqualTo("eng");

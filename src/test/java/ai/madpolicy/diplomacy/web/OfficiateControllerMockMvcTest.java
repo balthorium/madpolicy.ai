@@ -53,7 +53,7 @@ class OfficiateControllerMockMvcTest {
 
     @Test
     void officiatesAdjudicatedGameStateToNextState() throws Exception {
-        GameStateDocument input = TestYaml.load(Path.of("src/test/resources/regression/test6_requested.yaml"), GameStateDocument.class);
+        GameStateDocument input = TestYaml.load(Path.of("src/test/resources/regression/move/test6_requested.yaml"), GameStateDocument.class);
         var adjudicator = new MoveAdjudicator(new BoardIndex(new BoardCatalog().resolve(
             input.board(),
             input.boardRevision()
@@ -74,9 +74,11 @@ class OfficiateControllerMockMvcTest {
 
         assertThat(responseBody).doesNotContain("comment: null");
         assertThat(responseBody).doesNotContain("dislodged_by: null");
+        assertThat(responseBody).doesNotContain("order: null");
         assertThat(responseBody).doesNotContain("from: null");
         assertThat(responseBody).doesNotContain("to: null");
         assertThat(responseBody).doesNotContain("via_convoy: null");
+        assertThat(responseBody).contains("type: \"disband\"");
         assertThat(TestYaml.load(responseBody, GameStateDocument.class)).isEqualTo(expected);
     }
 }

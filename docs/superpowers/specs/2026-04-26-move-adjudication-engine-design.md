@@ -66,9 +66,8 @@ Rules:
 - units are relocated to their resolved post-move positions
 - dislodged units remain present and retain `dislodged_by`
 - top-level `standoffs` is preserved
-- every unit order is reset to:
-  - `type: hold`
-  - `status: new`
+- dislodged units receive a pending `disband` order by default, which clients may change to a valid retreat order
+- non-dislodged units do not receive player-actionable retreat orders
 - move-phase failure comments must not remain
 - move-phase-only order fields such as `to`, `from`, and `via_convoy` must not remain
 
@@ -458,9 +457,8 @@ Rules:
 - units must be relocated to their post-adjudication positions
 - dislodged units remain present and retain `dislodged_by`
 - `phase.step` must be `retreat`
-- every unit order must be reset to:
-  - `type: hold`
-  - `status: new`
+- dislodged units receive a pending `disband` order by default, which clients may change to a valid retreat order
+- non-dislodged units do not receive player-actionable retreat orders
 - move-phase comments must not remain
 - move-phase-only order fields must not remain
 - `standoffs` must be preserved
@@ -496,6 +494,7 @@ Comparison rules:
 - unit positions match resolved post-move occupancy
 - dislodged units remain present
 - dislodged units retain `dislodged_by`
-- every unit order is reset to `hold/new`
+- dislodged units have pending `disband` orders by default
+- non-dislodged units do not have orders
 - move-phase comments are absent
 - `standoffs` matches the adjudication result

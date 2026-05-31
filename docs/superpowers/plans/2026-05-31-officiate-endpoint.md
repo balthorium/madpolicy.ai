@@ -34,7 +34,7 @@ Add a test that calls `GET /officiate`, expects `200`, `application/yaml`, and c
 
 - [ ] **Step 3: Add failing POST test**
 
-Add a test that loads `src/test/resources/regression/test6_requested.yaml`, adjudicates it through the service path, posts the adjudicated state to `/officiate`, and compares the response to `new NextStateBuilder().build(input, adjudication)`.
+Add a test that loads `src/test/resources/regression/move/test6_requested.yaml`, adjudicates it through the service path, posts the adjudicated state to `/officiate`, and compares the response to `new NextStateBuilder().build(input, adjudication)`.
 
 - [ ] **Step 4: Run web tests and verify RED**
 
@@ -82,7 +82,7 @@ Add:
 public GameStateDocument officiate(GameStateDocument adjudicatedState)
 ```
 
-For move-phase input, resolve the board, adjudicate the supplied state with existing adjudication logic, and return `NextStateBuilder.build(adjudicatedState, adjudication)`.
+For adjudicated move-phase input, treat the supplied state as authoritative and return `NextStateBuilder.build(adjudicatedState)`. Do not re-run adjudication.
 
 - [ ] **Step 3: Preserve existing adjudication method**
 

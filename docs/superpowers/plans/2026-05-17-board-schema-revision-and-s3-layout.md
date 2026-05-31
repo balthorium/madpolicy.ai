@@ -45,7 +45,7 @@ Run the same command and expect success.
 **Files:**
 - Move: `data/boards/standard.yaml` -> `data/boards/standard/<revision>.yaml`
 - Modify: `data/states/*.yaml`
-- Modify: `src/test/resources/regression/*.yaml`
+- Modify: `src/test/resources/regression/move/*.yaml`
 - Test: `src/test/java/ai/madpolicy/diplomacy/model/YamlRoundTripTest.java`
 
 - [ ] **Step 1: Update board fixture structure**

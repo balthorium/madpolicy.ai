@@ -85,7 +85,7 @@ public final class NextStateBuilder {
             }
             nextUnits.add(new UnitState(
                 nextPosition,
-                pendingHoldOrder(),
+                result != null && result.dislodgedBy() != null ? pendingDisbandOrder() : null,
                 result == null ? null : result.dislodgedBy()
             ));
         }
@@ -103,14 +103,14 @@ public final class NextStateBuilder {
             }
             nextUnits.add(new UnitState(
                 nextPosition,
-                pendingHoldOrder(),
+                unit.dislodgedBy() == null ? null : pendingDisbandOrder(),
                 unit.dislodgedBy()
             ));
         }
         return nextUnits;
     }
 
-    private static OrderState pendingHoldOrder() {
-        return new OrderState("hold", "pending", null, null, null, null);
+    private static OrderState pendingDisbandOrder() {
+        return new OrderState("disband", "pending", null, null, null, null);
     }
 }

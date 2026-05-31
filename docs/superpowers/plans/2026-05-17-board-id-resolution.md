@@ -40,7 +40,7 @@ Run the same command and expect success.
 
 **Files:**
 - Modify: `data/boards/standard.yaml`
-- Modify: `src/test/resources/regression/*.yaml`
+- Modify: `src/test/resources/regression/move/*.yaml`
 - Test: `src/test/java/ai/madpolicy/diplomacy/model/YamlRoundTripTest.java`
 
 - [ ] **Step 1: Update board fixtures with `id`**
