@@ -30,7 +30,7 @@ class YamlRoundTripTest {
 
     @Test
     void parsesRegressionFixturesWithDislodgedBy() {
-        var state = TestYaml.load(Path.of("src/test/resources/regression/move/test6_expected.yaml"), GameStateDocument.class);
+        var state = TestYaml.load(Path.of("src/test/resources/regression/adjudicate/move/test6_expected.yaml"), GameStateDocument.class);
 
         assertThat(state.nations().get("england").units().getFirst().dislodgedBy()).isEqualTo("eng");
     }

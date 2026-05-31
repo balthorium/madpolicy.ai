@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test;
 class NextStateBuilderTest {
     @Test
     void buildsRetreatStateFromAdjudicatedMoveState() {
-        var adjudicated = TestYaml.load(Path.of("src/test/resources/regression/move/test6_expected.yaml"), GameStateDocument.class);
+        var adjudicated = TestYaml.load(Path.of("src/test/resources/regression/adjudicate/move/test6_expected.yaml"), GameStateDocument.class);
 
         GameStateDocument nextState = new NextStateBuilder().build(adjudicated);
 
@@ -52,7 +52,7 @@ class NextStateBuilderTest {
 
     @Test
     void resetsOrdersAndAdvancesToRetreatStep() {
-        var expected = TestYaml.load(Path.of("src/test/resources/regression/move/test6_expected.yaml"), GameStateDocument.class);
+        var expected = TestYaml.load(Path.of("src/test/resources/regression/adjudicate/move/test6_expected.yaml"), GameStateDocument.class);
         var input = normalize(expected);
         var adjudicator = new MoveAdjudicator(new BoardIndex(new BoardCatalog().resolve(
             input.board(),

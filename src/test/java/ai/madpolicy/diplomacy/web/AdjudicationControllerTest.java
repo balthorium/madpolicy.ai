@@ -33,7 +33,7 @@ class AdjudicationControllerTest {
     @Test
     void officiatesAdjudicatedGameStateToNextState() throws Exception {
         assumeTrue(YamlAdjudicationHttpClient.canBindLocalPort(), "local port binding is required for live REST tests");
-        GameStateDocument input = TestYaml.load(Path.of("src/test/resources/regression/move/test6_requested.yaml"), GameStateDocument.class);
+        GameStateDocument input = TestYaml.load(Path.of("src/test/resources/regression/adjudicate/move/test6_requested.yaml"), GameStateDocument.class);
         var adjudicator = new MoveAdjudicator(new BoardIndex(new BoardCatalog().resolve(
             input.board(),
             input.boardRevision()
@@ -61,8 +61,8 @@ class AdjudicationControllerTest {
     @Test
     void adjudicatesPostedGameState() throws Exception {
         assumeTrue(YamlAdjudicationHttpClient.canBindLocalPort(), "local port binding is required for live REST tests");
-        GameStateDocument expected = TestYaml.load(Path.of("src/test/resources/regression/move/test1_expected.yaml"), GameStateDocument.class);
-        GameStateDocument input = TestYaml.load(Path.of("src/test/resources/regression/move/test1_requested.yaml"), GameStateDocument.class);
+        GameStateDocument expected = TestYaml.load(Path.of("src/test/resources/regression/adjudicate/move/test1_expected.yaml"), GameStateDocument.class);
+        GameStateDocument input = TestYaml.load(Path.of("src/test/resources/regression/adjudicate/move/test1_requested.yaml"), GameStateDocument.class);
         YamlAdjudicationHttpClient client = new YamlAdjudicationHttpClient();
         HttpResponse<String> response = client.adjudicateYaml(TestYaml.write(input));
 
@@ -81,8 +81,8 @@ class AdjudicationControllerTest {
     @Test
     void defaultsMissingStatusInRequestToPending() throws Exception {
         assumeTrue(YamlAdjudicationHttpClient.canBindLocalPort(), "local port binding is required for live REST tests");
-        GameStateDocument expected = TestYaml.load(Path.of("src/test/resources/regression/move/test1_expected.yaml"), GameStateDocument.class);
-        String requestBody = java.nio.file.Files.readString(Path.of("src/test/resources/regression/move/test1_requested.yaml"))
+        GameStateDocument expected = TestYaml.load(Path.of("src/test/resources/regression/adjudicate/move/test1_expected.yaml"), GameStateDocument.class);
+        String requestBody = java.nio.file.Files.readString(Path.of("src/test/resources/regression/adjudicate/move/test1_requested.yaml"))
             .replaceAll("(?m)^\\s*status:\\s*pending\\n", "");
 
         YamlAdjudicationHttpClient client = new YamlAdjudicationHttpClient();

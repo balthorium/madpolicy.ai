@@ -34,7 +34,7 @@ Add a test that calls `GET /officiate`, expects `200`, `application/yaml`, and c
 
 - [ ] **Step 3: Add failing POST test**
 
-Add a test that loads `src/test/resources/regression/move/test6_requested.yaml`, adjudicates it through the service path, posts the adjudicated state to `/officiate`, and compares the response to `new NextStateBuilder().build(input, adjudication)`.
+Add a test that loads `src/test/resources/regression/adjudicate/move/test6_requested.yaml`, adjudicates it through the service path, posts the adjudicated state to `/officiate`, and compares the response to `new NextStateBuilder().build(input, adjudication)`.
 
 - [ ] **Step 4: Run web tests and verify RED**
 

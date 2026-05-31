@@ -17,7 +17,7 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 public final class RegressionHarness {
-    private static final Path REGRESSION_DIR = Path.of("src/test/resources/regression/move");
+    private static final Path REGRESSION_DIR = Path.of("src/test/resources/regression/adjudicate/move");
 
     private RegressionHarness() {
     }

@@ -96,10 +96,23 @@ This avoids wrapper request types and keeps the YAML response shape as a plain `
 
 ## Testing
 
+Regression fixtures are organized by endpoint first, then phase:
+
+- `src/test/resources/regression/adjudicate/move`
+- `src/test/resources/regression/adjudicate/retreat`
+- `src/test/resources/regression/adjudicate/adjustment`
+- `src/test/resources/regression/officiate/move`
+- `src/test/resources/regression/officiate/retreat`
+- `src/test/resources/regression/officiate/adjustment`
+
+Existing move, retreat, and adjustment adjudication corpora live under `regression/adjudicate`. Officiate regression fixtures use the same requested/expected naming convention, where `*_requested.yaml` is the verbatim adjudicated state submitted to `POST /officiate` and `*_expected.yaml` is the pre-adjudicated state returned for the next turn step.
+
+For the current implementation, only move-to-retreat officiation has executable fixtures. Those fixtures should be generated from adjudicated move cases that contain at least one `dislodged_by`, because no-dislodgement move turns will later advance directly past retreat when phase progression is implemented.
+
 Add focused HTTP tests that prove:
 
 - `GET /officiate` returns YAML equal to `data/seeds/standard/1.yaml`
 - `POST /officiate` accepts an adjudicated move-phase state and returns the same next-state shape currently produced by `NextStateBuilder`
 - existing `POST /adjudicate` behavior remains unchanged
 
-Run the focused web tests and the move regression corpus after implementation.
+Run the focused web tests, the adjudicate move regression corpus, and the officiate move regression corpus after implementation.

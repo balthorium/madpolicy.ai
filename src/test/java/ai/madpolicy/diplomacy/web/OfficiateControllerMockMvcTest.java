@@ -53,7 +53,7 @@ class OfficiateControllerMockMvcTest {
 
     @Test
     void officiatesAdjudicatedGameStateToNextState() throws Exception {
-        GameStateDocument input = TestYaml.load(Path.of("src/test/resources/regression/move/test6_requested.yaml"), GameStateDocument.class);
+        GameStateDocument input = TestYaml.load(Path.of("src/test/resources/regression/adjudicate/move/test6_requested.yaml"), GameStateDocument.class);
         var adjudicator = new MoveAdjudicator(new BoardIndex(new BoardCatalog().resolve(
             input.board(),
             input.boardRevision()

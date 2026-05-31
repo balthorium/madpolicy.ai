@@ -1,0 +1,34 @@
+kind: "game_state"
+schema: 1
+revision: 1
+board: "standard"
+board_revision: 1
+phase:
+  season: "spring"
+  step: "retreat"
+  year: 1901
+  due: 0
+nations:
+  england:
+    name: "England"
+    controls: []
+    units:
+    - position: "nth_s"
+    - position: "bel_l"
+    - position: "eng_s"
+  france:
+    name: "France"
+    controls: []
+    units:
+    - position: "bel_c"
+      order:
+        type: "disband"
+        status: "pending"
+      dislodged_by: "lon"
+  germany:
+    name: "Germany"
+    controls: []
+    units:
+    - position: "hel_s"
+    - position: "ska_s"
+standoffs: []

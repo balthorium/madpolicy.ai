@@ -1,0 +1,29 @@
+kind: "game_state"
+schema: 1
+revision: 1
+board: "standard"
+board_revision: 1
+phase:
+  season: "spring"
+  step: "retreat"
+  year: 1901
+  due: 0
+nations:
+  france:
+    name: "France"
+    controls: []
+    units:
+    - position: "spa_l"
+    - position: "lyo_s"
+    - position: "tys_s"
+      order:
+        type: "disband"
+        status: "pending"
+      dislodged_by: "ion"
+  italy:
+    name: "Italy"
+    controls: []
+    units:
+    - position: "tys_s"
+    - position: "tun_c"
+standoffs: []

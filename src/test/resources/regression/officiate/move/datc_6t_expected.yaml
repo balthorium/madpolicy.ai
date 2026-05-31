@@ -1,0 +1,37 @@
+kind: "game_state"
+schema: 1
+revision: 1
+board: "standard"
+board_revision: 1
+phase:
+  season: "spring"
+  step: "retreat"
+  year: 1901
+  due: 0
+nations:
+  england:
+    name: "England"
+    controls: []
+    units:
+    - position: "nth_s"
+    - position: "lon_c"
+    - position: "iri_s"
+    - position: "mao_s"
+  france:
+    name: "France"
+    controls: []
+    units:
+    - position: "bre_l"
+    - position: "eng_s"
+    - position: "bel_c"
+  russia:
+    name: "Russia"
+    controls: []
+    units:
+    - position: "nwy_l"
+    - position: "nth_s"
+      order:
+        type: "disband"
+        status: "pending"
+      dislodged_by: "edi"
+standoffs: []

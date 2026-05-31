@@ -1,0 +1,27 @@
+kind: "game_state"
+schema: 1
+revision: 1
+board: "standard"
+board_revision: 1
+phase:
+  season: "spring"
+  step: "retreat"
+  year: 1901
+  due: 0
+nations:
+  italy:
+    name: "Italy"
+    controls: []
+    units:
+    - position: "tri_l"
+    - position: "tyr_l"
+  austria:
+    name: "Austria"
+    controls: []
+    units:
+    - position: "tri_c"
+      order:
+        type: "disband"
+        status: "pending"
+      dislodged_by: "ven"
+standoffs: []
