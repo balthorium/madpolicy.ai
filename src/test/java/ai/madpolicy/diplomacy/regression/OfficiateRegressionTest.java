@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 class OfficiateRegressionTest {
     private static final Path MOVE_DIR = Path.of("src/test/resources/regression/officiate/move");
     private static final Path RETREAT_DIR = Path.of("src/test/resources/regression/officiate/retreat");
+    private static final Path ADJUSTMENT_DIR = Path.of("src/test/resources/regression/officiate/adjustment");
 
     @Test
     void moveCorpusMatchesExpectedPreAdjudicatedRetreatState() throws IOException {
@@ -26,6 +27,12 @@ class OfficiateRegressionTest {
     void retreatCorpusMatchesExpectedNextState() throws IOException {
         assumeTrue(YamlAdjudicationHttpClient.canBindLocalPort(), "local port binding is required for live REST tests");
         assertCorpusMatchesExpectedNextState(RETREAT_DIR);
+    }
+
+    @Test
+    void adjustmentCorpusMatchesExpectedNextMoveState() throws IOException {
+        assumeTrue(YamlAdjudicationHttpClient.canBindLocalPort(), "local port binding is required for live REST tests");
+        assertCorpusMatchesExpectedNextState(ADJUSTMENT_DIR);
     }
 
     private static void assertCorpusMatchesExpectedNextState(Path directory) throws IOException {

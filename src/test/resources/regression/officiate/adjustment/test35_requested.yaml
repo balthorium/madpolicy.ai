@@ -1,0 +1,37 @@
+kind: game_state
+schema: 1
+revision: 1
+board: standard
+board_revision: 1
+phase:
+  season: fall
+  step: adjustment
+  year: 1901
+  due: 0
+nations:
+  germany:
+    name: Germany
+    controls:
+    - kie
+    - mun
+    - par
+    - vie
+    units:
+    - position: par_l
+      order:
+        type: hold
+        status: success
+    - position: mao_s
+      order:
+        type: hold
+        status: success
+    - position: vie_l
+      order:
+        type: build
+        status: failure
+        comment: Illegal or useless order.
+    - position: mun_l
+      order:
+        type: hold
+        status: success
+standoffs: []

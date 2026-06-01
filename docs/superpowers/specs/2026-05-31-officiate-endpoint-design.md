@@ -40,7 +40,7 @@ Conceptually:
 
 `Given that ruling, what state do players edit next?`
 
-This boundary should remain stable as new phase support is added. Future retreat and winter build work should extend phase-specific adjudication in `adjudicate` and phase-transition orchestration in `officiate`, rather than mixing those responsibilities.
+This boundary should remain stable as new phase support is added. Phase-specific adjudication belongs in `adjudicate`, and phase-transition orchestration belongs in `officiate`, rather than mixing those responsibilities.
 
 ## Endpoint Contract
 
@@ -92,7 +92,18 @@ For adjudicated retreat states, this means:
 - fall retreats advance to `season: fall`, `step: adjustment`
 - fall retreats update supply-center control after retreat cleanup; occupied supply centers transfer to the occupying unit's nation, and unoccupied supply centers keep their prior controller
 
-This endpoint uses the existing adjudication result semantics and `NextStateBuilder` behavior. It does not introduce build/disband adjudication, victory detection, or year progression.
+For adjudicated adjustment states, this means:
+
+- successful build orders become units with pending `hold` orders
+- failed build orders are omitted because they were never existing units
+- successful disband orders remove their units
+- units removed by civil disorder are removed
+- failed disband orders and other surviving existing units receive pending `hold` orders
+- controls are preserved unchanged
+- standoffs are cleared
+- fall adjustments advance to `season: spring`, `step: move`, and increment the year
+
+This endpoint uses the existing adjudication result semantics and `NextStateBuilder` behavior. It does not introduce build/disband adjudication or victory detection.
 
 ## Design Choices
 
@@ -118,13 +129,14 @@ Regression fixtures are organized by endpoint first, then phase:
 
 Existing move, retreat, and adjustment adjudication corpora live under `regression/adjudicate`. Officiate regression fixtures use the same requested/expected naming convention, where `*_requested.yaml` is the verbatim adjudicated state submitted to `POST /officiate` and `*_expected.yaml` is the pre-adjudicated state returned for the next turn step.
 
-Move-to-retreat officiation fixtures should be generated from adjudicated move cases that contain at least one `dislodged_by`, because no-dislodgement move turns will later advance directly past retreat when phase progression is implemented. Retreat officiation fixtures should cover successful retreat relocation, failed retreat/disband removal, spring retreat phase advancement, and fall retreat supply-center control updates.
+Move-to-retreat officiation fixtures should be generated from adjudicated move cases that contain at least one `dislodged_by`, because no-dislodgement move turns will later advance directly past retreat when phase progression is implemented. Retreat officiation fixtures should cover successful retreat relocation, failed retreat/disband removal, spring retreat phase advancement, and fall retreat supply-center control updates. Adjustment officiation fixtures should use the adjudicate adjustment `*_expected.yaml` files as `*_requested.yaml` inputs, then assert the next spring move state after applying successful builds, successful disbands, and civil-disorder removals.
 
 Add focused HTTP tests that prove:
 
 - `GET /officiate` returns YAML equal to `data/seeds/standard/1.yaml`
 - `POST /officiate` accepts an adjudicated move-phase state and returns the same next-state shape currently produced by `NextStateBuilder`
 - `POST /officiate` accepts adjudicated retreat states and returns the next pre-adjudicated move or adjustment state
+- `POST /officiate` accepts adjudicated adjustment states and returns the next spring move state
 - existing `POST /adjudicate` behavior remains unchanged
 
-Run the focused web tests, the adjudicate move and retreat regression corpora, and the officiate move and retreat regression corpora after implementation.
+Run the focused web tests, the adjudicate move, retreat, and adjustment regression corpora, and the officiate move, retreat, and adjustment regression corpora after implementation.

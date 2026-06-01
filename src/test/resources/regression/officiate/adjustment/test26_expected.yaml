@@ -1,0 +1,32 @@
+kind: game_state
+schema: 1
+revision: 1
+board: standard
+board_revision: 1
+phase:
+  season: spring
+  step: move
+  year: 1902
+  due: 0
+nations:
+  germany:
+    name: Germany
+    controls:
+    - war
+    - kie
+    - mun
+    - lon
+    units:
+    - position: kie_l
+      order:
+        type: hold
+        status: pending
+    - position: mun_l
+      order:
+        type: hold
+        status: pending
+    - position: vie_l
+      order:
+        type: hold
+        status: pending
+standoffs: []

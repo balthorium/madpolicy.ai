@@ -53,6 +53,9 @@ public final class NextStateBuilder {
         if ("retreat".equals(adjudicated.phase().step())) {
             return buildAfterRetreat(adjudicated);
         }
+        if ("adjustment".equals(adjudicated.phase().step())) {
+            return buildAfterAdjustment(adjudicated);
+        }
 
         Map<String, NationState> nations = new LinkedHashMap<>();
         for (Map.Entry<String, NationState> entry : adjudicated.nations().entrySet()) {
@@ -75,6 +78,29 @@ public final class NextStateBuilder {
             retreatPhase(adjudicated.phase()),
             nations,
             adjudicated.standoffs().stream().sorted().toList()
+        );
+    }
+
+    private GameStateDocument buildAfterAdjustment(GameStateDocument adjudicated) {
+        Map<String, NationState> nations = new LinkedHashMap<>();
+        for (Map.Entry<String, NationState> entry : adjudicated.nations().entrySet()) {
+            NationState nation = entry.getValue();
+            nations.put(entry.getKey(), new NationState(
+                nation.name(),
+                nation.controls(),
+                adjustmentToNextUnitStates(nation.units())
+            ));
+        }
+
+        return new GameStateDocument(
+            adjudicated.kind(),
+            adjudicated.schema(),
+            adjudicated.revision(),
+            adjudicated.board(),
+            adjudicated.boardRevision(),
+            phaseAfterAdjustment(adjudicated.phase()),
+            nations,
+            List.of()
         );
     }
 
@@ -132,6 +158,15 @@ public final class NextStateBuilder {
         );
     }
 
+    private static GamePhase phaseAfterAdjustment(GamePhase originalPhase) {
+        return new GamePhase(
+            "spring",
+            "move",
+            originalPhase.year() + 1,
+            originalPhase.due()
+        );
+    }
+
     private static List<UnitState> moveToRetreatUnitStates(AdjudicationResult adjudication, Map.Entry<String, NationState> entry) {
         List<UnitState> nextUnits = new ArrayList<>();
         for (UnitState unit : entry.getValue().units()) {
@@ -180,6 +215,35 @@ public final class NextStateBuilder {
                     && unit.order().to() != null) {
                     nextUnits.add(new UnitState(unit.order().to(), pendingHoldOrder(), null));
                 }
+                continue;
+            }
+
+            nextUnits.add(new UnitState(unit.position(), pendingHoldOrder(), null));
+        }
+        return nextUnits;
+    }
+
+    private static List<UnitState> adjustmentToNextUnitStates(List<UnitState> adjudicatedUnits) {
+        List<UnitState> nextUnits = new ArrayList<>();
+        for (UnitState unit : adjudicatedUnits) {
+            OrderState order = unit.order();
+            if (order == null) {
+                nextUnits.add(new UnitState(unit.position(), pendingHoldOrder(), null));
+                continue;
+            }
+
+            if ("build".equals(order.type())) {
+                if ("success".equals(order.status())) {
+                    nextUnits.add(new UnitState(unit.position(), pendingHoldOrder(), null));
+                }
+                continue;
+            }
+
+            if ("disband".equals(order.type()) && "success".equals(order.status())) {
+                continue;
+            }
+
+            if ("failure".equals(order.status()) && "Civil disorder.".equals(order.comment())) {
                 continue;
             }
 
