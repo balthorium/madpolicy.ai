@@ -9,12 +9,12 @@ The application also needs an endpoint named `officiate` for turn orchestration:
 - provide the canonical initial state for a new standard game
 - advance an adjudicated turn output into the pre-adjudicated state for the next turn step
 
-The service is intentionally stateless. It owns static reference data only:
+The service owns static reference data:
 
 - board definitions in `data/boards`
 - initial game-state seeds in `data/seeds`
 
-Clients own game persistence and submit complete `game_state` documents to each endpoint. The server does not maintain game ids, saved game directories, turn history, continuity validation, authorization state, or anti-cheat validation.
+Clients submit complete `game_state` documents to each endpoint. The server archives the initial state returned by `GET /officiate` under `data/games/<game_id>/`, but it does not load from that archive for adjudication or officiation and does not maintain turn history, continuity validation, authorization state, or anti-cheat validation.
 
 ## Service Boundary
 
@@ -42,7 +42,7 @@ Adjustment build and disband orders are validated before any excessive-build, ex
 
 `officiate` advances the game without player involvement.
 
-It accepts the verbatim judged result from `adjudicate` and performs the automatic bookkeeping needed to create the next player-editable state. Depending on phase, that bookkeeping may include relocating units, carrying or clearing dislodgements, resetting or creating orders for the next phase, updating phase/season/year, updating supply-center ownership, and computing build or disband obligations.
+It accepts the verbatim judged result from `adjudicate` and performs the automatic bookkeeping needed to create the next player-editable state. Depending on phase, that bookkeeping may include relocating units, carrying or clearing dislodgements, resetting or creating orders for the next phase, updating phase/season/year, stamping `phase.started`, updating supply-center ownership, and computing build or disband obligations.
 
 Conceptually:
 
@@ -60,7 +60,24 @@ The seed lives at:
 
 `data/seeds/standard/1.yaml`
 
-This location mirrors the board catalog path `data/boards/standard/1.yaml`. The seed is runtime data, not a regression fixture or example game instance.
+This location mirrors the board catalog path `data/boards/standard/1.yaml`. The seed is runtime data, not a regression fixture or example game instance. It is a template; `GET /officiate` overlays request-specific game options and stamps `phase.started`.
+
+Supported query parameters are optional:
+
+- `game_id`, defaulting to a random UUID
+- `move_phase_minutes`, defaulting to `15`
+- `retreat_phase_minutes`, defaulting to `5`
+- `adjustment_phase_minutes`, defaulting to `5`
+
+Phase-duration values must be positive integers. These values are returned as top-level `options` on the game state:
+
+```yaml
+options:
+  game_id: "..."
+  move_phase_minutes: 15
+  retreat_phase_minutes: 5
+  adjustment_phase_minutes: 5
+```
 
 The initial state is:
 
@@ -72,12 +89,32 @@ The initial state is:
 - `phase.season: spring`
 - `phase.step: move`
 - `phase.year: 1901`
+- `phase.started: <current epoch seconds>`
+- top-level `options` populated from query parameters or defaults
 - every starting unit has a pending hold order
 - `standoffs: []`
+
+After constructing that response state, `GET /officiate` creates a game archive directory:
+
+`data/games/<game_id>/`
+
+The archive root defaults to `data/games` and may be overridden with the `diplomacy.games.root` property.
+
+It writes the exact returned initial game state as YAML using the phase-derived filename:
+
+`<year>_<season>_<step>.yaml`
+
+For the standard initial state with `game_id=demo`, the archive file is:
+
+`data/games/demo/1901_spring_move.yaml`
+
+The `game_id` must be a single path segment so request values cannot escape the games archive root.
 
 ### `POST /officiate`
 
 Accepts an adjudicated `game_state` as YAML and returns the pre-adjudicated state for the next turn step.
+
+Every `POST /officiate` response stamps the returned phase with `phase.started` equal to the current epoch seconds. Top-level `options` are copied from the submitted adjudicated state without modification.
 
 For adjudicated move states, this means:
 
@@ -113,14 +150,18 @@ For adjudicated adjustment states, this means:
 
 This endpoint uses the existing adjudication result semantics and `NextStateBuilder` behavior. It does not introduce build/disband adjudication or victory detection.
 
+`POST /adjudicate` preserves submitted `phase.started` and top-level `options` unchanged. Adjudication judges the submitted phase; it does not start a new phase.
+
 ## Design Choices
 
 Use one resource name with HTTP method semantics:
 
-- `GET /officiate` starts a new game from the canonical seed
+- `GET /officiate` starts a new game from the canonical seed template and game-option query parameters
 - `POST /officiate` advances an adjudicated state into the next pre-adjudicated state
 
 This avoids wrapper request types and keeps the YAML response shape as a plain `GameStateDocument`.
+
+The initial-state archive is a side effect of `GET /officiate`, not a source of truth for later endpoint calls. `POST /adjudicate` and `POST /officiate` continue to evaluate the full state supplied in the request body.
 
 `POST /officiate` treats its input as an already-adjudicated state. It does not re-run adjudication and does not require players to edit the adjudicated state before submission.
 
@@ -143,10 +184,13 @@ Move-to-retreat officiation fixtures should be generated from adjudicated move c
 
 Add focused HTTP tests that prove:
 
-- `GET /officiate` returns YAML equal to `data/seeds/standard/1.yaml`
+- `GET /officiate` returns the seed template with options and current `phase.started` applied
+- `GET /officiate` accepts optional game-option query parameters and rejects non-positive phase durations
+- `GET /officiate` archives the returned initial state at `data/games/<game_id>/<year>_<season>_<step>.yaml`
 - `POST /officiate` accepts an adjudicated move-phase state and returns the same next-state shape currently produced by `NextStateBuilder`
 - `POST /officiate` accepts adjudicated retreat states and returns the next pre-adjudicated move or adjustment state
 - `POST /officiate` accepts adjudicated adjustment states and returns the next spring move state
+- `POST /adjudicate` and `POST /officiate` preserve top-level `options`
 - existing `POST /adjudicate` behavior remains unchanged
 
 Run the focused web tests, the adjudicate move, retreat, and adjustment regression corpora, and the officiate move, retreat, and adjustment regression corpora after implementation.

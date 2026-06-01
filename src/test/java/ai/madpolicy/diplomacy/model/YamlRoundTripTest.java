@@ -47,7 +47,7 @@ class YamlRoundTripTest {
               season: spring
               step: move
               year: 1901
-              due: 0
+              started: 0
             nations:
               england:
                 name: England

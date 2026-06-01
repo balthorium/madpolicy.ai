@@ -7,7 +7,7 @@ phase:
   season: "spring"
   step: "retreat"
   year: 1901
-  due: 0
+  started: 1700000000
 nations:
   france:
     name: "France"

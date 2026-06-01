@@ -10,6 +10,7 @@ public record GameStateDocument(
     int revision,
     String board,
     @JsonProperty("board_revision") int boardRevision,
+    GameOptions options,
     GamePhase phase,
     Map<String, NationState> nations,
     List<String> standoffs

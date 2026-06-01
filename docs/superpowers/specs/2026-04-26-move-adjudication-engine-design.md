@@ -1,6 +1,6 @@
 # Move Adjudication Engine Design
 
-> Current note: this is the historical design spec for move-phase adjudication only. The service now also includes retreat and adjustment adjudication plus the stateless `/officiate` turn-orchestration endpoint. See `docs/superpowers/specs/2026-05-31-officiate-endpoint-design.md` for the current endpoint boundary and phase-transition design.
+> Current note: this is the historical design spec for move-phase adjudication only. The service now also includes retreat and adjustment adjudication plus the `/officiate` turn-orchestration endpoint. See `docs/superpowers/specs/2026-05-31-officiate-endpoint-design.md` for the current endpoint boundary and phase-transition design.
 
 ## Context
 

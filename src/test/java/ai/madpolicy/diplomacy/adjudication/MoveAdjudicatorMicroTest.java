@@ -36,6 +36,7 @@ class MoveAdjudicatorMicroTest {
             1,
             "standard",
             1,
+            null,
             new GamePhase("spring", "move", 1901, 0),
             Map.of(
                 "france",
@@ -75,6 +76,7 @@ class MoveAdjudicatorMicroTest {
             1,
             "standard",
             1,
+            null,
             new GamePhase("spring", "move", 1901, 0),
             Map.of(
                 "france",
@@ -114,6 +116,7 @@ class MoveAdjudicatorMicroTest {
             1,
             "standard",
             1,
+            null,
             new GamePhase("spring", "move", 1901, 0),
             Map.of(
                 "france",

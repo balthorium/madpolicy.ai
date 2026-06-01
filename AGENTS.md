@@ -1,14 +1,14 @@
 # AGENTS.md
 
 ## Purpose
-This repository contains a Java 21 + Spring Boot + Maven implementation of a stateless Diplomacy adjudication and turn-orchestration service.
+This repository contains a Java 21 + Spring Boot + Maven implementation of a Diplomacy adjudication and turn-orchestration service.
 
 Current service responsibilities:
 - `POST /adjudicate` evaluates player-edited orders for move, retreat, and adjustment phases.
-- `GET /officiate` returns the canonical initial standard game state from `data/seeds/standard/1.yaml`.
+- `GET /officiate` returns the canonical initial standard game state from `data/seeds/standard/1.yaml`, overlays initial game options, stamps `phase.started`, and archives the returned state under `data/games/<game_id>/`.
 - `POST /officiate` advances the verbatim adjudicated result from `POST /adjudicate` into the next pre-adjudicated state.
 
-Clients own game persistence and submit complete `game_state` documents. The server does not maintain game ids, saved game directories, turn history, continuity validation, authorization state, or anti-cheat validation.
+Clients submit complete `game_state` documents. The server archives initial `GET /officiate` responses, but later endpoint calls do not load from persisted game state and the server does not maintain turn history, continuity validation, authorization state, or anti-cheat validation.
 
 ## Environment
 - Repository root: `/Users/adb/Desktop/madpolicy.ai`
@@ -44,6 +44,14 @@ export PATH="$JAVA_HOME/bin:$PATH"
 - The service boundary is:
   - `adjudicate` evaluates player orders and returns a judged state.
   - `officiate` advances a judged state without player involvement.
+- `phase.started` is seconds since epoch. Every `/officiate` response sets it to the current time; `POST /adjudicate` preserves the submitted value.
+- `GET /officiate` accepts optional query parameters:
+  - `game_id`, defaulting to a random UUID
+  - `move_phase_minutes`, defaulting to 15
+  - `retreat_phase_minutes`, defaulting to 5
+  - `adjustment_phase_minutes`, defaulting to 5
+- Game options are top-level `options` on `GameStateDocument` and are carried through `POST /adjudicate` and `POST /officiate` unchanged.
+- `GET /officiate` writes the exact returned initial game state to `data/games/<game_id>/<year>_<season>_<step>.yaml`.
 - Support-to-hold matches supported units ordered to `hold`, `support`, or `convoy`.
 - Support-to-move matching is province-based on the destination side, not exact-position based.
 - A dislodged unit:
@@ -97,7 +105,12 @@ export PATH="$JAVA_HOME/bin:$PATH"
 - Initial game-state seeds:
   - `data/seeds/standard/1.yaml`
 
-There is intentionally no `data/games` directory and no persisted server-side game state.
+Runtime initial-state archive:
+- `data/games/<game_id>/<year>_<season>_<step>.yaml`
+
+The archive root defaults to `data/games` and can be overridden with `diplomacy.games.root`.
+
+Generated `data/games/` contents are ignored by git. They are not used as the source of truth for `POST /adjudicate` or `POST /officiate`.
 
 ## Main Test Areas
 - Micro adjudication tests:
@@ -136,7 +149,9 @@ Officiate adjustment requested fixtures are copied from adjudicate adjustment ex
 As of 2026-06-01:
 - move, retreat, and adjustment adjudication are implemented and covered by REST regression tests
 - move, retreat, and adjustment officiation are implemented and covered by REST regression tests
-- `GET /officiate` returns `data/seeds/standard/1.yaml`
+- `GET /officiate` returns the `data/seeds/standard/1.yaml` template with request-specific options and `phase.started`
+- `GET /officiate` archives the returned initial state under `data/games/<game_id>/`
+- `/officiate` stamps `phase.started` on every response and `GET /officiate` includes game options
 - `POST /officiate` handles:
   - adjudicated move states to pre-retreat states
   - adjudicated spring retreat states to fall move states

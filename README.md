@@ -1,16 +1,25 @@
 # madpolicy.ai
 
-Java 21 + Spring Boot + Maven implementation of a stateless Diplomacy adjudication and turn-orchestration service.
+Java 21 + Spring Boot + Maven implementation of a Diplomacy adjudication and turn-orchestration service.
 
 ## Scope
 
 This repo currently exposes two YAML endpoints:
 
 - `POST /adjudicate` evaluates player-edited orders for move, retreat, and adjustment phases.
-- `GET /officiate` returns the canonical initial standard game state.
+- `GET /officiate` returns the canonical initial standard game state, stamps `phase.started`, accepts optional game options as query parameters, and archives the returned state under `data/games/<game_id>/`.
 - `POST /officiate` advances an adjudicated state into the next pre-adjudicated state without player involvement.
 
-The service is intentionally stateless. Clients own persistence and submit complete `game_state` documents to each request. Static runtime data lives under `data/boards` and `data/seeds`.
+Clients submit complete `game_state` documents to each request. The server archives the initial state returned by `GET /officiate`, but `POST /adjudicate` and `POST /officiate` do not load from persisted game state, enforce turn continuity, or validate anti-cheat concerns. Static runtime data lives under `data/boards` and `data/seeds`.
+
+Each game state may carry top-level `options`:
+
+- `game_id`
+- `move_phase_minutes`
+- `retreat_phase_minutes`
+- `adjustment_phase_minutes`
+
+`GET /officiate` adds these options to the initial game state. If omitted, the defaults are a random UUID game id, 15-minute move phases, 5-minute retreat phases, and 5-minute adjustment phases. It also writes the exact returned initial state to `data/games/<game_id>/<year>_<season>_<step>.yaml`, for example `data/games/demo/1901_spring_move.yaml`. The archive root defaults to `data/games` and can be overridden with `diplomacy.games.root`. `POST /adjudicate` and `POST /officiate` preserve options unchanged. Every `/officiate` response sets `phase.started` to the current epoch seconds.
 
 The primary behavioral oracle is the REST-based regression corpus in `src/test/resources/regression`.
 
@@ -111,7 +120,13 @@ Start a new standard game:
 
 ```bash
 curl -H 'Accept: application/yaml' \
-     http://localhost:8080/officiate
+     'http://localhost:8080/officiate?game_id=demo&move_phase_minutes=15&retreat_phase_minutes=5&adjustment_phase_minutes=5'
+```
+
+That call also archives the returned YAML at:
+
+```text
+data/games/demo/1901_spring_move.yaml
 ```
 
 Advance an adjudicated state to the next pre-adjudicated state:
@@ -132,7 +147,7 @@ curl -H 'Content-Type: application/yaml' \
 - `src/main/java/ai/madpolicy/diplomacy/io/`
   Builders for adjudicated states and next pre-adjudicated states.
 - `src/main/java/ai/madpolicy/diplomacy/app/`
-  Board catalog and stateless service orchestration.
+  Board catalog, service orchestration, and initial-state archiving.
 - `src/main/java/ai/madpolicy/diplomacy/web/`
   YAML HTTP controller for `/adjudicate` and `/officiate`.
 - `src/test/java/ai/madpolicy/diplomacy/adjudication/`
@@ -142,7 +157,9 @@ curl -H 'Content-Type: application/yaml' \
 - `data/boards/standard/1.yaml`
   Standard board topology.
 - `data/seeds/standard/1.yaml`
-  Canonical initial standard game state returned by `GET /officiate`.
+  Canonical initial standard game state template used by `GET /officiate`; runtime options and `phase.started` are overlaid per request.
+- `data/games/`
+  Runtime archive for initial game states returned by `GET /officiate`; generated contents are ignored by git.
 - `src/test/resources/regression/`
   Endpoint-first regression fixtures:
   - `adjudicate/move`

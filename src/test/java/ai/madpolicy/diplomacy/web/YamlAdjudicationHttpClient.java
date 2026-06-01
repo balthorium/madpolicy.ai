@@ -10,15 +10,20 @@ import java.net.ServerSocket;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 
 public final class YamlAdjudicationHttpClient {
+    public static final long FIXED_EPOCH_SECONDS = 1_700_000_000L;
+
     private static final Object LOCK = new Object();
     private static ConfigurableApplicationContext sharedContext;
     private static URI sharedAdjudicateUri;
     private static URI sharedOfficiateUri;
+    private static Path sharedGamesRoot;
     private static boolean shutdownHookRegistered;
 
     private final HttpClient httpClient;
@@ -41,7 +46,13 @@ public final class YamlAdjudicationHttpClient {
             if (sharedContext != null) {
                 return;
             }
-            sharedContext = SpringApplication.run(DiplomacyApplication.class, "--server.port=0");
+            sharedGamesRoot = createGamesRoot();
+            sharedContext = SpringApplication.run(
+                DiplomacyApplication.class,
+                "--server.port=0",
+                "--diplomacy.clock.fixed-epoch-seconds=" + FIXED_EPOCH_SECONDS,
+                "--diplomacy.games.root=" + sharedGamesRoot
+            );
             int port = ((ServletWebServerApplicationContext) sharedContext).getWebServer().getPort();
             sharedAdjudicateUri = URI.create("http://127.0.0.1:" + port + "/adjudicate");
             sharedOfficiateUri = URI.create("http://127.0.0.1:" + port + "/officiate");
@@ -49,6 +60,19 @@ public final class YamlAdjudicationHttpClient {
                 Runtime.getRuntime().addShutdownHook(new Thread(YamlAdjudicationHttpClient::shutdownServer));
                 shutdownHookRegistered = true;
             }
+        }
+    }
+
+    public static Path gamesRoot() {
+        ensureServerStarted();
+        return sharedGamesRoot;
+    }
+
+    private static Path createGamesRoot() {
+        try {
+            return Files.createTempDirectory("diplomacy-games-");
+        } catch (IOException e) {
+            throw new UncheckedIOException("Failed to create temporary games root", e);
         }
     }
 

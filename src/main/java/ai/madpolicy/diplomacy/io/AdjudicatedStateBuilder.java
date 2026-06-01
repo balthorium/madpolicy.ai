@@ -39,6 +39,7 @@ public final class AdjudicatedStateBuilder {
             original.revision(),
             original.board(),
             original.boardRevision(),
+            original.options(),
             original.phase(),
             nations,
             adjudication.standoffs().stream().sorted().toList()

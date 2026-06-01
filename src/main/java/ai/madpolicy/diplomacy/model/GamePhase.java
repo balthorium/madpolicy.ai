@@ -4,5 +4,5 @@ public record GamePhase(
     String season,
     String step,
     int year,
-    int due
+    long started
 ) {}

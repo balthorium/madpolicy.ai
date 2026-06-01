@@ -2,7 +2,7 @@
 
 > Historical note: this plan records the original implementation path and follow-on scope. Do not treat the unchecked boxes as the current active task list.
 
-> Current note: this plan began as the implementation plan for initial move-to-retreat officiation. The implemented service now supports `GET /officiate` plus `POST /officiate` for adjudicated move, retreat, and adjustment states. The endpoint contract and current fixture strategy are captured in `docs/superpowers/specs/2026-05-31-officiate-endpoint-design.md`.
+> Current note: this plan began as the implementation plan for initial move-to-retreat officiation. The implemented service now supports `GET /officiate` plus `POST /officiate` for adjudicated move, retreat, and adjustment states. It also stamps `phase.started` on officiate responses, carries top-level game options, and archives the initial state returned by `GET /officiate` under `data/games/<game_id>/`. The endpoint contract and current fixture strategy are captured in `docs/superpowers/specs/2026-05-31-officiate-endpoint-design.md`.
 
 **Goal:** Add `GET /officiate` for the canonical initial game state and `POST /officiate` for advancing adjudicated states to the next pre-adjudicated state.
 
@@ -123,7 +123,11 @@ The implementation was extended beyond the initial plan:
 - `POST /officiate` accepts adjudicated spring retreat states and returns fall move states.
 - `POST /officiate` accepts adjudicated fall retreat states and returns fall adjustment states with supply-center controls updated after retreat cleanup.
 - `POST /officiate` accepts adjudicated fall adjustment states and returns spring move states for the next year.
-- The server remains stateless; clients persist complete game states.
+- Every `/officiate` response stamps `phase.started` with current epoch seconds.
+- `GET /officiate` accepts optional `game_id`, `move_phase_minutes`, `retreat_phase_minutes`, and `adjustment_phase_minutes` query parameters and returns them as top-level `options`.
+- `POST /adjudicate` and `POST /officiate` preserve top-level `options` unchanged.
+- `GET /officiate` writes the returned initial state to `data/games/<game_id>/<year>_<season>_<step>.yaml`.
+- Later endpoint calls remain request-body driven and do not load from persisted game state.
 - Regression fixtures are organized by endpoint and phase under:
   - `src/test/resources/regression/adjudicate/{move,retreat,adjustment}`
   - `src/test/resources/regression/officiate/{move,retreat,adjustment}`

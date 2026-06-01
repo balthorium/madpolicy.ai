@@ -103,6 +103,7 @@ class NextStateBuilderTest {
             expected.revision(),
             expected.board(),
             expected.boardRevision(),
+            expected.options(),
             expected.phase(),
             nations,
             List.of()

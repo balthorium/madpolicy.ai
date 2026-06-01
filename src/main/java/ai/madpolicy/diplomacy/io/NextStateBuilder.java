@@ -43,6 +43,7 @@ public final class NextStateBuilder {
             original.revision(),
             original.board(),
             original.boardRevision(),
+            original.options(),
             retreatPhase(original.phase()),
             nations,
             adjudication.standoffs().stream().sorted().toList()
@@ -75,6 +76,7 @@ public final class NextStateBuilder {
             adjudicated.revision(),
             adjudicated.board(),
             adjudicated.boardRevision(),
+            adjudicated.options(),
             retreatPhase(adjudicated.phase()),
             nations,
             adjudicated.standoffs().stream().sorted().toList()
@@ -98,6 +100,7 @@ public final class NextStateBuilder {
             adjudicated.revision(),
             adjudicated.board(),
             adjudicated.boardRevision(),
+            adjudicated.options(),
             phaseAfterAdjustment(adjudicated.phase()),
             nations,
             List.of()
@@ -133,6 +136,7 @@ public final class NextStateBuilder {
             adjudicated.revision(),
             adjudicated.board(),
             adjudicated.boardRevision(),
+            adjudicated.options(),
             phaseAfterRetreat(adjudicated.phase()),
             nations,
             List.of()
@@ -144,7 +148,7 @@ public final class NextStateBuilder {
             originalPhase.season(),
             "retreat",
             originalPhase.year(),
-            originalPhase.due()
+            originalPhase.started()
         );
     }
 
@@ -154,7 +158,7 @@ public final class NextStateBuilder {
             "fall",
             nextStep,
             originalPhase.year(),
-            originalPhase.due()
+            originalPhase.started()
         );
     }
 
@@ -163,7 +167,7 @@ public final class NextStateBuilder {
             "spring",
             "move",
             originalPhase.year() + 1,
-            originalPhase.due()
+            originalPhase.started()
         );
     }
 

@@ -7,7 +7,7 @@ phase:
   season: spring
   step: move
   year: 1901
-  due: 0
+  started: 0
 nations:
   austria:
     name: Austria
