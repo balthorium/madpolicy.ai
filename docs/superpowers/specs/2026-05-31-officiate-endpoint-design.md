@@ -71,7 +71,7 @@ The initial state is:
 
 Accepts an adjudicated `game_state` as YAML and returns the pre-adjudicated state for the next turn step.
 
-For the current move-phase implementation, this means:
+For adjudicated move states, this means:
 
 - successful move orders relocate their units
 - dislodged units remain present with `dislodged_by`
@@ -81,7 +81,18 @@ For the current move-phase implementation, this means:
 - top-level standoffs come from the adjudication outcome
 - the returned phase has `step: retreat`
 
-This endpoint uses the existing adjudication result semantics and `NextStateBuilder` behavior. It does not introduce retreat adjudication, build/disband adjudication, supply-center ownership updates, victory detection, or season/year progression.
+For adjudicated retreat states, this means:
+
+- successful retreat orders relocate their units
+- failed retreat orders remove the dislodged unit
+- disbanded units are removed
+- surviving units receive pending `hold` orders for the next player-editable state
+- `dislodged_by`, retreat-order fields, failure comments, and standoffs are cleared
+- spring retreats advance to `season: fall`, `step: move`
+- fall retreats advance to `season: fall`, `step: adjustment`
+- fall retreats update supply-center control after retreat cleanup; occupied supply centers transfer to the occupying unit's nation, and unoccupied supply centers keep their prior controller
+
+This endpoint uses the existing adjudication result semantics and `NextStateBuilder` behavior. It does not introduce build/disband adjudication, victory detection, or year progression.
 
 ## Design Choices
 
@@ -107,12 +118,13 @@ Regression fixtures are organized by endpoint first, then phase:
 
 Existing move, retreat, and adjustment adjudication corpora live under `regression/adjudicate`. Officiate regression fixtures use the same requested/expected naming convention, where `*_requested.yaml` is the verbatim adjudicated state submitted to `POST /officiate` and `*_expected.yaml` is the pre-adjudicated state returned for the next turn step.
 
-For the current implementation, only move-to-retreat officiation has executable fixtures. Those fixtures should be generated from adjudicated move cases that contain at least one `dislodged_by`, because no-dislodgement move turns will later advance directly past retreat when phase progression is implemented.
+Move-to-retreat officiation fixtures should be generated from adjudicated move cases that contain at least one `dislodged_by`, because no-dislodgement move turns will later advance directly past retreat when phase progression is implemented. Retreat officiation fixtures should cover successful retreat relocation, failed retreat/disband removal, spring retreat phase advancement, and fall retreat supply-center control updates.
 
 Add focused HTTP tests that prove:
 
 - `GET /officiate` returns YAML equal to `data/seeds/standard/1.yaml`
 - `POST /officiate` accepts an adjudicated move-phase state and returns the same next-state shape currently produced by `NextStateBuilder`
+- `POST /officiate` accepts adjudicated retreat states and returns the next pre-adjudicated move or adjustment state
 - existing `POST /adjudicate` behavior remains unchanged
 
-Run the focused web tests, the adjudicate move regression corpus, and the officiate move regression corpus after implementation.
+Run the focused web tests, the adjudicate move and retreat regression corpora, and the officiate move and retreat regression corpora after implementation.

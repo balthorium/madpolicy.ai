@@ -20,13 +20,11 @@ public class AdjudicationService {
     private final BoardCatalog boardCatalog;
     private final ObjectMapper yamlMapper;
     private final AdjudicatedStateBuilder adjudicatedStateBuilder;
-    private final NextStateBuilder nextStateBuilder;
 
     public AdjudicationService() {
         this.boardCatalog = new BoardCatalog();
         this.yamlMapper = new ObjectMapper(new YAMLFactory()).findAndRegisterModules();
         this.adjudicatedStateBuilder = new AdjudicatedStateBuilder();
-        this.nextStateBuilder = new NextStateBuilder();
     }
 
     public GameStateDocument adjudicate(GameStateDocument state) {
@@ -43,7 +41,8 @@ public class AdjudicationService {
     }
 
     public GameStateDocument officiate(GameStateDocument adjudicatedState) {
-        return nextStateBuilder.build(adjudicatedState);
+        BoardDocument board = boardCatalog.resolve(adjudicatedState.board(), adjudicatedState.boardRevision());
+        return new NextStateBuilder(new BoardIndex(board)).build(adjudicatedState);
     }
 
     private <T> T load(Path path, Class<T> type) {

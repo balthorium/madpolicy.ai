@@ -1,0 +1,37 @@
+kind: game_state
+schema: 1
+revision: 1
+board: standard
+board_revision: 1
+phase:
+  season: fall
+  step: retreat
+  year: 1901
+  due: 0
+nations:
+  england:
+    name: England
+    controls:
+    - hol
+    units: []
+  france:
+    name: France
+    controls:
+    - par
+    units:
+    - position: mun_l
+      order:
+        type: hold
+        status: success
+  germany:
+    name: Germany
+    controls:
+    - ber
+    units:
+    - position: kie_l
+      order:
+        type: retreat
+        status: success
+        to: hol_l
+      dislodged_by: ruh
+standoffs: []

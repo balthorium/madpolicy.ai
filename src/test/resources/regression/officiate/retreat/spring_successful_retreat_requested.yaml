@@ -1,0 +1,29 @@
+kind: game_state
+schema: 1
+revision: 1
+board: standard
+board_revision: 1
+phase:
+  season: spring
+  step: retreat
+  year: 1901
+  due: 0
+nations:
+  england:
+    name: England
+    controls: []
+    units:
+    - position: hol_l
+      order:
+        type: retreat
+        status: success
+        to: bel_l
+      dislodged_by: ruh
+    - position: nth_s
+      order:
+        type: move
+        status: failure
+        to: nwg_s
+        via_convoy: false
+        comment: Illegal or useless order.
+standoffs: []

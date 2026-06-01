@@ -2,6 +2,7 @@ package ai.madpolicy.diplomacy.io;
 
 import ai.madpolicy.diplomacy.adjudication.AdjudicationResult;
 import ai.madpolicy.diplomacy.adjudication.UnitResult;
+import ai.madpolicy.diplomacy.domain.BoardIndex;
 import ai.madpolicy.diplomacy.model.GamePhase;
 import ai.madpolicy.diplomacy.model.GameStateDocument;
 import ai.madpolicy.diplomacy.model.NationState;
@@ -13,10 +14,20 @@ import java.util.List;
 import java.util.Map;
 
 public final class NextStateBuilder {
+    private final BoardIndex board;
+
+    public NextStateBuilder() {
+        this(null);
+    }
+
+    public NextStateBuilder(BoardIndex board) {
+        this.board = board;
+    }
+
     public GameStateDocument build(GameStateDocument original, AdjudicationResult adjudication) {
         Map<String, NationState> nations = new LinkedHashMap<>();
         for (Map.Entry<String, NationState> entry : original.nations().entrySet()) {
-            List<UnitState> nextUnits = getUnitStates(adjudication, entry);
+            List<UnitState> nextUnits = moveToRetreatUnitStates(adjudication, entry);
 
             NationState nation = entry.getValue();
             nations.put(entry.getKey(), new NationState(
@@ -39,9 +50,13 @@ public final class NextStateBuilder {
     }
 
     public GameStateDocument build(GameStateDocument adjudicated) {
+        if ("retreat".equals(adjudicated.phase().step())) {
+            return buildAfterRetreat(adjudicated);
+        }
+
         Map<String, NationState> nations = new LinkedHashMap<>();
         for (Map.Entry<String, NationState> entry : adjudicated.nations().entrySet()) {
-            List<UnitState> nextUnits = getUnitStates(entry);
+            List<UnitState> nextUnits = moveToRetreatUnitStates(entry);
 
             NationState nation = entry.getValue();
             nations.put(entry.getKey(), new NationState(
@@ -63,6 +78,41 @@ public final class NextStateBuilder {
         );
     }
 
+    private GameStateDocument buildAfterRetreat(GameStateDocument adjudicated) {
+        Map<String, List<UnitState>> unitsByNation = new LinkedHashMap<>();
+        for (Map.Entry<String, NationState> entry : adjudicated.nations().entrySet()) {
+            unitsByNation.put(entry.getKey(), retreatToNextUnitStates(entry.getValue().units()));
+        }
+
+        Map<String, List<String>> controlsByNation = new LinkedHashMap<>();
+        for (Map.Entry<String, NationState> entry : adjudicated.nations().entrySet()) {
+            controlsByNation.put(entry.getKey(), new ArrayList<>(entry.getValue().controls()));
+        }
+        if ("fall".equals(adjudicated.phase().season()) && board != null) {
+            updateControls(controlsByNation, unitsByNation);
+        }
+
+        Map<String, NationState> nations = new LinkedHashMap<>();
+        for (Map.Entry<String, NationState> entry : adjudicated.nations().entrySet()) {
+            nations.put(entry.getKey(), new NationState(
+                entry.getValue().name(),
+                controlsByNation.get(entry.getKey()),
+                unitsByNation.get(entry.getKey())
+            ));
+        }
+
+        return new GameStateDocument(
+            adjudicated.kind(),
+            adjudicated.schema(),
+            adjudicated.revision(),
+            adjudicated.board(),
+            adjudicated.boardRevision(),
+            phaseAfterRetreat(adjudicated.phase()),
+            nations,
+            List.of()
+        );
+    }
+
     private static GamePhase retreatPhase(GamePhase originalPhase) {
         return new GamePhase(
             originalPhase.season(),
@@ -72,7 +122,17 @@ public final class NextStateBuilder {
         );
     }
 
-    private static List<UnitState> getUnitStates(AdjudicationResult adjudication, Map.Entry<String, NationState> entry) {
+    private static GamePhase phaseAfterRetreat(GamePhase originalPhase) {
+        String nextStep = "fall".equals(originalPhase.season()) ? "adjustment" : "move";
+        return new GamePhase(
+            "fall",
+            nextStep,
+            originalPhase.year(),
+            originalPhase.due()
+        );
+    }
+
+    private static List<UnitState> moveToRetreatUnitStates(AdjudicationResult adjudication, Map.Entry<String, NationState> entry) {
         List<UnitState> nextUnits = new ArrayList<>();
         for (UnitState unit : entry.getValue().units()) {
             UnitResult result = adjudication.unitResult(unit.position());
@@ -92,7 +152,7 @@ public final class NextStateBuilder {
         return nextUnits;
     }
 
-    private static List<UnitState> getUnitStates(Map.Entry<String, NationState> entry) {
+    private static List<UnitState> moveToRetreatUnitStates(Map.Entry<String, NationState> entry) {
         List<UnitState> nextUnits = new ArrayList<>();
         for (UnitState unit : entry.getValue().units()) {
             String nextPosition = unit.position();
@@ -108,6 +168,57 @@ public final class NextStateBuilder {
             ));
         }
         return nextUnits;
+    }
+
+    private static List<UnitState> retreatToNextUnitStates(List<UnitState> adjudicatedUnits) {
+        List<UnitState> nextUnits = new ArrayList<>();
+        for (UnitState unit : adjudicatedUnits) {
+            if (unit.dislodgedBy() != null) {
+                if (unit.order() != null
+                    && "retreat".equals(unit.order().type())
+                    && "success".equals(unit.order().status())
+                    && unit.order().to() != null) {
+                    nextUnits.add(new UnitState(unit.order().to(), pendingHoldOrder(), null));
+                }
+                continue;
+            }
+
+            nextUnits.add(new UnitState(unit.position(), pendingHoldOrder(), null));
+        }
+        return nextUnits;
+    }
+
+    private void updateControls(Map<String, List<String>> controlsByNation, Map<String, List<UnitState>> unitsByNation) {
+        for (Map.Entry<String, List<UnitState>> entry : unitsByNation.entrySet()) {
+            String nationId = entry.getKey();
+            for (UnitState unit : entry.getValue()) {
+                String province = board.provinceIdForPosition(unit.position());
+                if (province == null || !board.isSupplyCenter(province)) {
+                    continue;
+                }
+                String currentController = controllerOf(controlsByNation, province);
+                if (nationId.equals(currentController)) {
+                    continue;
+                }
+                if (currentController != null) {
+                    controlsByNation.get(currentController).remove(province);
+                }
+                controlsByNation.get(nationId).add(province);
+            }
+        }
+    }
+
+    private static String controllerOf(Map<String, List<String>> controlsByNation, String province) {
+        for (Map.Entry<String, List<String>> entry : controlsByNation.entrySet()) {
+            if (entry.getValue().contains(province)) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
+    private static OrderState pendingHoldOrder() {
+        return new OrderState("hold", "pending", null, null, null, null);
     }
 
     private static OrderState pendingDisbandOrder() {

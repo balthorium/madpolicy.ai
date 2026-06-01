@@ -14,11 +14,22 @@ import org.junit.jupiter.api.Test;
 
 class OfficiateRegressionTest {
     private static final Path MOVE_DIR = Path.of("src/test/resources/regression/officiate/move");
+    private static final Path RETREAT_DIR = Path.of("src/test/resources/regression/officiate/retreat");
 
     @Test
     void moveCorpusMatchesExpectedPreAdjudicatedRetreatState() throws IOException {
         assumeTrue(YamlAdjudicationHttpClient.canBindLocalPort(), "local port binding is required for live REST tests");
-        var requestedPaths = requestedPaths(MOVE_DIR);
+        assertCorpusMatchesExpectedNextState(MOVE_DIR);
+    }
+
+    @Test
+    void retreatCorpusMatchesExpectedNextState() throws IOException {
+        assumeTrue(YamlAdjudicationHttpClient.canBindLocalPort(), "local port binding is required for live REST tests");
+        assertCorpusMatchesExpectedNextState(RETREAT_DIR);
+    }
+
+    private static void assertCorpusMatchesExpectedNextState(Path directory) throws IOException {
+        var requestedPaths = requestedPaths(directory);
 
         assertThat(requestedPaths).isNotEmpty();
 

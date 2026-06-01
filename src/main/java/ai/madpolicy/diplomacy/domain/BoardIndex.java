@@ -99,6 +99,11 @@ public final class BoardIndex {
         return nationId.equals(province.homeNation());
     }
 
+    public boolean isSupplyCenter(String provinceId) {
+        BoardProvince province = provinces.get(provinceId);
+        return province != null && province.isSupplyCenter();
+    }
+
     public boolean hasPossibleConvoyRoute(String fromPositionId, String toPositionId) {
         return convoyFleetCanParticipate(null, fromPositionId, toPositionId);
     }

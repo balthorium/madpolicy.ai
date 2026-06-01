@@ -1,0 +1,36 @@
+kind: game_state
+schema: 1
+revision: 1
+board: standard
+board_revision: 1
+phase:
+  season: fall
+  step: adjustment
+  year: 1901
+  due: 0
+nations:
+  england:
+    name: England
+    controls: []
+    units: []
+  france:
+    name: France
+    controls:
+    - par
+    - mun
+    units:
+    - position: mun_l
+      order:
+        type: hold
+        status: pending
+  germany:
+    name: Germany
+    controls:
+    - ber
+    - hol
+    units:
+    - position: hol_l
+      order:
+        type: hold
+        status: pending
+standoffs: []
