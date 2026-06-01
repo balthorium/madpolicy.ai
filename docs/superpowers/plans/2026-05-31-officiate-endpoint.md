@@ -1,10 +1,12 @@
 # Officiate Endpoint Implementation Plan
 
-> **For agentic workers:** REQUIRED: Use superpowers:subagent-driven-development (if subagents available) or superpowers:executing-plans to implement this plan. Steps use checkbox (`- [ ]`) syntax for tracking.
+> Historical note: this plan records the original implementation path and follow-on scope. Do not treat the unchecked boxes as the current active task list.
 
-**Goal:** Add `GET /officiate` for the canonical initial game state and `POST /officiate` for advancing an adjudicated move state to the next pre-adjudicated state.
+> Current note: this plan began as the implementation plan for initial move-to-retreat officiation. The implemented service now supports `GET /officiate` plus `POST /officiate` for adjudicated move, retreat, and adjustment states. The endpoint contract and current fixture strategy are captured in `docs/superpowers/specs/2026-05-31-officiate-endpoint-design.md`.
 
-**Architecture:** Keep the controller thin and put orchestration in a service method beside existing adjudication work. Store the initial seed as runtime data under `data/seeds/standard/1.yaml`, and reuse `NextStateBuilder` for move-to-retreat state construction.
+**Goal:** Add `GET /officiate` for the canonical initial game state and `POST /officiate` for advancing adjudicated states to the next pre-adjudicated state.
+
+**Architecture:** Keep the controller thin and put orchestration in a service method beside existing adjudication work. Store the initial seed as runtime data under `data/seeds/standard/1.yaml`, and use `NextStateBuilder` for move-to-retreat, retreat-to-next-step, and adjustment-to-next-year state construction.
 
 **Tech Stack:** Java 21, Spring Boot 3.5, Maven, Jackson YAML, JUnit 5, AssertJ.
 
@@ -111,22 +113,51 @@ mvn -Dmaven.repo.local=$PWD/.m2 test -Dtest=AdjudicationControllerTest
 
 Expected: PASS.
 
+---
+
+## Implemented Follow-On Scope
+
+The implementation was extended beyond the initial plan:
+
+- `POST /officiate` accepts adjudicated move states and returns pre-retreat states.
+- `POST /officiate` accepts adjudicated spring retreat states and returns fall move states.
+- `POST /officiate` accepts adjudicated fall retreat states and returns fall adjustment states with supply-center controls updated after retreat cleanup.
+- `POST /officiate` accepts adjudicated fall adjustment states and returns spring move states for the next year.
+- The server remains stateless; clients persist complete game states.
+- Regression fixtures are organized by endpoint and phase under:
+  - `src/test/resources/regression/adjudicate/{move,retreat,adjustment}`
+  - `src/test/resources/regression/officiate/{move,retreat,adjustment}`
+- All regression tests are REST-based through `YamlAdjudicationHttpClient`.
+- Officiate adjustment requested fixtures are copied from adjudicate adjustment expected fixtures, because `POST /officiate` consumes the verbatim adjudicated state produced by `POST /adjudicate`.
+
 ### Task 5: Regression Verification
 
 **Files:**
 - No production file changes expected.
 
-- [ ] **Step 1: Run move regression corpus**
+- [ ] **Step 1: Run adjudicate regression corpora**
 
 Run:
 
 ```bash
 mvn -Dmaven.repo.local=$PWD/.m2 test -Dtest=RegressionCorpusTest
+mvn -Dmaven.repo.local=$PWD/.m2 test -Dtest=RetreatRegressionCorpusTest
+mvn -Dmaven.repo.local=$PWD/.m2 test -Dtest=AdjustmentRegressionCorpusTest
 ```
 
 Expected: PASS.
 
-- [ ] **Step 2: Run focused next-state tests**
+- [ ] **Step 2: Run officiate regression corpus**
+
+Run:
+
+```bash
+mvn -Dmaven.repo.local=$PWD/.m2 test -Dtest=OfficiateRegressionTest
+```
+
+Expected: PASS.
+
+- [ ] **Step 3: Run focused next-state tests**
 
 Run:
 

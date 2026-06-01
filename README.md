@@ -1,15 +1,18 @@
 # madpolicy.ai
 
-Java 21 + Spring Boot + Maven implementation of a Diplomacy move-phase adjudication engine.
+Java 21 + Spring Boot + Maven implementation of a stateless Diplomacy adjudication and turn-orchestration service.
 
 ## Scope
 
-This repo currently covers move-phase adjudication only. It reads a board plus move-phase game state and produces:
+This repo currently exposes two YAML endpoints:
 
-- an `adjudicated_state`
-- a `next_state` with `phase.step: retreat`
+- `POST /adjudicate` evaluates player-edited orders for move, retreat, and adjustment phases.
+- `GET /officiate` returns the canonical initial standard game state.
+- `POST /officiate` advances an adjudicated state into the next pre-adjudicated state without player involvement.
 
-The primary behavioral oracle is the regression corpus in `src/test/resources/regression`.
+The service is intentionally stateless. Clients own persistence and submit complete `game_state` documents to each request. Static runtime data lives under `data/boards` and `data/seeds`.
+
+The primary behavioral oracle is the REST-based regression corpus in `src/test/resources/regression`.
 
 ## Requirements
 
@@ -58,10 +61,18 @@ Run focused adjudication tests:
 mvn -Dmaven.repo.local=$PWD/.m2 test -Dtest=MoveAdjudicatorMicroTest
 ```
 
-Run the move-phase regression corpus:
+Run adjudicate regression corpora:
 
 ```bash
 mvn -Dmaven.repo.local=$PWD/.m2 test -Dtest=RegressionCorpusTest
+mvn -Dmaven.repo.local=$PWD/.m2 test -Dtest=RetreatRegressionCorpusTest
+mvn -Dmaven.repo.local=$PWD/.m2 test -Dtest=AdjustmentRegressionCorpusTest
+```
+
+Run officiate regression corpora:
+
+```bash
+mvn -Dmaven.repo.local=$PWD/.m2 test -Dtest=OfficiateRegressionTest
 ```
 
 Run the full test suite:
@@ -83,7 +94,7 @@ In another shell, call the YAML adjudication endpoint with a regression request 
 ```bash
 curl -H 'Content-Type: application/yaml' \
      -H 'Accept: application/yaml' \
-     --data-binary @src/test/resources/regression/test1_requested.yaml \
+     --data-binary @src/test/resources/regression/adjudicate/move/test1_requested.yaml \
      http://localhost:8080/adjudicate \
      -o /tmp/test1_actual.yaml
 ```
@@ -91,31 +102,58 @@ curl -H 'Content-Type: application/yaml' \
 Compare the response to the expected fixture with `dyff`:
 
 ```bash
-dyff between /tmp/test1_actual.yaml src/test/resources/regression/test1_expected.yaml
+dyff between /tmp/test1_actual.yaml src/test/resources/regression/adjudicate/move/test1_expected.yaml
 ```
 
 If `dyff` reports no differences, the manual adjudication result matches the expected fixture semantically.
 
+Start a new standard game:
+
+```bash
+curl -H 'Accept: application/yaml' \
+     http://localhost:8080/officiate
+```
+
+Advance an adjudicated state to the next pre-adjudicated state:
+
+```bash
+curl -H 'Content-Type: application/yaml' \
+     -H 'Accept: application/yaml' \
+     --data-binary @src/test/resources/regression/officiate/adjustment/test26_requested.yaml \
+     http://localhost:8080/officiate
+```
+
 ## Project Layout
 
 - `src/main/java/ai/madpolicy/diplomacy/adjudication/`
-  Core move adjudication logic.
+  Phase adjudication logic for move, retreat, and adjustment turns.
 - `src/main/java/ai/madpolicy/diplomacy/domain/`
   Board and game-state indexing plus normalized order/unit structures.
 - `src/main/java/ai/madpolicy/diplomacy/io/`
-  Builders for `adjudicated_state` and `next_state`.
+  Builders for adjudicated states and next pre-adjudicated states.
+- `src/main/java/ai/madpolicy/diplomacy/app/`
+  Board catalog and stateless service orchestration.
+- `src/main/java/ai/madpolicy/diplomacy/web/`
+  YAML HTTP controller for `/adjudicate` and `/officiate`.
 - `src/test/java/ai/madpolicy/diplomacy/adjudication/`
   Focused adjudication and validator tests.
 - `src/test/java/ai/madpolicy/diplomacy/regression/`
-  Regression harness and corpus test.
-- `data/boards/standard.yaml`
-  Board topology.
+  REST regression harness and corpus tests.
+- `data/boards/standard/1.yaml`
+  Standard board topology.
+- `data/seeds/standard/1.yaml`
+  Canonical initial standard game state returned by `GET /officiate`.
 - `src/test/resources/regression/`
-  Move-phase expected results.
+  Endpoint-first regression fixtures:
+  - `adjudicate/move`
+  - `adjudicate/retreat`
+  - `adjudicate/adjustment`
+  - `officiate/move`
+  - `officiate/retreat`
+  - `officiate/adjustment`
 
 ## Important Rules
 
-- Only move-phase adjudication is in scope.
 - Support-to-hold matches supported units ordered to `hold`, `support`, or `convoy`.
 - Support-to-move matching is province-based at the destination side.
 - Same-position move orders are invalid.
@@ -124,8 +162,13 @@ If `dyff` reports no differences, the manual adjudication result matches the exp
 - A fleet attacked by a convoyed army does not have its support cut when:
   - the convoy has exactly one possible route
   - and the support could alter the success of that route by supporting a convoying fleet or an attack on a convoying fleet
+- Retreat orders are valid only for dislodged units, cannot retreat to the dislodger's province, cannot retreat to occupied provinces or standoff provinces, and contested retreats fail.
+- Adjustment orders are limited to `build`, `disband`, and `hold`; all other order types are illegal.
+- Build and disband orders are checked for validity before excessive-build, excessive-disband, or civil-disorder selection is applied.
+- Players are not required to use every allowed build.
+- Civil-disorder and excess-order selection prefer units or candidate builds furthest from a home supply center, then fleets before armies, then province name alphabetically.
 
 ## Docs
 
-- Spec: `docs/superpowers/specs/2026-04-26-move-adjudication-engine-design.md`
-- Plan: `docs/superpowers/plans/2026-04-26-move-adjudication-engine.md`
+- Move adjudication spec: `docs/superpowers/specs/2026-04-26-move-adjudication-engine-design.md`
+- Officiate endpoint spec: `docs/superpowers/specs/2026-05-31-officiate-endpoint-design.md`

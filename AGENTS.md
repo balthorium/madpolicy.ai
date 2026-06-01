@@ -1,13 +1,14 @@
 # AGENTS.md
 
 ## Purpose
-This repository contains a Java 21 + Spring Boot + Maven implementation of a Diplomacy move-phase adjudication engine.
+This repository contains a Java 21 + Spring Boot + Maven implementation of a stateless Diplomacy adjudication and turn-orchestration service.
 
-The current goal is:
-- keep the move-phase adjudicator passing the move-phase regression corpus in `src/test/resources/regression`
-- produce both:
-  - an `adjudicated_state`
-  - a `next_state` with `phase.step: retreat`
+Current service responsibilities:
+- `POST /adjudicate` evaluates player-edited orders for move, retreat, and adjustment phases.
+- `GET /officiate` returns the canonical initial standard game state from `data/seeds/standard/1.yaml`.
+- `POST /officiate` advances the verbatim adjudicated result from `POST /adjudicate` into the next pre-adjudicated state.
+
+Clients own game persistence and submit complete `game_state` documents. The server does not maintain game ids, saved game directories, turn history, continuity validation, authorization state, or anti-cheat validation.
 
 ## Environment
 - Repository root: `/Users/adb/Desktop/madpolicy.ai`
@@ -17,13 +18,6 @@ The current goal is:
 - Maven should be run with a workspace-local repo:
   - `mvn -Dmaven.repo.local=$PWD/.m2 ...`
 
-Recommended shell setup before Java/Maven work:
-
-```bash
-export JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home
-export PATH="$JAVA_HOME/bin:$PATH"
-```
-
 Before exporting `JAVA_HOME` or modifying `PATH`, first check the live shell:
 
 ```bash
@@ -31,16 +25,25 @@ which java
 java -version
 ```
 
-If `java` already resolves to Java 21, do not override `JAVA_HOME` or prepend a new Java path. Only apply the exports above when the current shell is not already using Java 21.
+If `java` already resolves to Java 21, do not override `JAVA_HOME` or prepend a new Java path. Only apply the exports below when the current shell is not already using Java 21.
+
+```bash
+export JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home
+export PATH="$JAVA_HOME/bin:$PATH"
+```
 
 ## Key Docs
-- Spec:
+- Move adjudication spec:
   - `docs/superpowers/specs/2026-04-26-move-adjudication-engine-design.md`
-- Plan:
-  - `docs/superpowers/plans/2026-04-26-move-adjudication-engine.md`
+- Officiate endpoint spec:
+  - `docs/superpowers/specs/2026-05-31-officiate-endpoint-design.md`
+- Historical implementation plans:
+  - `docs/superpowers/plans/`
 
 ## Important Rule Decisions
-- Only move-phase adjudication is in scope for this engine.
+- The service boundary is:
+  - `adjudicate` evaluates player orders and returns a judged state.
+  - `officiate` advances a judged state without player involvement.
 - Support-to-hold matches supported units ordered to `hold`, `support`, or `convoy`.
 - Support-to-move matching is province-based on the destination side, not exact-position based.
 - A dislodged unit:
@@ -54,6 +57,16 @@ If `java` already resolves to Java 21, do not override `JAVA_HOME` or prepend a 
 - Same-position move orders are invalid.
 - Convoy endpoints are land positions in coastal provinces.
 - Convoy orders must be validated against whether the specific fleet can lie on a possible convoy route.
+- Retreat orders are valid only for dislodged units.
+- Retreats cannot go to the province of the dislodging unit, occupied provinces, or provinces with standoffs.
+- Two or more units retreating to the same province all fail.
+- Adjustment orders are limited to `build`, `disband`, and `hold`; all other orders are illegal.
+- Build and disband orders are checked for validity before applying any excessive-build, excessive-disband, or civil-disorder selection.
+- Players are not required to build as many units as they are permitted to build.
+- Civil-disorder and excess-order selection prefer:
+  - units or candidate builds furthest from a home supply center
+  - fleets before armies on ties
+  - province name alphabetically on further ties
 
 ## Main Source Areas
 - App entry:
@@ -66,79 +79,89 @@ If `java` already resolves to Java 21, do not override `JAVA_HOME` or prepend a 
 - Adjudication:
   - `src/main/java/ai/madpolicy/diplomacy/adjudication/OrderValidator.java`
   - `src/main/java/ai/madpolicy/diplomacy/adjudication/MoveAdjudicator.java`
+  - `src/main/java/ai/madpolicy/diplomacy/adjudication/RetreatAdjudicator.java`
+  - `src/main/java/ai/madpolicy/diplomacy/adjudication/AdjustmentAdjudicator.java`
   - `src/main/java/ai/madpolicy/diplomacy/adjudication/FailureComment.java`
 - Output builders:
   - `src/main/java/ai/madpolicy/diplomacy/io/AdjudicatedStateBuilder.java`
   - `src/main/java/ai/madpolicy/diplomacy/io/NextStateBuilder.java`
 - Service layer:
   - `src/main/java/ai/madpolicy/diplomacy/app/AdjudicationService.java`
+  - `src/main/java/ai/madpolicy/diplomacy/app/BoardCatalog.java`
+- Web layer:
+  - `src/main/java/ai/madpolicy/diplomacy/web/AdjudicationController.java`
+
+## Runtime Data
+- Boards:
+  - `data/boards/standard/1.yaml`
+- Initial game-state seeds:
+  - `data/seeds/standard/1.yaml`
+
+There is intentionally no `data/games` directory and no persisted server-side game state.
 
 ## Main Test Areas
 - Micro adjudication tests:
   - `src/test/java/ai/madpolicy/diplomacy/adjudication/MoveAdjudicatorMicroTest.java`
 - Validator tests:
   - `src/test/java/ai/madpolicy/diplomacy/adjudication/OrderValidatorTest.java`
-- Regression harness:
+- REST controller tests:
+  - `src/test/java/ai/madpolicy/diplomacy/web/AdjudicationControllerTest.java`
+  - `src/test/java/ai/madpolicy/diplomacy/web/OfficiateControllerMockMvcTest.java`
+- Regression harness and corpora:
   - `src/test/java/ai/madpolicy/diplomacy/regression/RegressionHarness.java`
   - `src/test/java/ai/madpolicy/diplomacy/regression/RegressionCorpusTest.java`
+  - `src/test/java/ai/madpolicy/diplomacy/regression/RetreatRegressionCorpusTest.java`
+  - `src/test/java/ai/madpolicy/diplomacy/regression/AdjustmentRegressionCorpusTest.java`
+  - `src/test/java/ai/madpolicy/diplomacy/regression/OfficiateRegressionTest.java`
 
-## Regression Harness Behavior
-The regression harness:
-1. reads each move-phase fixture in `src/test/resources/regression`
-2. normalizes it back to pre-adjudicated state by:
-   - setting all order statuses to `new`
-   - removing order comments
-   - removing `dislodged_by`
-   - clearing `standoffs`
-3. adjudicates it
-4. rebuilds the `adjudicated_state`
-5. compares semantic equality with the original fixture
+## Regression Fixture Layout
+Regression fixtures are organized by endpoint first, then phase:
+
+- `src/test/resources/regression/adjudicate/move`
+- `src/test/resources/regression/adjudicate/retreat`
+- `src/test/resources/regression/adjudicate/adjustment`
+- `src/test/resources/regression/officiate/move`
+- `src/test/resources/regression/officiate/retreat`
+- `src/test/resources/regression/officiate/adjustment`
+
+All regression tests are REST-based:
+- adjudicate regression tests call live `POST /adjudicate` through `YamlAdjudicationHttpClient`
+- officiate regression tests call live `POST /officiate` through `YamlAdjudicationHttpClient`
+
+These tests require local port binding and use `YamlAdjudicationHttpClient.canBindLocalPort()` to skip when a local HTTP server cannot be started.
+
+Officiate adjustment requested fixtures are copied from adjudicate adjustment expected fixtures. This reflects the service contract that `POST /officiate` accepts the verbatim adjudicated state produced by `POST /adjudicate`.
 
 ## Current Status
-As of 2026-04-27:
-- focused micro adjudication tests are passing
-- the move-phase regression corpus is passing
-- the adjudicator is producing both `adjudicated_state` and `next_state`
+As of 2026-06-01:
+- move, retreat, and adjustment adjudication are implemented and covered by REST regression tests
+- move, retreat, and adjustment officiation are implemented and covered by REST regression tests
+- `GET /officiate` returns `data/seeds/standard/1.yaml`
+- `POST /officiate` handles:
+  - adjudicated move states to pre-retreat states
+  - adjudicated spring retreat states to fall move states
+  - adjudicated fall retreat states to fall adjustment states, including control updates
+  - adjudicated fall adjustment states to next-year spring move states
 
-Last verified focused command:
+Useful verification commands:
 
 ```bash
 mvn -Dmaven.repo.local=$PWD/.m2 test -Dtest=MoveAdjudicatorMicroTest
-```
-
-Last verified regression command:
-
-```bash
 mvn -Dmaven.repo.local=$PWD/.m2 test -Dtest=RegressionCorpusTest
+mvn -Dmaven.repo.local=$PWD/.m2 test -Dtest=RetreatRegressionCorpusTest
+mvn -Dmaven.repo.local=$PWD/.m2 test -Dtest=AdjustmentRegressionCorpusTest
+mvn -Dmaven.repo.local=$PWD/.m2 test -Dtest=OfficiateRegressionTest
+mvn -Dmaven.repo.local=$PWD/.m2 test
 ```
-
-## Fixture Updates Already Made
-Several regression fixtures were updated to match the agreed spec/rules. Do not blindly revert them.
-
-Notable examples include:
-- `src/test/resources/regression/datc_6q.yaml`
-- `src/test/resources/regression/datc_6r.yaml`
-- `src/test/resources/regression/datc_6s.yaml`
-- `src/test/resources/regression/datc_6t.yaml`
-- `src/test/resources/regression/datc_1e.yaml`
-- `src/test/resources/regression/datc_1g.yaml`
-- `src/test/resources/regression/2ed_example2.yaml`
-- `src/test/resources/regression/datc_2m.yaml`
-- `src/test/resources/regression/datc_6k.yaml`
-- `src/test/resources/regression/datc_7b.yaml`
-- `src/test/resources/regression/datc_7d.yaml`
-- `src/test/resources/regression/datc_7g.yaml`
-- `src/test/resources/regression/datc_7k_alt.yaml`
-- `src/test/resources/regression/datc_8i.yaml`
-- `src/test/resources/regression/test1.yaml`
 
 ## Working Notes
-- Prefer adding a focused microtest before changing adjudication logic.
-- Treat the spec as authoritative when the corpus is clearly inconsistent, but verify carefully before changing fixtures.
-- The current adjudicator behavior depends on iterative resolution for convoy paradox cases; preserve that structure unless there is strong reason to replace it.
+- Prefer adding a focused microtest or regression fixture before changing adjudication logic.
+- Treat the specs and explicit user decisions as authoritative when the corpus is inconsistent, but verify carefully before changing fixtures.
+- Do not change any regression `status` field without explicit user confirmation first.
+- The move adjudicator depends on iterative resolution for convoy paradox cases; preserve that structure unless there is strong reason to replace it.
 - If Maven cannot resolve dependencies, that is likely an environment/network limitation rather than a known project regression.
 
 ## Notes for the Next Agent
 - Use `apply_patch` for edits.
 - Do not revert unrelated user changes.
-- Do not change any regression `status` field without explicit user confirmation first.
+- Keep endpoint boundaries clear: `adjudicate` judges player orders; `officiate` advances already-judged state.

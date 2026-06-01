@@ -1,5 +1,7 @@
 # Move Adjudication Engine Design
 
+> Current note: this is the historical design spec for move-phase adjudication only. The service now also includes retreat and adjustment adjudication plus the stateless `/officiate` turn-orchestration endpoint. See `docs/superpowers/specs/2026-05-31-officiate-endpoint-design.md` for the current endpoint boundary and phase-transition design.
+
 ## Context
 
 Diplomacy is a simultaneous-order strategy game. During a move phase, all nations submit orders at the same time, and those orders are then resolved together. That resolution step is called adjudication.

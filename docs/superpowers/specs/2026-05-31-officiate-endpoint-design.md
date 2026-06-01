@@ -2,7 +2,7 @@
 
 ## Context
 
-The service currently exposes `POST /adjudicate` for move-phase adjudication. That endpoint accepts a pre-adjudicated move-phase `game_state` and returns an adjudicated move-phase `game_state`.
+The service exposes `POST /adjudicate` for phase adjudication. That endpoint accepts a pre-adjudicated `game_state` for move, retreat, or adjustment phases and returns an adjudicated `game_state` for the same phase.
 
 The application also needs an endpoint named `officiate` for turn orchestration:
 
@@ -29,6 +29,14 @@ It accepts a pre-adjudicated state whose orders were authored or updated by play
 Conceptually:
 
 `Given these submitted orders, what is the ruling?`
+
+Current phase support:
+
+- move adjudication resolves `hold`, `move`, `support`, and `convoy`
+- retreat adjudication resolves `retreat`, `disband`, and survivor `hold` orders
+- adjustment adjudication resolves `build`, `disband`, and `hold`
+
+Adjustment build and disband orders are validated before any excessive-build, excessive-disband, or civil-disorder selection is applied. Players are not required to use every allowed build. Civil-disorder and excess-order selection prefer units or candidate builds furthest from a home supply center, then fleets before armies, then province name alphabetically.
 
 ### `officiate`
 
@@ -128,6 +136,8 @@ Regression fixtures are organized by endpoint first, then phase:
 - `src/test/resources/regression/officiate/adjustment`
 
 Existing move, retreat, and adjustment adjudication corpora live under `regression/adjudicate`. Officiate regression fixtures use the same requested/expected naming convention, where `*_requested.yaml` is the verbatim adjudicated state submitted to `POST /officiate` and `*_expected.yaml` is the pre-adjudicated state returned for the next turn step.
+
+All regression harnesses are REST-based. Adjudicate corpora call live `POST /adjudicate`, and officiate corpora call live `POST /officiate`, both through `YamlAdjudicationHttpClient`.
 
 Move-to-retreat officiation fixtures should be generated from adjudicated move cases that contain at least one `dislodged_by`, because no-dislodgement move turns will later advance directly past retreat when phase progression is implemented. Retreat officiation fixtures should cover successful retreat relocation, failed retreat/disband removal, spring retreat phase advancement, and fall retreat supply-center control updates. Adjustment officiation fixtures should use the adjudicate adjustment `*_expected.yaml` files as `*_requested.yaml` inputs, then assert the next spring move state after applying successful builds, successful disbands, and civil-disorder removals.
 
