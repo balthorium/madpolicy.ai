@@ -19,7 +19,8 @@ nations:
     - position: war_l
       order:
         type: build
-        status: success
+        status: failure
+        comment: Illegal or useless order.
     - position: kie_l
       order:
         type: build
@@ -27,8 +28,7 @@ nations:
     - position: mun_l
       order:
         type: build
-        status: failure
-        comment: Too many build orders.
+        status: success
     - position: vie_l
       order:
         type: hold

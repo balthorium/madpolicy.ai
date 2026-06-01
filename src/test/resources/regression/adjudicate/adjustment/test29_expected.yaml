@@ -18,8 +18,7 @@ nations:
     - position: war_l
       order:
         type: hold
-        status: failure
-        comment: Civil disorder.
+        status: success
     - position: kie_l
       order:
         type: build
@@ -32,5 +31,6 @@ nations:
     - position: vie_l
       order:
         type: hold
-        status: success
+        status: failure
+        comment: Civil disorder.
 standoffs: []

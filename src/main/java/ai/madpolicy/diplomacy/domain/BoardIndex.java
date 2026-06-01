@@ -3,10 +3,12 @@ package ai.madpolicy.diplomacy.domain;
 import ai.madpolicy.diplomacy.model.BoardDocument;
 import ai.madpolicy.diplomacy.model.BoardPosition;
 import ai.madpolicy.diplomacy.model.BoardProvince;
+import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 
 public final class BoardIndex {
@@ -82,6 +84,11 @@ public final class BoardIndex {
         return Collections.unmodifiableSet(ids);
     }
 
+    public String provinceName(String provinceId) {
+        BoardProvince province = provinces.get(provinceId);
+        return province == null ? provinceId : province.name();
+    }
+
     public boolean canReachProvince(String fromPositionId, String provinceId) {
         for (String positionId : positionsForProvince(provinceId)) {
             if (areAdjacent(fromPositionId, positionId)) {
@@ -102,6 +109,35 @@ public final class BoardIndex {
     public boolean isSupplyCenter(String provinceId) {
         BoardProvince province = provinces.get(provinceId);
         return province != null && province.isSupplyCenter();
+    }
+
+    public int distanceToNearestHomeSupplyCenter(String provinceId, String nationId) {
+        Set<String> homeCenters = homeSupplyCenterProvinceIdsForNation(nationId);
+        if (homeCenters.isEmpty()) {
+            return Integer.MAX_VALUE;
+        }
+        if (homeCenters.contains(provinceId)) {
+            return 0;
+        }
+
+        Set<String> visited = new HashSet<>();
+        Queue<ProvinceDistance> queue = new ArrayDeque<>();
+        visited.add(provinceId);
+        queue.add(new ProvinceDistance(provinceId, 0));
+        while (!queue.isEmpty()) {
+            ProvinceDistance current = queue.remove();
+            for (String adjacent : adjacentProvinceIds(current.provinceId())) {
+                if (!visited.add(adjacent)) {
+                    continue;
+                }
+                int distance = current.distance() + 1;
+                if (homeCenters.contains(adjacent)) {
+                    return distance;
+                }
+                queue.add(new ProvinceDistance(adjacent, distance));
+            }
+        }
+        return Integer.MAX_VALUE;
     }
 
     public boolean hasPossibleConvoyRoute(String fromPositionId, String toPositionId) {
@@ -133,6 +169,29 @@ public final class BoardIndex {
             }
         }
         return false;
+    }
+
+    private Set<String> homeSupplyCenterProvinceIdsForNation(String nationId) {
+        Set<String> homeCenters = new HashSet<>();
+        for (Map.Entry<String, BoardProvince> entry : provinces.entrySet()) {
+            if (nationId.equals(entry.getValue().homeNation())) {
+                homeCenters.add(entry.getKey());
+            }
+        }
+        return homeCenters;
+    }
+
+    private Set<String> adjacentProvinceIds(String provinceId) {
+        Set<String> adjacentProvinceIds = new HashSet<>();
+        for (String positionId : positionsForProvince(provinceId)) {
+            for (String adjacentPositionId : adjacencyByPosition.getOrDefault(positionId, Set.of())) {
+                String adjacentProvinceId = provinceIdForPosition(adjacentPositionId);
+                if (adjacentProvinceId != null && !adjacentProvinceId.equals(provinceId)) {
+                    adjacentProvinceIds.add(adjacentProvinceId);
+                }
+            }
+        }
+        return adjacentProvinceIds;
     }
 
     private boolean convoyPathExists(
@@ -173,5 +232,8 @@ public final class BoardIndex {
             }
         }
         return touching;
+    }
+
+    private record ProvinceDistance(String provinceId, int distance) {
     }
 }

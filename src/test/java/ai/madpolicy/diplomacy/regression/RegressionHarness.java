@@ -19,6 +19,7 @@ import java.util.stream.Stream;
 public final class RegressionHarness {
     private static final Path MOVE_REGRESSION_DIR = Path.of("src/test/resources/regression/adjudicate/move");
     private static final Path RETREAT_REGRESSION_DIR = Path.of("src/test/resources/regression/adjudicate/retreat");
+    private static final Path ADJUSTMENT_REGRESSION_DIR = Path.of("src/test/resources/regression/adjudicate/adjustment");
 
     private RegressionHarness() {
     }
@@ -29,6 +30,10 @@ public final class RegressionHarness {
 
     public static RegressionSummary runRetreat() {
         return run(RETREAT_REGRESSION_DIR, "retreat");
+    }
+
+    public static RegressionSummary runAdjustment() {
+        return run(ADJUSTMENT_REGRESSION_DIR, "adjustment");
     }
 
     private static RegressionSummary run(Path regressionDir, String step) {

@@ -1,5 +1,7 @@
 package ai.madpolicy.diplomacy.app;
 
+import ai.madpolicy.diplomacy.adjudication.AdjudicationResult;
+import ai.madpolicy.diplomacy.adjudication.AdjustmentAdjudicator;
 import ai.madpolicy.diplomacy.adjudication.MoveAdjudicator;
 import ai.madpolicy.diplomacy.adjudication.RetreatAdjudicator;
 import ai.madpolicy.diplomacy.domain.BoardIndex;
@@ -30,9 +32,11 @@ public class AdjudicationService {
     public GameStateDocument adjudicate(GameStateDocument state) {
         BoardDocument board = boardCatalog.resolve(state.board(), state.boardRevision());
         BoardIndex boardIndex = new BoardIndex(board);
-        var adjudication = "retreat".equals(state.phase().step())
-            ? new RetreatAdjudicator(boardIndex).adjudicate(state)
-            : new MoveAdjudicator(boardIndex).adjudicate(state);
+        AdjudicationResult adjudication = switch (state.phase().step()) {
+            case "retreat" -> new RetreatAdjudicator(boardIndex).adjudicate(state);
+            case "adjustment" -> new AdjustmentAdjudicator(boardIndex).adjudicate(state);
+            default -> new MoveAdjudicator(boardIndex).adjudicate(state);
+        };
         return adjudicatedStateBuilder.build(state, adjudication);
     }
 
