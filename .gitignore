@@ -13,3 +13,4 @@ replay_pid*
 *.dumpstream
 *.swp
 *.swo
+result/
