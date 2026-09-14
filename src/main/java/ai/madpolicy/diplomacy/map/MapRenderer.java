@@ -7,8 +7,10 @@ import ai.madpolicy.diplomacy.model.GameStateDocument;
 import ai.madpolicy.diplomacy.model.NationState;
 import ai.madpolicy.diplomacy.model.UnitState;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public final class MapRenderer {
 
@@ -109,19 +111,54 @@ public final class MapRenderer {
             svg.append("</g>\n");
         }
 
-        // Layer 4: borders
+        // Layer 4: borders — only draw edges between actually adjacent provinces.
+        // Build reverse-edge lookup: canonical edge key -> owning provinceId
+        Map<String, String> edgeOwner = new HashMap<>();
+        for (Map.Entry<String, ProvinceLayout> e : layout.provinces().entrySet()) {
+            String pid = e.getKey();
+            List<Vec2> poly = e.getValue().polygon();
+            int sz = poly.size();
+            for (int vi = 0; vi < sz; vi++) {
+                Vec2 v1 = poly.get(vi), v2 = poly.get((vi + 1) % sz);
+                edgeOwner.put(edgeCanonicalKey(v1, v2), pid);
+            }
+        }
+
         svg.append("<g id=\"borders\" fill=\"none\">\n");
         for (Map.Entry<String, ProvinceLayout> e : layout.provinces().entrySet()) {
             String pid = e.getKey();
             ProvinceLayout pl = e.getValue();
-            if (pl.polygon().isEmpty()) continue;
+            List<Vec2> poly = pl.polygon();
+            if (poly.isEmpty()) continue;
             boolean isOcean = "ocean".equals(pl.terrain());
-            String stroke = isOcean ? "#4a7a9b" : "#555";
-            double width = isOcean ? 0.5 : 1.0;
-            svg.append("  <path d=\"").append(toPath(pl.polygon()))
-               .append("\" stroke=\"").append(stroke)
-               .append("\" stroke-width=\"").append(width).append("\"/>\n");
+            Set<String> adjSet = layout.adjacencies().getOrDefault(pid, Set.of());
+            int sz = poly.size();
+            for (int vi = 0; vi < sz; vi++) {
+                Vec2 v1 = poly.get(vi), v2 = poly.get((vi + 1) % sz);
+                String neighbor = edgeOwner.get(edgeCanonicalKey(v2, v1));
+                boolean isBoundaryEdge = (neighbor == null);
+                boolean isRealAdjacency = isBoundaryEdge || adjSet.contains(neighbor);
+                if (!isRealAdjacency) continue;
+
+                String stroke;
+                double strokeWidth;
+                if (isBoundaryEdge) {
+                    stroke = isOcean ? "#2d5f7a" : "#444";
+                    strokeWidth = isOcean ? 1.0 : 1.0;
+                } else {
+                    boolean neighborOcean = "ocean".equals(
+                        layout.provinces().get(neighbor).terrain());
+                    stroke = (isOcean && neighborOcean) ? "#2d5f7a"
+                           : (isOcean || neighborOcean) ? "#3a6a7a" : "#444";
+                    strokeWidth = (isOcean && neighborOcean) ? 1.5 : 1.0;
+                }
+                svg.append("  <line x1=\"").append(fmt(v1.x())).append("\" y1=\"").append(fmt(v1.y()))
+                   .append("\" x2=\"").append(fmt(v2.x())).append("\" y2=\"").append(fmt(v2.y()))
+                   .append("\" stroke=\"").append(stroke)
+                   .append("\" stroke-width=\"").append(strokeWidth).append("\"/>\n");
+            }
         }
+
         svg.append("</g>\n");
 
         // Layer 5: supply center markers
@@ -187,6 +224,7 @@ public final class MapRenderer {
         for (Map.Entry<String, ProvinceLayout> e : layout.provinces().entrySet()) {
             ProvinceLayout pl = e.getValue();
             String pid = e.getKey();
+            boolean isSupplyCenter = board != null && board.provinces().get(pid).isSupplyCenter();
             String name = board != null
                 ? board.provinces().get(pid).name()
                 : pid;
@@ -194,11 +232,13 @@ public final class MapRenderer {
             String fill = isOcean ? "#ddeeff" : "#222";
             int fontSize = isOcean ? 9 : 10;
             Vec2 c = pl.centroid();
-            svg.append("  <text x=\"").append(fmt(c.x())).append("\" y=\"").append(fmt(c.y()))
+            // Offset label below supply center star to avoid overlap
+            double labelY = isSupplyCenter ? c.y() + 14 : c.y();
+            svg.append("  <text x=\"").append(fmt(c.x())).append("\" y=\"").append(fmt(labelY))
                .append("\" fill=\"").append(fill)
                .append("\" font-size=\"").append(fontSize)
                .append("\" font-family=\"sans-serif\" text-anchor=\"middle\"")
-               .append(" dominant-baseline=\"middle\">").append(abbreviate(name))
+               .append(" dominant-baseline=\"middle\">").append(name)
                .append("</text>\n");
         }
         svg.append("</g>\n");
@@ -210,6 +250,11 @@ public final class MapRenderer {
     // -------------------------------------------------------------------------
     // Helpers
     // -------------------------------------------------------------------------
+
+    private static String edgeCanonicalKey(Vec2 v1, Vec2 v2) {
+        return Math.round(v1.x() * 10) + "," + Math.round(v1.y() * 10)
+             + "->" + Math.round(v2.x() * 10) + "," + Math.round(v2.y() * 10);
+    }
 
     private static String toPath(List<Vec2> poly) {
         if (poly.isEmpty()) return "";
@@ -235,12 +280,6 @@ public final class MapRenderer {
         }
         sb.append(" Z");
         return sb.toString();
-    }
-
-    private static String abbreviate(String name) {
-        if (name.length() <= 12) return name;
-        int space = name.indexOf(' ');
-        return space > 0 ? name.substring(0, space) : name.substring(0, 11) + "…";
     }
 
     private static String fmt(double v) {

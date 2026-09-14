@@ -5,26 +5,30 @@ import ai.madpolicy.diplomacy.model.BoardDocument;
 import ai.madpolicy.diplomacy.model.BoardPosition;
 import ai.madpolicy.diplomacy.model.BoardProvince;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
-import org.apache.commons.math3.linear.EigenDecomposition;
+import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.DecompositionSolver;
+import org.apache.commons.math3.linear.LUDecomposition;
+import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.linear.RealVector;
+import org.jgrapht.Graph;
+import org.jgrapht.alg.planar.BoyerMyrvoldPlanarityInspector;
+import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.SimpleGraph;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryCollection;
 import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.MultiPoint;
-import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
-import org.locationtech.jts.triangulate.VoronoiDiagramBuilder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -33,9 +37,10 @@ public class MapLayoutService {
     private static final int WIDTH = 1200;
     private static final int HEIGHT = 900;
     private static final int MARGIN = 80;
-    private static final int FORCE_ITERATIONS = 150;
+    private static final double OUTER_PUSH = 260.0;
     private static final double PERTURBATION_AMPLITUDE = 14.0;
     private static final double PERTURBATION_SEGMENT_LENGTH = 25.0;
+    private static final long EDGE_KEY_BASE = 100_000L;
 
     private final BoardCatalog boardCatalog;
     private final Map<String, MapLayout> cache = new ConcurrentHashMap<>();
@@ -54,6 +59,11 @@ public class MapLayoutService {
 
     // -------------------------------------------------------------------------
     // Top-level computation
+    //
+    // Pipeline: planar embedding (Boyer-Myrvold) -> face extraction -> Tutte
+    // coordinates (outer face pinned to a circle) -> dual polygonization.
+    // Every stage guarantees the invariant the next stage requires, so borders
+    // exist iff a graph edge exists — by construction, not by optimization.
     // -------------------------------------------------------------------------
 
     private MapLayout compute(String boardId, int revision) {
@@ -66,10 +76,44 @@ public class MapLayoutService {
         Map<String, Integer> index = new HashMap<>();
         for (int i = 0; i < n; i++) index.put(ids.get(i), i);
 
-        // Build province-level adjacency from position-level pairs
-        @SuppressWarnings("unchecked")
+        Set<Integer>[] adj = buildProvinceAdjacency(board, ids, index, n);
+
+        int[][] rotation = planarRotationSystem(adj, n);
+        PlanarFaces faces = extractFaces(rotation, n);
+        double[][] coords = tutteCoordinates(faces, adj, n);
+        scaleToViewport(coords, n);
+
+        List<Vec2> facePoints = computeFacePoints(faces, coords);
+        List<List<Vec2>> polygons = buildPolygons(rotation, faces, facePoints, coords, n);
+        clipToCanvas(polygons, coords);
+        perturbBorders(polygons, adj, n);
+
+        Map<String, ProvinceLayout> provinces = new LinkedHashMap<>();
+        for (int i = 0; i < n; i++) {
+            String pid = ids.get(i);
+            Vec2 centroid = polygonCentroid(polygons.get(i), new Vec2(coords[i][0], coords[i][1]));
+            String terrain = classifyTerrain(board.provinces().get(pid), centroid);
+            Map<String, Vec2> posCentroids = positionCentroids(board.provinces().get(pid), centroid);
+            provinces.put(pid, new ProvinceLayout(centroid, polygons.get(i), terrain, posCentroids));
+        }
+
+        Map<String, Set<String>> adjacencies = new LinkedHashMap<>();
+        for (int i = 0; i < n; i++) {
+            Set<String> neighbors = new HashSet<>();
+            for (int j : adj[i]) neighbors.add(ids.get(j));
+            adjacencies.put(ids.get(i), Collections.unmodifiableSet(neighbors));
+        }
+
+        return new MapLayout(WIDTH, HEIGHT, Collections.unmodifiableMap(provinces),
+            Collections.unmodifiableMap(adjacencies));
+    }
+
+    @SuppressWarnings("unchecked")
+    private Set<Integer>[] buildProvinceAdjacency(
+        BoardDocument board, List<String> ids, Map<String, Integer> index, int n
+    ) {
         Set<Integer>[] adj = new Set[n];
-        for (int i = 0; i < n; i++) adj[i] = new HashSet<>();
+        for (int i = 0; i < n; i++) adj[i] = new LinkedHashSet<>();
 
         Map<String, String> provinceByPosition = new HashMap<>();
         for (Map.Entry<String, BoardProvince> e : board.provinces().entrySet()) {
@@ -86,199 +130,176 @@ public class MapLayoutService {
                 adj[ib].add(ia);
             }
         }
-
-        double[][] D = bfsDistanceMatrix(n, adj);
-        double[][] coords = mdsCoordinates(D, n);
-        separateSeaLand(board, ids, coords);
-        forceDirected(coords, adj, n);
-        scaleToViewport(coords, n);
-
-        List<List<Vec2>> polygons = voronoiPolygons(coords, n);
-        perturbBorders(polygons, adj, n);
-
-        Map<String, ProvinceLayout> provinces = new LinkedHashMap<>();
-        for (int i = 0; i < n; i++) {
-            String pid = ids.get(i);
-            Vec2 centroid = new Vec2(coords[i][0], coords[i][1]);
-            String terrain = classifyTerrain(board.provinces().get(pid), centroid);
-            Map<String, Vec2> posCentroids = positionCentroids(board.provinces().get(pid), centroid);
-            provinces.put(pid, new ProvinceLayout(centroid, polygons.get(i), terrain, posCentroids));
-        }
-
-        return new MapLayout(WIDTH, HEIGHT, Collections.unmodifiableMap(provinces));
+        return adj;
     }
 
     // -------------------------------------------------------------------------
-    // Step 1: BFS all-pairs distance matrix
+    // Step 1: Planar rotation system via Boyer-Myrvold
+    //
+    // The rotation system (cyclic neighbor order around each vertex) comes from
+    // the combinatorial planarity algorithm, NOT from any geometric layout.
+    // This is what guarantees the face structure is valid.
     // -------------------------------------------------------------------------
 
-    private double[][] bfsDistanceMatrix(int n, Set<Integer>[] adj) {
-        double[][] D = new double[n][n];
-        int[] dist = new int[n];
-        for (int src = 0; src < n; src++) {
-            Arrays.fill(dist, -1);
-            dist[src] = 0;
-            int[] queue = new int[n];
-            int head = 0, tail = 0;
-            queue[tail++] = src;
-            while (head < tail) {
-                int cur = queue[head++];
-                for (int nb : adj[cur]) {
-                    if (dist[nb] == -1) {
-                        dist[nb] = dist[cur] + 1;
-                        queue[tail++] = nb;
-                    }
-                }
-            }
-            for (int j = 0; j < n; j++) {
-                D[src][j] = dist[j] == -1 ? n : dist[j];
+    private int[][] planarRotationSystem(Set<Integer>[] adj, int n) {
+        Graph<Integer, DefaultEdge> graph = new SimpleGraph<>(DefaultEdge.class);
+        for (int i = 0; i < n; i++) graph.addVertex(i);
+        for (int i = 0; i < n; i++) {
+            for (int j : adj[i]) {
+                if (j > i) graph.addEdge(i, j);
             }
         }
-        return D;
+
+        BoyerMyrvoldPlanarityInspector<Integer, DefaultEdge> inspector =
+            new BoyerMyrvoldPlanarityInspector<>(graph);
+        if (!inspector.isPlanar()) {
+            throw new IllegalStateException(
+                "Province graph is not planar; cannot construct map layout");
+        }
+
+        var embedding = inspector.getEmbedding();
+        int[][] rotation = new int[n][];
+        for (int v = 0; v < n; v++) {
+            List<DefaultEdge> around = embedding.getEdgesAround(v);
+            rotation[v] = new int[around.size()];
+            for (int k = 0; k < around.size(); k++) {
+                DefaultEdge e = around.get(k);
+                int src = graph.getEdgeSource(e);
+                int tgt = graph.getEdgeTarget(e);
+                rotation[v][k] = (src == v) ? tgt : src;
+            }
+        }
+        return rotation;
     }
 
     // -------------------------------------------------------------------------
-    // Step 2: Classical MDS via Commons Math EigenDecomposition
+    // Step 2: Face extraction from the rotation system
+    //
+    // Traversal rule: next(u -> v) = (v -> w) where w is the successor of u in
+    // v's rotation. Each directed edge belongs to exactly one face. The outer
+    // face is the largest cycle (validated by the planarity diagnostic: the
+    // standard board has one size-13 face, all others size 3-5).
     // -------------------------------------------------------------------------
 
-    private double[][] mdsCoordinates(double[][] D, int n) {
-        // Double-center D²
-        double[][] Dsq = new double[n][n];
-        double[] rowMean = new double[n];
-        double[] colMean = new double[n];
-        double grandMean = 0;
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                Dsq[i][j] = D[i][j] * D[i][j];
-                rowMean[i] += Dsq[i][j];
-                colMean[j] += Dsq[i][j];
-                grandMean += Dsq[i][j];
+    private static final class PlanarFaces {
+        final Map<Long, Integer> faceOfDirectedEdge = new HashMap<>();
+        final List<List<Integer>> faceCycles = new ArrayList<>();
+        int outerFace = -1;
+    }
+
+    private PlanarFaces extractFaces(int[][] rotation, int n) {
+        PlanarFaces pf = new PlanarFaces();
+
+        for (int u = 0; u < n; u++) {
+            for (int v : rotation[u]) {
+                long startKey = directedKey(u, v);
+                if (pf.faceOfDirectedEdge.containsKey(startKey)) continue;
+
+                int faceId = pf.faceCycles.size();
+                List<Integer> cycle = new ArrayList<>();
+                int cu = u, cv = v;
+                do {
+                    pf.faceOfDirectedEdge.put(directedKey(cu, cv), faceId);
+                    cycle.add(cv);
+                    int w = successor(rotation[cv], cu);
+                    cu = cv;
+                    cv = w;
+                } while (!(cu == u && cv == v));
+                pf.faceCycles.add(cycle);
             }
         }
-        for (int i = 0; i < n; i++) rowMean[i] /= n;
-        for (int j = 0; j < n; j++) colMean[j] /= n;
-        grandMean /= (double) (n * n);
 
-        double[][] B = new double[n][n];
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                B[i][j] = -0.5 * (Dsq[i][j] - rowMean[i] - colMean[j] + grandMean);
+        int maxSize = -1;
+        for (int f = 0; f < pf.faceCycles.size(); f++) {
+            if (pf.faceCycles.get(f).size() > maxSize) {
+                maxSize = pf.faceCycles.get(f).size();
+                pf.outerFace = f;
             }
         }
+        return pf;
+    }
 
-        EigenDecomposition eigen = new EigenDecomposition(new Array2DRowRealMatrix(B));
+    private long directedKey(int u, int v) {
+        return u * EDGE_KEY_BASE + v;
+    }
 
-        // Find indices of top 2 real eigenvalues
-        int n0 = largestEigenvalueIndex(eigen, n, -1);
-        int n1 = largestEigenvalueIndex(eigen, n, n0);
+    private long undirectedKey(int u, int v) {
+        return Math.min(u, v) * EDGE_KEY_BASE + Math.max(u, v);
+    }
 
-        double s0 = Math.sqrt(Math.max(0, eigen.getRealEigenvalue(n0)));
-        double s1 = Math.sqrt(Math.max(0, eigen.getRealEigenvalue(n1)));
+    private int successor(int[] rotationRow, int u) {
+        for (int i = 0; i < rotationRow.length; i++) {
+            if (rotationRow[i] == u) return rotationRow[(i + 1) % rotationRow.length];
+        }
+        throw new IllegalStateException("rotation system inconsistency");
+    }
+
+    // -------------------------------------------------------------------------
+    // Step 3: Tutte barycentric coordinates
+    //
+    // Pin the outer face vertices on a circle; every interior vertex solves
+    // deg(v) * pos(v) - sum(pos(neighbors)) = 0. Tutte's theorem guarantees the
+    // resulting straight-line drawing is crossing-free and realizes the
+    // embedding, so the dual polygonization downstream is geometrically valid.
+    // -------------------------------------------------------------------------
+
+    private double[][] tutteCoordinates(PlanarFaces faces, Set<Integer>[] adj, int n) {
+        // Outer cycle in walk order, deduplicated (repeats possible if the
+        // boundary pinches at a cut vertex)
+        List<Integer> outerCycle = new ArrayList<>(
+            new LinkedHashSet<>(faces.faceCycles.get(faces.outerFace)));
+        int m = outerCycle.size();
 
         double[][] coords = new double[n][2];
-        for (int i = 0; i < n; i++) {
-            coords[i][0] = eigen.getEigenvector(n0).getEntry(i) * s0;
-            coords[i][1] = eigen.getEigenvector(n1).getEntry(i) * s1;
+        boolean[] pinned = new boolean[n];
+        for (int k = 0; k < m; k++) {
+            double angle = 2 * Math.PI * k / m;
+            int v = outerCycle.get(k);
+            coords[v][0] = Math.cos(angle) * 1000.0;
+            coords[v][1] = Math.sin(angle) * 1000.0;
+            pinned[v] = true;
+        }
+
+        List<Integer> interior = new ArrayList<>();
+        int[] interiorIndex = new int[n];
+        for (int v = 0; v < n; v++) {
+            if (!pinned[v]) {
+                interiorIndex[v] = interior.size();
+                interior.add(v);
+            }
+        }
+        int mi = interior.size();
+        if (mi == 0) return coords;
+
+        RealMatrix A = new Array2DRowRealMatrix(mi, mi);
+        double[] bx = new double[mi];
+        double[] by = new double[mi];
+        for (int r = 0; r < mi; r++) {
+            int v = interior.get(r);
+            A.setEntry(r, r, adj[v].size());
+            for (int u : adj[v]) {
+                if (pinned[u]) {
+                    bx[r] += coords[u][0];
+                    by[r] += coords[u][1];
+                } else {
+                    A.setEntry(r, interiorIndex[u], A.getEntry(r, interiorIndex[u]) - 1);
+                }
+            }
+        }
+
+        DecompositionSolver solver = new LUDecomposition(A).getSolver();
+        RealVector xs = solver.solve(new ArrayRealVector(bx));
+        RealVector ys = solver.solve(new ArrayRealVector(by));
+        for (int r = 0; r < mi; r++) {
+            int v = interior.get(r);
+            coords[v][0] = xs.getEntry(r);
+            coords[v][1] = ys.getEntry(r);
         }
         return coords;
     }
 
-    private int largestEigenvalueIndex(EigenDecomposition eigen, int n, int exclude) {
-        int best = -1;
-        double bestVal = Double.NEGATIVE_INFINITY;
-        for (int i = 0; i < n; i++) {
-            if (i == exclude) continue;
-            double val = eigen.getRealEigenvalue(i);
-            if (val > bestVal) { bestVal = val; best = i; }
-        }
-        return best;
-    }
-
     // -------------------------------------------------------------------------
-    // Step 3: Sea/land centroid separation
-    // -------------------------------------------------------------------------
-
-    private void separateSeaLand(BoardDocument board, List<String> ids, double[][] coords) {
-        int n = ids.size();
-        boolean[] isSea = new boolean[n];
-        for (int i = 0; i < n; i++) {
-            isSea[i] = board.provinces().get(ids.get(i)).positions().stream()
-                .allMatch(p -> "sea".equals(p.type()));
-        }
-
-        double[] seaCx = {0, 0}, landCx = {0, 0};
-        int seaCount = 0, landCount = 0;
-        for (int i = 0; i < n; i++) {
-            if (isSea[i]) { seaCx[0] += coords[i][0]; seaCx[1] += coords[i][1]; seaCount++; }
-            else           { landCx[0] += coords[i][0]; landCx[1] += coords[i][1]; landCount++; }
-        }
-        if (seaCount  > 0) { seaCx[0]  /= seaCount;  seaCx[1]  /= seaCount; }
-        if (landCount > 0) { landCx[0] /= landCount; landCx[1] /= landCount; }
-
-        for (int i = 0; i < n; i++) {
-            double[] target = isSea[i] ? seaCx : landCx;
-            coords[i][0] += (target[0] - coords[i][0]) * 0.4;
-            coords[i][1] += (target[1] - coords[i][1]) * 0.4;
-        }
-    }
-
-    // -------------------------------------------------------------------------
-    // Step 4: Fruchterman-Reingold force layout
-    // -------------------------------------------------------------------------
-
-    private void forceDirected(double[][] coords, Set<Integer>[] adj, int n) {
-        double k = Math.sqrt((double) WIDTH * HEIGHT / n);
-        double temperature = WIDTH * 0.15;
-        double cooling = temperature / (FORCE_ITERATIONS + 1);
-        double[][] disp = new double[n][2];
-
-        for (int iter = 0; iter < FORCE_ITERATIONS; iter++) {
-            for (int i = 0; i < n; i++) { disp[i][0] = 0; disp[i][1] = 0; }
-
-            // Repulsive forces between all pairs
-            for (int i = 0; i < n; i++) {
-                for (int j = i + 1; j < n; j++) {
-                    double dx = coords[i][0] - coords[j][0];
-                    double dy = coords[i][1] - coords[j][1];
-                    double dist = Math.max(0.01, Math.sqrt(dx * dx + dy * dy));
-                    double force = k * k / dist;
-                    double fx = dx / dist * force;
-                    double fy = dy / dist * force;
-                    disp[i][0] += fx; disp[i][1] += fy;
-                    disp[j][0] -= fx; disp[j][1] -= fy;
-                }
-            }
-
-            // Attractive forces along edges
-            for (int i = 0; i < n; i++) {
-                for (int j : adj[i]) {
-                    if (j <= i) continue;
-                    double dx = coords[i][0] - coords[j][0];
-                    double dy = coords[i][1] - coords[j][1];
-                    double dist = Math.max(0.01, Math.sqrt(dx * dx + dy * dy));
-                    double force = dist * dist / k;
-                    double fx = dx / dist * force;
-                    double fy = dy / dist * force;
-                    disp[i][0] -= fx; disp[i][1] -= fy;
-                    disp[j][0] += fx; disp[j][1] += fy;
-                }
-            }
-
-            // Apply displacements, clamped to temperature
-            for (int i = 0; i < n; i++) {
-                double len = Math.sqrt(disp[i][0] * disp[i][0] + disp[i][1] * disp[i][1]);
-                if (len > 0) {
-                    double scale = Math.min(len, temperature) / len;
-                    coords[i][0] += disp[i][0] * scale;
-                    coords[i][1] += disp[i][1] * scale;
-                }
-            }
-            temperature -= cooling;
-        }
-    }
-
-    // -------------------------------------------------------------------------
-    // Step 5: Scale and center to viewport
+    // Step 4: Scale and center to viewport
     // -------------------------------------------------------------------------
 
     private void scaleToViewport(double[][] coords, int n) {
@@ -302,141 +323,260 @@ public class MapLayoutService {
     }
 
     // -------------------------------------------------------------------------
-    // Step 6: Voronoi tessellation via JTS
+    // Step 5: Face points and polygon construction
     // -------------------------------------------------------------------------
 
-    private List<List<Vec2>> voronoiPolygons(double[][] coords, int n) {
-        GeometryFactory gf = new GeometryFactory();
-        Point[] points = new Point[n];
-        for (int i = 0; i < n; i++) {
-            points[i] = gf.createPoint(new Coordinate(coords[i][0], coords[i][1]));
+    private List<Vec2> computeFacePoints(PlanarFaces faces, double[][] coords) {
+        List<Vec2> points = new ArrayList<>(faces.faceCycles.size());
+        for (List<Integer> cycle : faces.faceCycles) {
+            double sx = 0, sy = 0;
+            for (int v : cycle) {
+                sx += coords[v][0];
+                sy += coords[v][1];
+            }
+            points.add(new Vec2(sx / cycle.size(), sy / cycle.size()));
         }
-        MultiPoint sites = gf.createMultiPoint(points);
+        return points;
+    }
 
-        VoronoiDiagramBuilder vdb = new VoronoiDiagramBuilder();
-        vdb.setSites(sites);
-        vdb.setClipEnvelope(new Envelope(0, WIDTH, 0, HEIGHT));
+    private List<List<Vec2>> buildPolygons(
+        int[][] rotation, PlanarFaces faces, List<Vec2> facePoints, double[][] coords, int n
+    ) {
+        Vec2 center = new Vec2(WIDTH / 2.0, HEIGHT / 2.0);
+        Map<Long, Vec2> outerPoints = new HashMap<>();
 
-        GeometryCollection diagram = (GeometryCollection) vdb.getDiagram(gf);
-
-        // JTS returns one cell per site but not necessarily in input order.
-        // Match each cell back to its site by finding the cell that contains the site point.
-        List<List<Vec2>> result = new ArrayList<>(Collections.nCopies(n, null));
-        for (int c = 0; c < diagram.getNumGeometries(); c++) {
-            Geometry cell = diagram.getGeometryN(c);
-            for (int i = 0; i < n; i++) {
-                if (result.get(i) != null) continue;
-                if (cell.contains(points[i]) || cell.distance(points[i]) < 1e-6) {
-                    result.set(i, coordinatesToVec2(cell.getCoordinates()));
-                    break;
+        List<List<Vec2>> polygons = new ArrayList<>(n);
+        for (int p = 0; p < n; p++) {
+            int[] rot = rotation[p];
+            List<Vec2> pts = new ArrayList<>();
+            int k = rot.length;
+            for (int i = 0; i < k; i++) {
+                int a = rot[i];
+                int b = rot[(i + 1) % k];
+                Integer f = faces.faceOfDirectedEdge.get(directedKey(a, p));
+                if (f == null) continue;
+                if (f != faces.outerFace) {
+                    pts.add(facePoints.get(f));
+                } else {
+                    pts.add(outerPoint(outerPoints, p, a, coords, center));
+                    pts.add(outerPoint(outerPoints, p, b, coords, center));
                 }
             }
+            polygons.add(dedupeConsecutive(pts));
         }
-        // Fallback: any unmatched province gets an empty polygon
-        for (int i = 0; i < n; i++) {
-            if (result.get(i) == null) result.set(i, List.of());
-        }
-        return result;
+        return polygons;
     }
 
-    private List<Vec2> coordinatesToVec2(Coordinate[] coords) {
-        List<Vec2> pts = new ArrayList<>(coords.length);
-        // JTS polygons close on themselves; skip the duplicate last point
-        int end = coords.length;
-        if (end > 1 && coords[0].equals2D(coords[end - 1])) end--;
-        for (int i = 0; i < end; i++) pts.add(new Vec2(coords[i].x, coords[i].y));
-        return pts;
+    private Vec2 outerPoint(
+        Map<Long, Vec2> cache, int p, int q, double[][] coords, Vec2 center
+    ) {
+        return cache.computeIfAbsent(undirectedKey(p, q), key -> {
+            Vec2 mid = new Vec2(
+                (coords[p][0] + coords[q][0]) / 2.0,
+                (coords[p][1] + coords[q][1]) / 2.0
+            );
+            Vec2 dir = mid.sub(center);
+            double len = dir.norm();
+            if (len < 1e-6) dir = new Vec2(0, -1);
+            else dir = dir.scale(1.0 / len);
+            return mid.add(dir.scale(OUTER_PUSH));
+        });
+    }
+
+    private List<Vec2> dedupeConsecutive(List<Vec2> pts) {
+        if (pts.size() < 2) return pts;
+        List<Vec2> out = new ArrayList<>(pts.size());
+        for (Vec2 v : pts) {
+            if (out.isEmpty() || out.get(out.size() - 1).sub(v).norm() > 1e-6) {
+                out.add(v);
+            }
+        }
+        if (out.size() > 1 && out.get(0).sub(out.get(out.size() - 1)).norm() < 1e-6) {
+            out.remove(out.size() - 1);
+        }
+        return out;
     }
 
     // -------------------------------------------------------------------------
-    // Step 7: Boundary perturbation
+    // Step 6: Repair and clip polygons to the canvas
+    // -------------------------------------------------------------------------
+
+    private void clipToCanvas(List<List<Vec2>> polygons, double[][] coords) {
+        GeometryFactory gf = new GeometryFactory();
+        Geometry canvas = gf.toGeometry(new Envelope(0, WIDTH, 0, HEIGHT));
+
+        for (int i = 0; i < polygons.size(); i++) {
+            List<Vec2> poly = polygons.get(i);
+            if (poly.size() < 3) {
+                polygons.set(i, fallbackSquare(coords[i]));
+                continue;
+            }
+            Coordinate[] ring = new Coordinate[poly.size() + 1];
+            for (int j = 0; j < poly.size(); j++) {
+                ring[j] = new Coordinate(poly.get(j).x(), poly.get(j).y());
+            }
+            ring[poly.size()] = ring[0];
+
+            try {
+                Geometry g = gf.createPolygon(ring);
+                if (!g.isValid()) g = g.buffer(0);
+                g = g.intersection(canvas);
+                g = largestPolygon(g);
+                if (g == null || g.isEmpty()) {
+                    polygons.set(i, fallbackSquare(coords[i]));
+                    continue;
+                }
+                Coordinate[] cs = ((Polygon) g).getExteriorRing().getCoordinates();
+                List<Vec2> out = new ArrayList<>(cs.length);
+                for (int j = 0; j < cs.length - 1; j++) {
+                    out.add(new Vec2(cs[j].x, cs[j].y));
+                }
+                polygons.set(i, out);
+            } catch (RuntimeException e) {
+                polygons.set(i, fallbackSquare(coords[i]));
+            }
+        }
+    }
+
+    private Geometry largestPolygon(Geometry g) {
+        if (g instanceof Polygon) return g;
+        Geometry best = null;
+        double bestArea = -1;
+        for (int i = 0; i < g.getNumGeometries(); i++) {
+            Geometry part = g.getGeometryN(i);
+            if (part instanceof Polygon && part.getArea() > bestArea) {
+                bestArea = part.getArea();
+                best = part;
+            }
+        }
+        return best;
+    }
+
+    private List<Vec2> fallbackSquare(double[] coord) {
+        double x = coord[0], y = coord[1], r = 15;
+        return List.of(
+            new Vec2(x - r, y - r), new Vec2(x + r, y - r),
+            new Vec2(x + r, y + r), new Vec2(x - r, y + r)
+        );
+    }
+
+    private Vec2 polygonCentroid(List<Vec2> poly, Vec2 fallback) {
+        if (poly.size() < 3) return fallback;
+        double area = 0, cx = 0, cy = 0;
+        int sz = poly.size();
+        for (int i = 0; i < sz; i++) {
+            Vec2 a = poly.get(i), b = poly.get((i + 1) % sz);
+            double cross = a.x() * b.y() - b.x() * a.y();
+            area += cross;
+            cx += (a.x() + b.x()) * cross;
+            cy += (a.y() + b.y()) * cross;
+        }
+        if (Math.abs(area) < 1e-9) return fallback;
+        area /= 2.0;
+        return new Vec2(cx / (6 * area), cy / (6 * area));
+    }
+
+    // -------------------------------------------------------------------------
+    // Boundary perturbation (currently disabled; re-enable via compute())
     // -------------------------------------------------------------------------
 
     private void perturbBorders(List<List<Vec2>> polygons, Set<Integer>[] adj, int n) {
-        // Build canonical edge key → perturbed midpoints
-        // Key: "minIdx:maxIdx:v1x,v1y:v2x,v2y" — identifies a specific edge shared by two provinces
-        Map<String, List<Vec2>> perturbedEdges = new HashMap<>();
+        // Phase 1: detect shared edges on the unmodified polygons and compute
+        // each border's jagged polyline exactly once, in a canonical direction
+        // (from the lexicographically smaller endpoint). Detection must happen
+        // before any polygon is rebuilt, otherwise a neighbor processed earlier
+        // no longer contains the original edge and the two sides diverge.
+        Map<String, List<Vec2>> midsByEdge = new HashMap<>();
+        for (int i = 0; i < n; i++) {
+            List<Vec2> poly = polygons.get(i);
+            int sz = poly.size();
+            for (int vi = 0; vi < sz; vi++) {
+                Vec2 v1 = poly.get(vi);
+                Vec2 v2 = poly.get((vi + 1) % sz);
+                String key = unorderedCoordKey(v1, v2);
+                if (midsByEdge.containsKey(key)) continue;
 
+                int sharedWith = findSharedNeighbor(polygons, adj[i], v1, v2);
+                if (sharedWith < 0) continue;
+
+                Vec2 from = lexLess(v1, v2) ? v1 : v2;
+                Vec2 to   = lexLess(v1, v2) ? v2 : v1;
+                midsByEdge.put(key, computePerturbedMidpoints(from, to, i, sharedWith));
+            }
+        }
+
+        // Phase 2: rebuild every polygon, inserting the canonical midpoints in
+        // the direction each polygon traverses the edge.
         for (int i = 0; i < n; i++) {
             List<Vec2> poly = polygons.get(i);
             if (poly.isEmpty()) continue;
-
             List<Vec2> newPoly = new ArrayList<>();
             int sz = poly.size();
             for (int vi = 0; vi < sz; vi++) {
                 Vec2 v1 = poly.get(vi);
                 Vec2 v2 = poly.get((vi + 1) % sz);
                 newPoly.add(v1);
-
-                // Find if v2 is also in an adjacent province's polygon (shared edge)
-                int sharedWith = -1;
-                for (int j : adj[i]) {
-                    if (j == i) continue;
-                    List<Vec2> other = polygons.get(j);
-                    if (edgeExistsReversed(other, v1, v2)) {
-                        sharedWith = j;
-                        break;
-                    }
-                }
-
-                if (sharedWith >= 0) {
-                    String key = edgeKey(i, sharedWith, v1, v2);
-                    final int provI = i, provJ = sharedWith;
-                    List<Vec2> mids = perturbedEdges.computeIfAbsent(key,
-                        k -> computePerturbedMidpoints(v1, v2, provI, provJ));
-                    // Add midpoints in correct order (forward if i < sharedWith)
-                    if (i < sharedWith) {
-                        newPoly.addAll(mids);
-                    } else {
-                        List<Vec2> reversed = new ArrayList<>(mids);
-                        Collections.reverse(reversed);
-                        newPoly.addAll(reversed);
-                    }
+                List<Vec2> mids = midsByEdge.get(unorderedCoordKey(v1, v2));
+                if (mids == null || mids.isEmpty()) continue;
+                if (lexLess(v1, v2)) {
+                    newPoly.addAll(mids);
+                } else {
+                    List<Vec2> reversed = new ArrayList<>(mids);
+                    Collections.reverse(reversed);
+                    newPoly.addAll(reversed);
                 }
             }
             polygons.set(i, newPoly);
         }
     }
 
-    private boolean edgeExistsReversed(List<Vec2> poly, Vec2 v1, Vec2 v2) {
-        int sz = poly.size();
-        for (int i = 0; i < sz; i++) {
-            Vec2 a = poly.get(i);
-            Vec2 b = poly.get((i + 1) % sz);
-            if (approxEq(a, v2) && approxEq(b, v1)) return true;
+    private int findSharedNeighbor(List<List<Vec2>> polygons, Set<Integer> neighbors, Vec2 v1, Vec2 v2) {
+        for (int j : neighbors) {
+            List<Vec2> other = polygons.get(j);
+            int sz = other.size();
+            for (int k = 0; k < sz; k++) {
+                Vec2 a = other.get(k);
+                Vec2 b = other.get((k + 1) % sz);
+                if (approxEq(a, v2) && approxEq(b, v1)) return j;
+            }
         }
-        return false;
+        return -1;
     }
 
     private boolean approxEq(Vec2 a, Vec2 b) {
         return Math.abs(a.x() - b.x()) < 0.5 && Math.abs(a.y() - b.y()) < 0.5;
     }
 
-    private String edgeKey(int i, int j, Vec2 v1, Vec2 v2) {
-        int lo = Math.min(i, j), hi = Math.max(i, j);
-        // Canonical vertex order: always from the lower-index province's perspective
-        Vec2 from = (i < j) ? v1 : v2;
-        Vec2 to   = (i < j) ? v2 : v1;
-        return lo + ":" + hi + ":" + Math.round(from.x() * 10) + "," + Math.round(from.y() * 10)
-               + "-" + Math.round(to.x() * 10) + "," + Math.round(to.y() * 10);
+    private boolean lexLess(Vec2 a, Vec2 b) {
+        if (a.x() != b.x()) return a.x() < b.x();
+        return a.y() < b.y();
     }
 
-    private List<Vec2> computePerturbedMidpoints(Vec2 v1, Vec2 v2, int i, int j) {
-        long seed = (long) Math.min(i, j) * 100_000L + Math.max(i, j);
-        double dx = v2.x() - v1.x(), dy = v2.y() - v1.y();
+    private String unorderedCoordKey(Vec2 v1, Vec2 v2) {
+        Vec2 lo = lexLess(v1, v2) ? v1 : v2;
+        Vec2 hi = lexLess(v1, v2) ? v2 : v1;
+        return Math.round(lo.x() * 10) + "," + Math.round(lo.y() * 10)
+             + "-" + Math.round(hi.x() * 10) + "," + Math.round(hi.y() * 10);
+    }
+
+    private List<Vec2> computePerturbedMidpoints(Vec2 from, Vec2 to, int i, int j) {
+        long seed = (long) Math.min(i, j) * EDGE_KEY_BASE + Math.max(i, j);
+        double dx = to.x() - from.x(), dy = to.y() - from.y();
         double len = Math.sqrt(dx * dx + dy * dy);
         if (len < 1e-6) return List.of();
 
-        // Perpendicular unit vector
         double px = -dy / len, py = dx / len;
+        // Taper displacement toward endpoints so corners stay pinned, and cap
+        // amplitude on short edges to avoid spikes and self-intersections.
+        double amplitude = Math.min(PERTURBATION_AMPLITUDE, len * 0.2);
 
         int numMids = Math.max(1, (int) (len / PERTURBATION_SEGMENT_LENGTH));
         List<Vec2> mids = new ArrayList<>(numMids);
         for (int k = 1; k <= numMids; k++) {
             double t = (double) k / (numMids + 1);
-            double bx = v1.x() + dx * t;
-            double by = v1.y() + dy * t;
-            double disp = valueNoise(seed, k) * PERTURBATION_AMPLITUDE;
+            double bx = from.x() + dx * t;
+            double by = from.y() + dy * t;
+            double disp = valueNoise(seed, k) * amplitude * Math.sin(Math.PI * t);
             mids.add(new Vec2(bx + px * disp, by + py * disp));
         }
         return mids;
@@ -451,7 +591,7 @@ public class MapLayoutService {
     }
 
     // -------------------------------------------------------------------------
-    // Step 8: Terrain classification
+    // Terrain classification
     // -------------------------------------------------------------------------
 
     private String classifyTerrain(BoardProvince province, Vec2 centroid) {
@@ -467,7 +607,7 @@ public class MapLayoutService {
     }
 
     // -------------------------------------------------------------------------
-    // Step 9: Position centroids within province
+    // Position centroids within province
     // -------------------------------------------------------------------------
 
     private Map<String, Vec2> positionCentroids(BoardProvince province, Vec2 centroid) {
