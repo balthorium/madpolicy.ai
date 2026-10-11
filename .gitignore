@@ -3,6 +3,9 @@
 target
 .idea/
 .vscode/
+.classpath
+.project
+.settings
 data/games/
 *.iml
 *.class
