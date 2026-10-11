@@ -29,7 +29,7 @@
         let pkgs = import nixpkgs { inherit system; config.allowUnfree = true; };
         in {
           default = pkgs.mkShell {
-            packages = with pkgs; [ jdk21 maven jetbrains.idea ];
+            packages = with pkgs; [ jdk21 maven jetbrains.idea jdt-language-server ];
           };
         });
     };
